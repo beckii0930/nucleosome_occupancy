@@ -1,0 +1,4 @@
+# No mat files and output from slurm
+
+*.mat
+*.out
