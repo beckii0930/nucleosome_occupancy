@@ -21,19 +21,25 @@ from keras import optimizers
 from keras import backend as K
 from keras import regularizers
 
-data_folder = "/scratch2/yibeijia/data/train_test_data/"
+# data_folder = "/scratch2/yibeijia/data/train_test_data/"
+data_folder = "/Users/yibeijia/Downloads/nucleosome_occupancy/train_test_data/"
 
-trainmat = h5py.File(data_folder+'Etraining_data.mat')
-validmat = scipy.io.loadmat(data_folder+'Etesting_data.mat')
+# trainmat = h5py.File(data_folder+'Etraining_data.mat')
+trainmat = scipy.io.loadmat(data_folder+'Train_data.mat')
+validmat = scipy.io.loadmat(data_folder+'Test_data.mat')
 
-X_train = np.transpose(np.array(trainmat['trainxdata']),axes=(2,0,1))
-y_train = np.array(trainmat['traindata']).T
+# X_train is the one hot encode #seq X 4
+X_train = np.transpose(np.array(trainmat['Train_data']).T)
+
+# y_train is
+y_train = np.array(trainmat['Train_vals']).T
 
 trainmat.close()
 
-y_train = y_train[:,125:815]
+# y_train = y_train[:,125:815]
 
 # RUN TBINET
+# sequence_input = Input
 sequence_input = Input(shape=(1000,4))
 
 # Convolutional Layer
