@@ -265,7 +265,7 @@ def encodeNucSeq(data, total_sections, section):
 				while len(curr_seq) < 147:
 					curr_seq = curr_seq + 'N';
 				encodedDNAArr = oneHotEncode(curr_seq);
-				allEnrichSeqArr+=(encodedDNAArr);
+				allEnrichSeqArr+=[encodedDNAArr];
 
 				## for seqeunces that are long enough	
 				for start in range(curr_seq_length-146):
@@ -273,14 +273,14 @@ def encodeNucSeq(data, total_sections, section):
 					curr_end = 146 + start;
 					curr_seq = line[3][curr_start: curr_end+1];
 					encodedDNAarr = oneHotEncode(curr_seq);
-					allEnrichSeqArr+=(encodedDNAArr);
+					allEnrichSeqArr+=[encodedDNAArr];
 				# print(allEnrichSeqArr);
 			else:
 				## for seqeunces that are shorter
 				while len(curr_seq) < 147:
 					curr_seq = curr_seq + 'N';
 				encodedDNAArr = oneHotEncode(curr_seq);
-				allDepleteSeqArr+=(encodedDNAArr);
+				allDepleteSeqArr+=[encodedDNAArr];
 
 				## for seqeunces that are long enough	
 				for start in range(curr_seq_length-146):
@@ -288,7 +288,7 @@ def encodeNucSeq(data, total_sections, section):
 					curr_end = 146 + start;
 					curr_seq = line[3][curr_start: curr_end+1];
 					encodedDNAarr = oneHotEncode(curr_seq);
-					allDepleteSeqArr+=(encodedDNAArr);
+					allDepleteSeqArr+=[encodedDNAArr];
 		else:
 			print("header")
 	# print(allEnrichSeqArr);
