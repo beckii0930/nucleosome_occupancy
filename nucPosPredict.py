@@ -172,7 +172,7 @@ def readInputAsString(fileName):
 def oneHotEncode(seq):
     import numpy as np
     seq2=list()
-    mapping = {"A":[1., 0., 0., 0.], "C": [0., 1., 0., 0.], "G": [1., 0., 0., 0.], "T":[0., 0., 0., 1.]};
+    mapping = {"A":[1., 0., 0., 0.], "C": [0., 1., 0., 0.], "G": [0., 0., 1., 0.], "T":[0., 0., 0., 1.]};
     for i in seq:
     	seq2.append(mapping[i]  if i in mapping.keys() else [0., 0., 0., 0.]);
     return seq2;
@@ -215,8 +215,8 @@ def encodeNucSeq(data, total_sections, section):
 	print(f"Total # of lines is: {total_lines}\n");
 
 	# one hot encode the DNA
-	allEnrichSeqArr=[];
-	allDepleteSeqArr=[];
+	allEnrichSeqArr=list();
+	allDepleteSeqArr=list();
 	enrich = True;
 	
 	tic = time.perf_counter();
@@ -259,13 +259,15 @@ def encodeNucSeq(data, total_sections, section):
 		if line[0][0] == "(":
 			curr_seq_length = int(line[2]);
 			curr_seq =line[3];
-			if enrich:
+			encodedDNAArr = list();
 
+			if enrich:
 				## for seqeunces that are shorter
-				while len(curr_seq) < 147:
-					curr_seq = curr_seq + 'N';
-				encodedDNAArr = oneHotEncode(curr_seq);
-				allEnrichSeqArr+=[encodedDNAArr];
+				if(len(curr_seq) < 147):	
+					while len(curr_seq) < 147:
+						curr_seq = curr_seq + 'N';
+					encodedDNAArr = oneHotEncode(curr_seq);
+					allEnrichSeqArr+=[encodedDNAArr];
 
 				## for seqeunces that are long enough	
 				for start in range(curr_seq_length-146):
@@ -274,36 +276,46 @@ def encodeNucSeq(data, total_sections, section):
 					curr_seq = line[3][curr_start: curr_end+1];
 					encodedDNAarr = oneHotEncode(curr_seq);
 					allEnrichSeqArr+=[encodedDNAArr];
-				# print(allEnrichSeqArr);
+
 			else:
 				## for seqeunces that are shorter
-				while len(curr_seq) < 147:
-					curr_seq = curr_seq + 'N';
-				encodedDNAArr = oneHotEncode(curr_seq);
-				allDepleteSeqArr+=[encodedDNAArr];
-
-				## for seqeunces that are long enough	
-				for start in range(curr_seq_length-146):
-					curr_start = start;
-					curr_end = 146 + start;
-					curr_seq = line[3][curr_start: curr_end+1];
-					encodedDNAarr = oneHotEncode(curr_seq);
+				if(len(curr_seq) < 147):	
+					while len(curr_seq) < 147:
+						curr_seq = curr_seq + 'N';
+					encodedDNAArr = oneHotEncode(curr_seq);
 					allDepleteSeqArr+=[encodedDNAArr];
+				else:
+					## for seqeunces that are long enough	
+					for start in range(curr_seq_length-146):
+						curr_start = start;
+						curr_end = 146 + start;
+						curr_short_seq = curr_seq[curr_start: curr_end+1];
+						encodedDNAarr = oneHotEncode(curr_short_seq);
+						allDepleteSeqArr += [encodedDNAarr];
+
+
 		else:
 			print("header")
 	# print(allEnrichSeqArr);
 	toc = time.perf_counter();
 	print(f"Getting the DNA encoded took {toc - tic:0.4f} seconds");
 	nrow_enrich = len(allEnrichSeqArr);
-	ncol_enrich = 0;
+	ncol_enrich = -1;
+	ncol_enrich2 = -1;
 	if (len(allEnrichSeqArr) > 0):
 		ncol_enrich = len(allEnrichSeqArr[0]);
-	print(f" allEnrichSeqArr.shape: {nrow_enrich} x {ncol_enrich}");
+		if (len(allEnrichSeqArr[0]) > 0):
+			ncol_enrich2 = len(allEnrichSeqArr[0][0]);
+
+	print(f" allEnrichSeqArr.shape: {nrow_enrich} x {ncol_enrich} x {ncol_enrich2}");
 	nrow_deplete = len(allDepleteSeqArr)
-	ncol_deplete = 0;
+	ncol_deplete = -1;
+	ncol_deplete2 = -1;
 	if (len(allDepleteSeqArr) > 0):
 		ncol_deplete = len(allDepleteSeqArr[0])
-	print(f" allDepleteSeqArr.shape: {nrow_deplete} x {ncol_deplete}");
+		if (len(allDepleteSeqArr[0]) > 0):
+			ncol_deplete2 = len(allDepleteSeqArr[0][0]);
+	print(f" allDepleteSeqArr.shape: {nrow_deplete} x {ncol_deplete} x {ncol_deplete2}");
 
 	# split files if they get too large
 	if (nrow_enrich > 100000000):
@@ -317,6 +329,7 @@ def encodeNucSeq(data, total_sections, section):
 				sub_arr_end = nrow_enrich;
 			Data = {"EnrichedData": np.array(allEnrichSeqArr[sub_arr_start:sub_arr_end]), "DepletedData": np.array(allDepleteSeqArr)};
 			mat_filename = '/scratch2/yibeijia/data/nucleosome_occupancy_' + str(section) + '_' + str(index_str) + '.mat';
+			# mat_filename = '/Users/yibeijia/Downloads/nucleosome_occupancy/train_test_data/nucleosome_occupancy_' + str(section) + '_' + str(index_str) + '.mat';
 			scipy.io.savemat(mat_filename, Data,  do_compression=True);
 
 	# split files if they get too large
@@ -331,11 +344,13 @@ def encodeNucSeq(data, total_sections, section):
 				sub_arr_end = nrow_enrich;
 			Data = {"EnrichedData": np.array(allEnrichSeqArr), "DepletedData": np.array(allDepleteSeqArr[sub_arr_start:sub_arr_end])};
 			mat_filename = '/scratch2/yibeijia/data/nucleosome_occupancy_' + str(section) + '_' + str(index_str) + '.mat';
+			# mat_filename = '/Users/yibeijia/Downloads/nucleosome_occupancy/train_test_data/nucleosome_occupancy_' + str(section) + '_' + str(index_str) + '.mat';
 			scipy.io.savemat(mat_filename, Data,  do_compression=True);
 
 	else:
 		Data = {"EnrichedData": np.array(allEnrichSeqArr), "DepletedData": np.array(allDepleteSeqArr)};
 		mat_filename = '/scratch2/yibeijia/data/nucleosome_occupancy_' + str(section) + '.mat';
+		# mat_filename = '/Users/yibeijia/Downloads/nucleosome_occupancy/train_test_data/nucleosome_occupancy_' + str(section) + '.mat';
 		scipy.io.savemat(mat_filename, Data,  do_compression=True);
 
 
@@ -355,7 +370,7 @@ def main():
 	##### ########## ########## ########## ########## #####
 	##### Get the sequencnes in depleted ir enriched regions
 	data = readInputAsArray('/project/rohs_108/yibeijia/nucleosome_occupancy/InVitro_regions_out.txt');
-	# data = readInputAsArray('/Users/yibeijia/Downloads/nucleosome_occupancy/tbinet/data/nucleosome_occupancy_train/InVitro_regions_out.txt')
+	# data = readInputAsArray('/Users/yibeijia/Downloads/nucleosome_occupancy/InVitro_regions_out.txt')
 	encodeNucSeq(data, sys.argv[1], sys.argv[2])
 	# dna="ACGTAC";
 	# encodedDna=oneHotEncode(dna)
