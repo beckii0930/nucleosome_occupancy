@@ -330,8 +330,8 @@ def encodeNucSeq(data, total_sections, section):
 			# print(np_allDepleteSeqArr)
 			print(f"1 np_allEnrichSeqArr.shape {np_allEnrichSeqArr.shape}, np_allDepleteSeqArr.shape {np_allDepleteSeqArr.shape}");
 			Data = {"EnrichedData": np_allEnrichSeqArr, "DepletedData": np_allDepleteSeqArr};
-			# mat_filename = '/scratch2/yibeijia/data/nucleosome_occupancy_' + str(section) + '_' + str(index_str) + '.mat';
-			mat_filename = '/Users/yibeijia/Downloads/nucleosome_occupancy/train_test_data/nucleosome_occupancy_' + str(section) + '_' + str(index_str) + '.mat';
+			mat_filename = '/scratch2/yibeijia/data/nucleosome_occupancy_' + str(section) + '_' + str(index_str) + '.mat';
+			#mat_filename = '/Users/yibeijia/Downloads/nucleosome_occupancy/train_test_data/nucleosome_occupancy_' + str(section) + '_' + str(index_str) + '.mat';
 			scipy.io.savemat(mat_filename, Data,  do_compression=True);
 
 	# split files if they get too large
@@ -350,8 +350,8 @@ def encodeNucSeq(data, total_sections, section):
 			print(f"2 np_allEnrichSeqArr.shape {np_allEnrichSeqArr.shape}, np_allDepleteSeqArr.shape {np_allDepleteSeqArr.shape}");
 			Data = {"EnrichedData": np_allEnrichSeqArr, "DepletedData": np_allDepleteSeqArr};
 
-			# mat_filename = '/scratch2/yibeijia/data/nucleosome_occupancy_' + str(section) + '_' + str(index_str) + '.mat';
-			mat_filename = '/Users/yibeijia/Downloads/nucleosome_occupancy/train_test_data/nucleosome_occupancy_' + str(section) + '_' + str(index_str) + '.mat';
+			mat_filename = '/scratch2/yibeijia/data/nucleosome_occupancy_' + str(section) + '_' + str(index_str) + '.mat';
+			#mat_filename = '/Users/yibeijia/Downloads/nucleosome_occupancy/train_test_data/nucleosome_occupancy_' + str(section) + '_' + str(index_str) + '.mat';
 			scipy.io.savemat(mat_filename, Data,  do_compression=True);
 
 	else:
@@ -360,8 +360,8 @@ def encodeNucSeq(data, total_sections, section):
 		print(f"3 np_allEnrichSeqArr.shape {np_allEnrichSeqArr.shape}, np_allDepleteSeqArr.shape {np_allDepleteSeqArr.shape}");
 
 		Data = {"EnrichedData": np_allEnrichSeqArr, "DepletedData": np_allDepleteSeqArr};
-		# mat_filename = '/scratch2/yibeijia/data/nucleosome_occupancy_' + str(section) + '.mat';
-		mat_filename = '/Users/yibeijia/Downloads/nucleosome_occupancy/train_test_data/nucleosome_occupancy_' + str(section) + '.mat';
+		mat_filename = '/scratch2/yibeijia/data/nucleosome_occupancy_' + str(section) + '.mat';
+		#mat_filename = '/Users/yibeijia/Downloads/nucleosome_occupancy/train_test_data/nucleosome_occupancy_' + str(section) + '.mat';
 		scipy.io.savemat(mat_filename, Data,  do_compression=True);
 
 
@@ -380,8 +380,8 @@ def main():
 
 	##### ########## ########## ########## ########## #####
 	##### Get the sequencnes in depleted ir enriched regions
-	# data = readInputAsArray('/project/rohs_108/yibeijia/nucleosome_occupancy/InVitro_regions_out.txt');
-	data = readInputAsArray('/Users/yibeijia/Downloads/nucleosome_occupancy/InVitro_regions_out.txt')
+	data = readInputAsArray('/project/rohs_108/yibeijia/nucleosome_occupancy/InVitro_regions_out.txt');
+	#data = readInputAsArray('/Users/yibeijia/Downloads/nucleosome_occupancy/InVitro_regions_out.txt')
 	encodeNucSeq(data, sys.argv[1], sys.argv[2])
 	# dna="ACGTAC";
 	# encodedDna=oneHotEncode(dna)
