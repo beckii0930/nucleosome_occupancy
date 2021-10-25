@@ -13,8 +13,8 @@ Ddata_list = np.array([])
 for i in range(1, 51):
     print(i)
     N = 1000 #take every 100000 points
-    fname = '/scratch2/yibeijia/data/nucleosome_occupancy_' + str(i) + '.mat'
-    #fname = '/Users/yibeijia/Downloads/nucleosome_occupancy/train_test_data/nucleosome_occupancy_' + str(i) + '.mat'
+    # fname = '/scratch2/yibeijia/data/nucleosome_occupancy_' + str(i) + '.mat'
+    fname = '/Users/yibeijia/Downloads/nucleosome_occupancy/data/nucleosome_occupancy_' + str(i) + '.mat'
     #fname = '/project/rohs_108/yibeijia/nucleosome_occupancy/nucleosome_occupancy_' + str(i) + '.mat'
     if os.path.isfile(fname):
         mat_fname = pjoin(fname)
@@ -46,9 +46,9 @@ for i in range(1, 51):
 #         print("not exist, below are subfiles")
         for j in range(0, 20):
 #             print(j)
-            #fname = '/Users/yibeijia/Downloads/nucleosome_occupancy/train_test_data/nucleosome_occupancy_' + str(i) + '_' + str(j) + '.mat'
+            fname = '/Users/yibeijia/Downloads/nucleosome_occupancy/data/nucleosome_occupancy_' + str(i) + '_' + str(j) + '.mat'
 
-            fname = '/scratch2/yibeijia/data/nucleosome_occupancy_' + str(i) + '_' + str(j) + '.mat'
+            # fname = '/scratch2/yibeijia/data/nucleosome_occupancy_' + str(i) + '_' + str(j) + '.mat'
             if os.path.isfile(fname):
                 mat_fname = pjoin(fname)
                 mat_contents = sio.loadmat(mat_fname)
@@ -119,12 +119,12 @@ print(f"No. of testing sequences: {Test_data.shape[0]}")
 #print(Test_data)
 
 Data = {"Train_data" : np.array(Train_data), "Train_vals" : Train_vals}
-#sio.savemat('/Users/yibeijia/Downloads/nucleosome_occupancy/train_test_data/Train_data.mat', Data, do_compression=True)
-sio.savemat('/scratch2/yibeijia/data/train_test_data/Train_data.mat',Data, do_compression=True)
+sio.savemat('/Users/yibeijia/Downloads/nucleosome_occupancy/data/train_test_data/Train_data.mat', Data, do_compression=True)
+# sio.savemat('/scratch2/yibeijia/data/train_test_data/Train_data.mat',Data, do_compression=True)
 
 Data = {"Test_data" : np.array(Test_data), "Test_vals" : Test_vals}
-#sio.savemat('/Users/yibeijia/Downloads/nucleosome_occupancy/train_test_data/Test_data.mat', Data,  do_compression=True)
-sio.savemat('/scratch2/yibeijia/data/train_test_data/Test_data.mat',Data, do_compression=True)
+sio.savemat('/Users/yibeijia/Downloads/nucleosome_occupancy/data/train_test_data/Test_data.mat', Data,  do_compression=True)
+# sio.savemat('/scratch2/yibeijia/data/train_test_data/Test_data.mat',Data, do_compression=True)
 
 # Data = {"EnrichedData": np.array(allEnrichSeqArr), "DepletedData": np.array(allDepleteSeqArr)};
 # Data = {"Etraining_data" : np.array(Etraining_data)}
