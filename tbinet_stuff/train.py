@@ -21,26 +21,23 @@ from keras import optimizers
 from keras import backend as K
 from keras import regularizers
 
-# data_folder = "/scratch2/yibeijia/data/train_test_data/"
-data_folder = "/Users/yibeijia/Downloads/nucleosome_occupancy/train_test_data/"
+data_folder = "/scratch2/yibeijia/data/train_test_data/"
+# data_folder = "/Users/yibeijia/Downloads/nucleosome_occupancy/data/train_test_data/"
 
 # trainmat = h5py.File(data_folder+'Etraining_data.mat')
 trainmat = scipy.io.loadmat(data_folder+'Train_data.mat')
 validmat = scipy.io.loadmat(data_folder+'Test_data.mat')
 
 # X_train is the one hot encode #seq X 4
-X_train = np.transpose(np.array(trainmat['Train_data']).T)
-
+X_train = np.array(trainmat['Train_data'])
 # y_train is
-y_train = np.array(trainmat['Train_vals']).T
+y_train = np.array(trainmat['Train_labels']).T
 
-trainmat.close()
-
-# y_train = y_train[:,125:815]
+# trainmat.close()
 
 # RUN TBINET
 # sequence_input = Input
-sequence_input = Input(shape=(1000,4))
+sequence_input = Input(shape=(147,4))
 
 # Convolutional Layer
 output = Conv1D(320,kernel_size=26,padding="valid",activation="relu")(sequence_input)
@@ -68,7 +65,7 @@ FC_output = Dense(695)(flat_output)
 FC_output = Activation('relu')(FC_output)
 
 #Output Layer
-output = Dense(690)(FC_output)
+output = Dense(1)(FC_output)
 output = Activation('sigmoid')(output)
 
 model = Model(inputs=sequence_input, outputs=output)
@@ -82,6 +79,6 @@ model.summary()
 checkpointer = ModelCheckpoint(filepath="./model/tbinet.{epoch:02d}-{val_loss:.2f}.hdf5", verbose=1, save_best_only=False)
 earlystopper = EarlyStopping(monitor='val_loss', patience=10, verbose=1)
 
-model.fit(X_train, y_train, batch_size=100, epochs=60, shuffle=True, verbose=1, validation_data=(np.transpose(validmat['validxdata'],axes=(0,2,1)),validmat['validdata'][:,125:815]), callbacks=[checkpointer,earlystopper])
+model.fit(X_train, y_train, batch_size=100, epochs=60, shuffle=True, verbose=1, validation_data=(validmat['Test_data'],validmat['Test_labels'].T), callbacks=[checkpointer,earlystopper])
 
 model.save('./model/tbinet.h5')
