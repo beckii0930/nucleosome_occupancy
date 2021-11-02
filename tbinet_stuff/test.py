@@ -17,3 +17,56 @@ from keras.layers.recurrent import LSTM
 from keras.layers.wrappers import Bidirectional, TimeDistributed
 from keras.models import load_model
 from keras.callbacks import ModelCheckpoint, EarlyStopping
+
+def get_auroc(preds, obs):
+    fpr, tpr, thresholds  = metrics.roc_curve(obs, preds, drop_intermediate=False)
+    auroc = metrics.auc(fpr,tpr)
+    return auroc
+
+def get_aupr(preds, obs):
+    precision, recall, thresholds  = metrics.precision_recall_curve(obs, preds)
+    aupr = metrics.auc(recall,precision)
+    return aupr
+
+def get_aurocs_and_auprs(tpreds, tobs):
+    tpreds_df = pd.DataFrame(tpreds)
+    tobs_df = pd.DataFrame(tobs)
+    
+    task_list = []
+    auroc_list = []
+    aupr_list = []
+    for task in tpreds_df:
+        pred = tpreds_df[task]
+        obs = tobs_df[task]
+        auroc=round(get_auroc(pred,obs),5)
+        aupr = round(get_aupr(pred,obs),5)
+        task_list.append(task)
+        auroc_list.append(auroc)
+        aupr_list.append(aupr)
+    return auroc_list, aupr_list
+
+### Load data (test)
+data_folder = "/Users/yibeijia/Downloads/nucleosome_occupancy/data/train_test_data/"
+data_folder = "/scratch2/yibeijia/data/train_test_data/"
+
+testmat = scipy.io.loadmat(data_folder+'Test_data.mat')
+
+### Load model
+model = load_model("./model/tbinet_best.hdf5")
+print('model summary')
+model.summary()
+
+### Calculate averaged AUROC and AUPR
+tpreds = model.predict(testmat['Test_data'],verbose=1)
+tpreds_temp = np.copy(tpreds)
+reverse_start_id = int(testmat['Train_labels'].shape[0]/2)
+
+for i in range(reverse_start_id):
+    tpreds_avg_temp = (tpreds_temp[i] + tpreds_temp[reverse_start_id+i])/2.0
+    tpreds_temp[i] = tpreds_avg_temp
+    tpreds_temp[reverse_start_id+i] = tpreds_avg_temp
+
+
+aurocs, auprs = get_aurocs_and_auprs(tpreds_temp,testmat['Train_labels'].T)
+print("Averaged AUROC:",np.nanmean(aurocs))
+print("Averaged AUPR:", np.nanmean(auprs))
