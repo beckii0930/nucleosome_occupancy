@@ -82,12 +82,14 @@ model.summary()
 checkpointer = ModelCheckpoint(filepath="./model/tbinet.{epoch:02d}-{val_loss:.2f}.hdf5", verbose=1, save_best_only=False)
 earlystopper = EarlyStopping(monitor='val_loss', patience=10, verbose=1)
 
-history = model.fit(X_train, y_train, batch_size=100, epochs=60, shuffle=True, verbose=1, validation_data=(validmat['Test_data'],validmat['Test_labels'].T), callbacks=[checkpointer,earlystopper])
+history = model.fit(X_train, y_train, batch_size=100, epochs=2, shuffle=True, verbose=1, validation_data=(validmat['Test_data'],validmat['Test_labels'].T), callbacks=[checkpointer,earlystopper])
 
 # model.save('./model/tbinet_tmp.h5')
 model.save('./model/tbinet.h5')
 
 ####### Learning curve
+print(history.history['loss'])
+print(history.history['val_loss'])
 print(history.history.keys())
 # summarize history for accuracy
 # plt.plot(history.history['accuracy'])
@@ -98,8 +100,8 @@ print(history.history.keys())
 # plt.legend(['train', 'test'], loc='upper left')
 # plt.savefig("model_accuracy.png")
 # summarize history for loss
-plt.plot(history.history['loss'])
-plt.plot(history.history['val_loss'])
+plt.plot(history.history['loss'], label='train')
+plt.plot(history.history['val_loss'], label='test')
 plt.title('model loss')
 plt.ylabel('loss')
 plt.xlabel('epoch')
