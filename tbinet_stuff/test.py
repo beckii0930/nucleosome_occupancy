@@ -6,7 +6,7 @@ import os
 os.environ['THEANO_FLAGS'] = "device=cuda0,force_device=True,floatX=float32"
 import theano
 print(theano.config.device)
-import sys
+import sys, getopt
 
 from keras.layers import Embedding
 from keras.models import Sequential
@@ -53,6 +53,7 @@ data_folder = "/scratch2/yibeijia/data/train_test_data/"
 testmat = scipy.io.loadmat(data_folder+'Test_data.mat')
 
 ### Load model
+argv = sys.argv[1:]
 try:
     opts, args = getopt.getopt(argv,"hi:",["ifile="])
 
@@ -72,8 +73,8 @@ for opt, arg in opts:
 print ('Input file is "', inputmodel)
 # print ('Output file is "', output)
 
-model = load_model("./model/" + inputmodel)
-# model = load_model("./model/tbinet.h5")
+model = load_model("./model/tbinet.h5")
+model.load_weights(inputmodel)
 print('model summary')
 model.summary()
 
