@@ -6,6 +6,7 @@ import os
 os.environ['THEANO_FLAGS'] = "device=cuda0,force_device=True,floatX=float32"
 import theano
 print(theano.config.device)
+import sys
 
 from keras.layers import Embedding
 from keras.models import Sequential
@@ -52,7 +53,27 @@ data_folder = "/scratch2/yibeijia/data/train_test_data/"
 testmat = scipy.io.loadmat(data_folder+'Test_data.mat')
 
 ### Load model
-model = load_model("./model/tbinet.h5")
+try:
+    opts, args = getopt.getopt(argv,"hi:",["ifile="])
+
+except getopt.GetoptError:
+    print ('test.py -i <inputfile>')
+    # print ('test.py -i <inputfile> -o <outputfile>')
+    sys.exit(2)
+for opt, arg in opts:
+    if opt == '-h':
+        print ('test.py -i <inputfile>')
+        # print ('test.py -i <inputfile> -o <outputfile>')
+        sys.exit()
+    elif opt in ("-i", "--ifile"):
+        inputmodel = arg
+    # elif opt in ("-o", "--ofile"):
+    #     output = arg
+print ('Input file is "', inputmodel)
+# print ('Output file is "', output)
+
+model = load_model("./model/" + inputmodel)
+# model = load_model("./model/tbinet.h5")
 print('model summary')
 model.summary()
 
