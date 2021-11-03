@@ -6,6 +6,7 @@ import pandas as pd
 import os
 os.environ['THEANO_FLAGS'] = "device=cuda0,force_device=True,floatX=float32,gpuarray.preallocate=0.3"
 import theano
+import matplotlib.pyplot as plt
 
 from keras.layers import Embedding
 from keras.models import Sequential
@@ -76,9 +77,30 @@ model.compile(loss='binary_crossentropy', optimizer='adam')
 print('model summary')
 model.summary()
 
-checkpointer = ModelCheckpoint(filepath="./model/tbinet.{epoch:02d}-{val_loss:.2f}.hdf5", verbose=1, save_best_only=False)
+checkpointer = ModelCheckpoint(filepath="./model/tbinet.temp_check.hdf5", verbose=1, save_best_only=False)
+# checkpointer = ModelCheckpoint(filepath="./model/tbinet.{epoch:02d}-{val_loss:.2f}.hdf5", verbose=1, save_best_only=False)
 earlystopper = EarlyStopping(monitor='val_loss', patience=10, verbose=1)
 
-model.fit(X_train, y_train, batch_size=100, epochs=20, shuffle=True, verbose=1, validation_data=(validmat['Test_data'],validmat['Test_labels'].T), callbacks=[checkpointer,earlystopper])
+model.fit(X_train, y_train, batch_size=100, epochs=1, shuffle=True, verbose=1, validation_data=(validmat['Test_data'],validmat['Test_labels'].T), callbacks=[checkpointer,earlystopper])
 
-model.save('./model/tbinet.h5')
+model.save('./model/tbinet_tmp.h5')
+# model.save('./model/tbinet.h5')
+
+####### Learning curve
+print(model.history.keys())
+# summarize history for accuracy
+plt.plot(model.history['accuracy'])
+plt.plot(model.history['val_accuracy'])
+plt.title('model accuracy')
+plt.ylabel('accuracy')
+plt.xlabel('epoch')
+plt.legend(['train', 'test'], loc='upper left')
+plt.savefig("model_accuracy.png")
+# summarize history for loss
+plt.plot(model.history['loss'])
+plt.plot(model.history['val_loss'])
+plt.title('model loss')
+plt.ylabel('loss')
+plt.xlabel('epoch')
+plt.legend(['train', 'test'], loc='upper left')
+plt.savefig("model_loss.png")
