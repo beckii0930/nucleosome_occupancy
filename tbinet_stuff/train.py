@@ -82,7 +82,7 @@ model.summary()
 checkpointer = ModelCheckpoint(filepath="./model/tbinet.{epoch:02d}-{val_loss:.2f}.hdf5", verbose=1, save_best_only=False)
 earlystopper = EarlyStopping(monitor='val_loss', patience=10, verbose=1)
 
-history = model.fit(X_train, y_train, batch_size=100, epochs=1, shuffle=True, verbose=1, validation_data=(validmat['Test_data'],validmat['Test_labels'].T), callbacks=[checkpointer,earlystopper])
+history = model.fit(X_train, y_train, batch_size=100, epochs=60, shuffle=True, verbose=1, validation_data=(validmat['Test_data'],validmat['Test_labels'].T), callbacks=[checkpointer,earlystopper])
 
 # model.save('./model/tbinet_tmp.h5')
 model.save('./model/tbinet.h5')
