@@ -52,14 +52,14 @@ data_folder = "/scratch2/yibeijia/data/train_test_data/"
 testmat = scipy.io.loadmat(data_folder+'Test_data.mat')
 
 ### Load model
-model = load_model("./model/tbinet_best.hdf5")
+model = load_model("./model/tbinet.h5")
 print('model summary')
 model.summary()
 
 ### Calculate averaged AUROC and AUPR
 tpreds = model.predict(testmat['Test_data'],verbose=1)
 tpreds_temp = np.copy(tpreds)
-reverse_start_id = int(testmat['Train_labels'].shape[0]/2)
+reverse_start_id = int(testmat['Test_labels'].shape[0]/2)
 
 for i in range(reverse_start_id):
     tpreds_avg_temp = (tpreds_temp[i] + tpreds_temp[reverse_start_id+i])/2.0
@@ -67,6 +67,6 @@ for i in range(reverse_start_id):
     tpreds_temp[reverse_start_id+i] = tpreds_avg_temp
 
 
-aurocs, auprs = get_aurocs_and_auprs(tpreds_temp,testmat['Train_labels'].T)
+aurocs, auprs = get_aurocs_and_auprs(tpreds_temp,testmat['Test_labels'].T)
 print("Averaged AUROC:",np.nanmean(aurocs))
 print("Averaged AUPR:", np.nanmean(auprs))
