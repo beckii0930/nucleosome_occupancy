@@ -13,8 +13,8 @@ module load cuda/10.1.243
 
 # python3 test.py
 
-for f in *.hdf5
+for f in ./model/*.hdf5
 do
-    python3 -i $f test.py
+    python3 test.py -i $f
 done
 
