@@ -12,7 +12,7 @@ Edata_list = np.array([])
 Ddata_list = np.array([])
 
 N=1
-for i in range(1, 2):
+for i in range(1, 51):
 # for i in range(1, 5):
     print(i)
     # fname = '/scratch2/yibeijia/data/nucleosome_occupancy_' + str(i) + '.mat'
@@ -91,9 +91,11 @@ seq=""
 # Opening a file
 
 file1 = open('Eseqs.txt', 'w')
+i = 0;
 for seq_arr in Edata_list:
     seq = oneHotDecode(seq_arr)
-    file1.write("\n>\n")
+    file1.write("\n>" + str(i) + "\n")
+    i+=1;
     file1.write(seq)
     
 # Closing file
@@ -101,9 +103,11 @@ file1.close()
 
 # Opening a file
 file2 = open('Dseqs.txt', 'w')
+i = 0;
 for seq_arr in Ddata_list:
     seq = oneHotDecode(seq_arr)
-    file2.write("\n>\n")
+    file2.write("\n>" + str(i) + "\n")
+    i+=1;
     file2.write(seq)
     
 # Closing file
