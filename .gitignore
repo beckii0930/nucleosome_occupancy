@@ -4,3 +4,4 @@
 *.out
 tbinet
 tbinet_stuff/model
+tbinet_stuff/cluster_seq
