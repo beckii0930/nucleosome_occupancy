@@ -8,6 +8,9 @@
 #SBATCH --mem=64GB
 #SBATCH --output=train.out
 #SBATCH --partition=rohs
+. ~/.bashrc
+conda activate gpuenv2
+
 module load usc
 module load cuda/10.1.243
 
