@@ -2,11 +2,15 @@
 
 *.mat
 *.out
+<<<<<<< HEAD
 **/tbinet_stuff/cluster_seq/Eseqs.txt
 **/tbinet_stuff/cluster_seq/Dseqs.txt
 **/tbinet_stuff/cluster_seq/Eseqs80.clstr
 **/tbinet_stuff/cluster_seq/Dseqs80.clstr
 
 tbinet/
+=======
+tbinet
+>>>>>>> a1c6acdf6df5a971d8ac35d3996b844d9e7d5af7
 tbinet_stuff/model
 tbinet_stuff/cluster_seq
