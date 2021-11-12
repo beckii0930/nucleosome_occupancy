@@ -1,9 +1,0 @@
-### Conda System setup 
-conda init
-. ~/.bashrc
-conda create -n myenv
-conda activate myenv
-
-##conda install scipy=1.1.0 sklearn=0.20.1 theano=1.0.3 keras=2.2.4 
-
-conda install -c conda-forge scipy scikit-learn keras pandas h5py matplotlib cudatoolkit cudnn tensorflow-gpu

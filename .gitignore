@@ -2,6 +2,11 @@
 
 *.mat
 *.out
+tbinet_stuff/cluster_seq/Eseqs.txt
+tbinet_stuff/cluster_seq/Dseqs.txt
+tbinet_stuff/cluster_seq/Eseqs80.clstr
+tbinet_stuff/cluster_seq/Dseqs80.clstr
+
 tbinet
 tbinet_stuff/model
 tbinet_stuff/cluster_seq
