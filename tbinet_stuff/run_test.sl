@@ -8,7 +8,7 @@
 #SBATCH --mem=64GB
 #SBATCH --output=test.out
 #SBATCH --partition=rohs
-
+module load usc
 module load cuda/10.1.243
 
 # python3 test.py

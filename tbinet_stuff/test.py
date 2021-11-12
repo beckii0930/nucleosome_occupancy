@@ -4,7 +4,8 @@ from sklearn import metrics
 import pandas as pd
 import os
 os.environ['THEANO_FLAGS'] = "device=cuda0,force_device=True,floatX=float32"
-import theano
+from aesara_theano_fallback import aesara as theano
+#import theano
 print(theano.config.device)
 import sys, getopt
 
