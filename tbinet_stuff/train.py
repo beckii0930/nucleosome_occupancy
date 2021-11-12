@@ -23,7 +23,7 @@ from keras.callbacks import ModelCheckpoint, EarlyStopping
 from keras import optimizers
 from keras import backend as K
 from keras import regularizers
-sys.exit("all packages loaded")
+print("all packages loaded")
 
 data_folder = "/scratch2/yibeijia/data/train_test_data/"
 # data_folder = "/Users/yibeijia/Downloads/nucleosome_occupancy/data/train_test_data/"
