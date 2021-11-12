@@ -74,12 +74,15 @@ def cluster2seq(Ecluster, Eseqs):
 #     print(f"test_data.shape {np.array(E_test_data).shape}")
     return np.array(E_train_data), np.array(E_test_data)
 
-Eseqs = readInputAsArray('/Users/yibeijia/Downloads/nucleosome_occupancy/tbinet_stuff/cluster_seq/Eseqs.txt')[1:]
-Dseqs = readInputAsArray('/Users/yibeijia/Downloads/nucleosome_occupancy/tbinet_stuff/cluster_seq/Dseqs.txt')[1:]
-Ecluster = readInputAsArray('/Users/yibeijia/Downloads/nucleosome_occupancy/tbinet_stuff/cluster_seq/Eseqs80.clstr')
-Dcluster = readInputAsArray('/Users/yibeijia/Downloads/nucleosome_occupancy/tbinet_stuff/cluster_seq/Dseqs80.clstr')
-E_fout = '/Users/yibeijia/Downloads/nucleosome_occupancy/data/train_test_data/Ecluster'
-D_fout = '/Users/yibeijia/Downloads/nucleosome_occupancy/data/train_test_data/Dcluster'
+#Eseqs = readInputAsArray('/Users/yibeijia/Downloads/nucleosome_occupancy/tbinet_stuff/cluster_seq/Eseqs.txt')[1:]
+Eseqs = readInputAsArray('/project/rohs_108/yibeijia/nucleosome_occupancy/tbinet_stuff/cluster_seq/Eseqs.txt')[1:]
+#Dseqs = readInputAsArray('/Users/yibeijia/Downloads/nucleosome_occupancy/tbinet_stuff/cluster_seq/Dseqs.txt')[1:]
+Dseqs = readInputAsArray('/project/rohs_108/yibeijia/nucleosome_occupancy/tbinet_stuff/cluster_seq/Dseqs.txt')[1:]
+
+#Ecluster = readInputAsArray('/Users/yibeijia/Downloads/nucleosome_occupancy/tbinet_stuff/cluster_seq/Eseqs80.clstr')
+Ecluster = readInputAsArray('/project/rohs_108/yibeijia/nucleosome_occupancy/tbinet_stuff/cluster_seq/Eseqs80.clstr')
+#Dcluster = readInputAsArray('/Users/yibeijia/Downloads/nucleosome_occupancy/tbinet_stuff/cluster_seq/Dseqs80.clstr')
+Dcluster = readInputAsArray('/project/rohs_108/yibeijia/nucleosome_occupancy/tbinet_stuff/cluster_seq/Dseqs80.clstr')
 
 print(">>>>>>>>Preprocessing Enriched data")
 E_train_data, E_test_data = cluster2seq(Ecluster, Eseqs)
@@ -104,9 +107,9 @@ print(f"test label shape is: {Test_labels.shape}")
 
 ## Write to .mat file
 Data = {"Train_data" : np.array(Train_data), "Train_labels" : Train_labels}
-sio.savemat('/Users/yibeijia/Downloads/nucleosome_occupancy/data/train_test_data/Train_data.mat', Data, do_compression=True)
-# sio.savemat('/scratch2/yibeijia/data/train_test_data/Train_data.mat',Data, do_compression=True)
+#sio.savemat('/Users/yibeijia/Downloads/nucleosome_occupancy/data/train_test_data/Train_data.mat', Data, do_compression=True)
+sio.savemat('/scratch2/yibeijia/data/train_test_data/Train_data.mat',Data, do_compression=True)
 
 Data = {"Test_data" : np.array(Test_data), "Test_labels" : Test_labels}
-sio.savemat('/Users/yibeijia/Downloads/nucleosome_occupancy/data/train_test_data/Test_data.mat', Data,  do_compression=True)
-# sio.savemat('/scratch2/yibeijia/data/train_test_data/Test_data.mat',Data, do_compression=True)
+#sio.savemat('/Users/yibeijia/Downloads/nucleosome_occupancy/data/train_test_data/Test_data.mat', Data,  do_compression=True)
+sio.savemat('/scratch2/yibeijia/data/train_test_data/Test_data.mat',Data, do_compression=True)

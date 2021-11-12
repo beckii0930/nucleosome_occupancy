@@ -15,8 +15,8 @@ N=1
 for i in range(1, 51):
 # for i in range(1, 5):
     print(i)
-    # fname = '/scratch2/yibeijia/data/nucleosome_occupancy_' + str(i) + '.mat'
-    fname = '/Users/yibeijia/Downloads/nucleosome_occupancy/data/nucleosome_occupancy_' + str(i) + '.mat'
+    fname = '/scratch2/yibeijia/data/nucleosome_occupancy_' + str(i) + '.mat'
+    #fname = '/Users/yibeijia/Downloads/nucleosome_occupancy/data/nucleosome_occupancy_' + str(i) + '.mat'
     if os.path.isfile(fname):
         mat_fname = pjoin(fname)
         mat_contents = sio.loadmat(mat_fname)
@@ -40,8 +40,8 @@ for i in range(1, 51):
                 Ddata_list = np.concatenate((Ddata_list, ddata[::N]), axis=0)
     else:
         for j in range(0, 20):
-            fname = '/Users/yibeijia/Downloads/nucleosome_occupancy/data/nucleosome_occupancy_' + str(i) + '_' + str(j) + '.mat'
-            # fname = '/scratch2/yibeijia/data/nucleosome_occupancy_' + str(i) + '_' + str(j) + '.mat'
+            #fname = '/Users/yibeijia/Downloads/nucleosome_occupancy/data/nucleosome_occupancy_' + str(i) + '_' + str(j) + '.mat'
+            fname = '/scratch2/yibeijia/data/nucleosome_occupancy_' + str(i) + '_' + str(j) + '.mat'
             if os.path.isfile(fname):
                 mat_fname = pjoin(fname)
                 mat_contents = sio.loadmat(mat_fname)
