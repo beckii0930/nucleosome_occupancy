@@ -567,3 +567,4 @@ writing clustering information
 program completed !
 
 Total CPU time 21774.33
+nohup: ./run_cluster.sh: Permission denied

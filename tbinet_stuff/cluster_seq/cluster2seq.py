@@ -88,27 +88,44 @@ E_train_data, E_test_data = cluster2seq(Ecluster, Eseqs)
 print(">>>>>>>>Preprocessing Depleted data")
 D_train_data, D_test_data = cluster2seq(Dcluster, Dseqs)
 
-## combine E & D to create training, testing dataset & labels
-print(">>>>>>>>Preparing Train Test dataset")
-Train_data = np.concatenate((E_train_data, D_train_data), axis=0)
-Edata_labels = np.ones(E_train_data.shape[0])
-Ddata_labels = np.zeros(D_train_data.shape[0])
-Train_labels = np.concatenate((Edata_labels, Ddata_labels), axis=0)
-print(f"train data  shape is: {Train_data.shape}")
-print(f"train label shape is: {Train_labels.shape}")
+## Experiemnt 1: combine E & D to create training, testing dataset & labels
+## train test from different cluster
+# print(">>>>>>>>Preparing Train Test dataset")
+# Train_data = np.concatenate((E_train_data, D_train_data), axis=0)
+# Edata_labels = np.ones(E_train_data.shape[0])
+# Ddata_labels = np.zeros(D_train_data.shape[0])
+# Train_labels = np.concatenate((Edata_labels, Ddata_labels), axis=0)
+# print(f"train data  shape is: {Train_data.shape}")
+# print(f"train label shape is: {Train_labels.shape}")
 
-Test_data = np.concatenate((E_test_data, D_test_data), axis=0)
-Edata_labels = np.ones(E_test_data.shape[0])
-Ddata_labels = np.zeros(D_test_data.shape[0])
-Test_labels = np.concatenate((Edata_labels, Ddata_labels), axis=0)
-print(f"test data shape is: {Test_data.shape}")
-print(f"test label shape is: {Test_labels.shape}")
+# Test_data = np.concatenate((E_test_data, D_test_data), axis=0)
+# Edata_labels = np.ones(E_test_data.shape[0])
+# Ddata_labels = np.zeros(D_test_data.shape[0])
+# Test_labels = np.concatenate((Edata_labels, Ddata_labels), axis=0)
+# print(f"test data shape is: {Test_data.shape}")
+# print(f"test label shape is: {Test_labels.shape}")
+
+## Experiemnt 2: combine E & D to create training, testing dataset & labels
+## train test from same cluster
+print(">>>>>>>>Preparing Train Test dataset")
+Edata_list = np.concatenate((E_train_data, E_test_data), axis=0)
+Ddata_list = np.concatenate((D_train_data, D_test_data), axis=0)
+data_list = np.concatenate((Ddata_list, Edata_list), axis=0)
+
+Ddata_labels = np.zeros(Ddata_list.shape[0])
+Edata_labels = np.ones(Edata_list.shape[0])
+data_labels =  np.concatenate((Ddata_labels, Edata_labels), axis=0)
+print(f" All data label shape is: {data_labels.shape}")
+Train_data, Test_data, Train_labels, Test_labels = train_test_split(data_list, data_labels, test_size=0.40, random_state=42)
+
+print(f"No. of training sequeces: {Train_data.shape[0]}")
+print(f"No. of testing sequences: {Test_data.shape[0]}")
 
 ## Write to .mat file
 Data = {"Train_data" : np.array(Train_data), "Train_labels" : Train_labels}
-#sio.savemat('/Users/yibeijia/Downloads/nucleosome_occupancy/data/train_test_data/Train_data.mat', Data, do_compression=True)
-sio.savemat('/scratch2/yibeijia/data/train_test_data/Train_data.mat',Data, do_compression=True)
+sio.savemat('/Users/yibeijia/Downloads/nucleosome_occupancy/data/train_test_data/Train_data.mat', Data, do_compression=True)
+# sio.savemat('/scratch2/yibeijia/data/train_test_data/Train_data.mat',Data, do_compression=True)
 
 Data = {"Test_data" : np.array(Test_data), "Test_labels" : Test_labels}
-#sio.savemat('/Users/yibeijia/Downloads/nucleosome_occupancy/data/train_test_data/Test_data.mat', Data,  do_compression=True)
-sio.savemat('/scratch2/yibeijia/data/train_test_data/Test_data.mat',Data, do_compression=True)
+sio.savemat('/Users/yibeijia/Downloads/nucleosome_occupancy/data/train_test_data/Test_data.mat', Data,  do_compression=True)
+# sio.savemat('/scratch2/yibeijia/data/train_test_data/Test_data.mat',Data, do_compression=True)
