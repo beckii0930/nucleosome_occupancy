@@ -4,8 +4,8 @@ from sklearn import metrics
 import pandas as pd
 import os
 os.environ['THEANO_FLAGS'] = "device=cuda0,force_device=True,floatX=float32"
-# from aesara_theano_fallback import aesara as theano
-import theano
+from aesara_theano_fallback import aesara as theano
+#import theano
 
 print(theano.config.device)
 import sys, getopt
@@ -50,7 +50,7 @@ def get_aurocs_and_auprs(tpreds, tobs):
 
 ### Load data (test)
 data_folder = "/Users/yibeijia/Downloads/nucleosome_occupancy/data/train_test_data/"
-# data_folder = "/scratch2/yibeijia/data/train_test_data/"
+data_folder = "/scratch2/yibeijia/data/train_test_data/"
 
 testmat = scipy.io.loadmat(data_folder+'Test_data.mat')
 
@@ -86,7 +86,7 @@ tpreds_temp = np.copy(tpreds)
 reverse_start_id = int(testmat['Test_labels'].shape[0]/2)
 
 for i in range(len(tpreds)):
-    print("TrueLabel=%s, Predicted=%s" % (tpreds_temp, testmat['Test_labels'].T))
+    print("TrueLabel=%s, Predicted=%s" % (testmat['Test_labels'].T[i], tpreds_temp[i]))
 
 for i in range(reverse_start_id):
     tpreds_avg_temp = (tpreds_temp[i] + tpreds_temp[reverse_start_id+i])/2.0
@@ -98,9 +98,6 @@ aurocs, auprs = get_aurocs_and_auprs(tpreds_temp,testmat['Test_labels'].T)
 print("Averaged AUROC:",np.nanmean(aurocs))
 print("Averaged AUPR:", np.nanmean(auprs))
 
-import sklearn.metrics.accuracy_score
-import sklearn.metrics.precision_score
-import sklearn.metrics.recall_score
 print("accuracy_score", accuracy_score(tpreds_temp,testmat['Test_labels'].T))
 print("precision_score", precision_score(tpreds_temp,testmat['Test_labels'].T))
 print("recall_score", recall_score(tpreds_temp,testmat['Test_labels'].T))

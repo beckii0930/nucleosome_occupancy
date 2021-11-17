@@ -8,6 +8,8 @@
 #SBATCH --mem=64GB
 #SBATCH --output=test.out
 #SBATCH --partition=rohs
+#SBATCH --mail=yibeijia@usc.edu
+
 . ~/.bashrc
 conda activate gpuenv2
 
