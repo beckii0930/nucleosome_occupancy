@@ -107,6 +107,8 @@ D_train_data, D_test_data = cluster2seq(Dcluster, Dseqs)
 
 ## Experiemnt 2: combine E & D to create training, testing dataset & labels
 ## train test from same cluster
+from sklearn.model_selection import train_test_split
+
 print(">>>>>>>>Preparing Train Test dataset")
 Edata_list = np.concatenate((E_train_data, E_test_data), axis=0)
 Ddata_list = np.concatenate((D_train_data, D_test_data), axis=0)
@@ -123,9 +125,9 @@ print(f"No. of testing sequences: {Test_data.shape[0]}")
 
 ## Write to .mat file
 Data = {"Train_data" : np.array(Train_data), "Train_labels" : Train_labels}
-sio.savemat('/Users/yibeijia/Downloads/nucleosome_occupancy/data/train_test_data/Train_data.mat', Data, do_compression=True)
-# sio.savemat('/scratch2/yibeijia/data/train_test_data/Train_data.mat',Data, do_compression=True)
+#sio.savemat('/Users/yibeijia/Downloads/nucleosome_occupancy/data/train_test_data/Train_data.mat', Data, do_compression=True)
+sio.savemat('/scratch2/yibeijia/data/train_test_data/Train_data.mat',Data, do_compression=True)
 
 Data = {"Test_data" : np.array(Test_data), "Test_labels" : Test_labels}
-sio.savemat('/Users/yibeijia/Downloads/nucleosome_occupancy/data/train_test_data/Test_data.mat', Data,  do_compression=True)
-# sio.savemat('/scratch2/yibeijia/data/train_test_data/Test_data.mat',Data, do_compression=True)
+#sio.savemat('/Users/yibeijia/Downloads/nucleosome_occupancy/data/train_test_data/Test_data.mat', Data,  do_compression=True)
+sio.savemat('/scratch2/yibeijia/data/train_test_data/Test_data.mat',Data, do_compression=True)
