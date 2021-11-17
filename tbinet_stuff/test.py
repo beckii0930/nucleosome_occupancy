@@ -97,7 +97,9 @@ for i in range(reverse_start_id):
 aurocs, auprs = get_aurocs_and_auprs(tpreds_temp,testmat['Test_labels'].T)
 print("Averaged AUROC:",np.nanmean(aurocs))
 print("Averaged AUPR:", np.nanmean(auprs))
-
+from sklearn.metrics import accuracy_score
+from sklearn.metrics import precision_score
+from sklearn.metrics import recall_score 
 print("accuracy_score", accuracy_score(tpreds_temp,testmat['Test_labels'].T))
 print("precision_score", precision_score(tpreds_temp,testmat['Test_labels'].T))
 print("recall_score", recall_score(tpreds_temp,testmat['Test_labels'].T))
