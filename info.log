@@ -1,0 +1,4 @@
+2021-12-03 15:02:28 Yibei-Jiangs-MacBook-Pro.local INFO [mpi] global myrank = 0
+2021-12-03 15:02:28 Yibei-Jiangs-MacBook-Pro.local INFO [mpi] total nprocs = 1
+2021-12-03 15:02:28 Yibei-Jiangs-MacBook-Pro.local INFO [omp] nthreads = 1
+2021-12-03 15:02:28 Yibei-Jiangs-MacBook-Pro.local INFO ncores = 1
