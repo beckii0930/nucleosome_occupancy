@@ -6,7 +6,7 @@
 #SBATCH --gres=gpu:2
 #SBATCH --time=1:00:00
 #SBATCH --mem=64GB
-#SBATCH --output=train.out
+#SBATCH --output=train2.out
 #SBATCH --partition=rohs
 #SBATCH --mail-user=yibeijia@usc.edu
 
