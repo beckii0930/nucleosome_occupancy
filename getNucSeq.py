@@ -146,12 +146,15 @@ def encodeNucSeq(data, total_sections, section):
 	# print(np_allDepleteSeqArr)
 	print(f"np_allEnrichSeqArr.shape {np_allEnrichSeqArr.shape}, np_allDepleteSeqArr.shape {np_allDepleteSeqArr.shape}");
 	# Data = {"EnrichedData": np_allEnrichSeqArr, "DepletedData": np_allDepleteSeqArr};
-	out_filename_d = '/project/rohs_102/share/nucleosome_occupancy_depleted_'+ str(section) + '_'  + '.txt';
-	out_filename_e = '/project/rohs_102/share/nucleosome_occupancy_enriched_'+ str(section) + '_'  + '.txt';
+	out_filename_d = '/project/rohs_102/share/nucleosome_occupancy_data/nucleosome_occupancy_depleted_'+ str(section) +'.txt';
+	out_filename_e = '/project/rohs_102/share/nucleosome_occupancy_data/nucleosome_occupancy_enriched_'+ str(section) +'.txt';
 	# out_filename_d = '/Users/yibeijia/Downloads/nucleosome_occupancy/nucleosome_occupancy_depleted_'+ str(section) + '.txt';
 	# out_filename_e = '/Users/yibeijia/Downloads/nucleosome_occupancy/nucleosome_occupancy_enriched_'+ str(section) + '.txt';
-	with open(out_filename_d,"w+") as f:
-		f.write("\n".join("".join(map(str, x)) for x in (np_allEnrichSeqArr)))
+	with open(out_filename_d,"w+") as f1:
+		f1.write("\n".join("".join(map(str, x)) for x in (np_allDepleteSeqArr)))
+	with open(out_filename_e,"w+") as f2:
+		f2.write("\n".join("".join(map(str, x)) for x in (np_allEnrichSeqArr)))
+
 	# num_sub_array = 1;
 	# sub_size = math.floor(nrow_enrich / num_sub_array);
 	# for index in range(0, num_sub_array):
