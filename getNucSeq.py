@@ -52,8 +52,8 @@ def encodeNucSeq(data, total_sections, section):
 	print(f"Total # of lines is: {total_lines}\n");
 
 	# one hot encode the DNA
-	allEnrichSeqArr='';
-	allDepleteSeqArr='';
+	allEnrichSeqArr=[];
+	allDepleteSeqArr=[];
 	enrich = True;
 	
 	tic = time.perf_counter();
@@ -104,7 +104,7 @@ def encodeNucSeq(data, total_sections, section):
 					while len(curr_seq) < 147:
 						curr_seq = curr_seq + 'N';
 					# encodedDNAArr = oneHotEncode(curr_seq);
-					allEnrichSeqArr+= (curr_seq + '\n');
+					allEnrichSeqArr+= [curr_seq];
 				else:
 					## for seqeunces that are long enough	
 					for start in range(curr_seq_length-146):
@@ -112,7 +112,7 @@ def encodeNucSeq(data, total_sections, section):
 						curr_end = 146 + start;
 						curr_seq = line[3][curr_start: curr_end+1];
 						# encodedDNAArr = oneHotEncode(curr_seq);
-						allEnrichSeqArr+=(curr_seq + '\n');
+						allEnrichSeqArr+=[curr_seq];
 
 			else:
 				## for seqeunces that are shorter
@@ -120,7 +120,7 @@ def encodeNucSeq(data, total_sections, section):
 					while len(curr_seq) < 147:
 						curr_seq = curr_seq + 'N';
 					# encodedDNAArr = oneHotEncode(curr_seq);
-					allDepleteSeqArr+=(curr_seq + '\n');
+					allDepleteSeqArr+=[curr_seq];
 				else:
 					## for seqeunces that are long enough	
 					for start in range(curr_seq_length-146):
@@ -128,7 +128,7 @@ def encodeNucSeq(data, total_sections, section):
 						curr_end = 146 + start;
 						curr_seq = line[3][curr_start: curr_end+1];
 						# encodedDNAArr = oneHotEncode(curr_seq);
-						allDepleteSeqArr += (curr_seq + '\n');
+						allDepleteSeqArr += [curr_seq];
 		else:
 			print("header")
 	# print(allEnrichSeqArr);
@@ -137,28 +137,48 @@ def encodeNucSeq(data, total_sections, section):
 	nrow_enrich = len(allEnrichSeqArr);
 	nrow_deplete = len(allDepleteSeqArr);
 
-	num_sub_array = 10;
-	sub_size = math.floor(nrow_enrich / num_sub_array);
-	for index in range(0, num_sub_array):
-		index_str = index;
-		sub_arr_start = sub_size*index;
-		sub_arr_end = sub_size*(index+1);
-		if (sub_arr_end > nrow_enrich):
-			sub_arr_end = nrow_enrich;
-		# np_allEnrichSeqArr = np.array(allEnrichSeqArr[sub_arr_start:sub_arr_end])
-		# np_allDepleteSeqArr = np.array(allDepleteSeqArr)
-		# print(np_allDepleteSeqArr)
-		print(f"1 np_allEnrichSeqArr.shape {np_allEnrichSeqArr.shape}, np_allDepleteSeqArr.shape {np_allDepleteSeqArr.shape}");
-		# Data = {"EnrichedData": np_allEnrichSeqArr, "DepletedData": np_allDepleteSeqArr};
-		out_filename_d = '/project/rohs_102/share/nucleosome_occupancy_depleted_'+ str(index_str) + '.txt';
-		out_filename_e = '/project/rohs_102/share/nucleosome_occupancy_enriched_'+ str(index_str) + '.txt';
+	np_allEnrichSeqArr = np.array(allEnrichSeqArr)
+	np_allDepleteSeqArr = np.array(allDepleteSeqArr)
+	# print("allEnrichSeqArr")
+	# print(allEnrichSeqArr[1:10])
+	# print("len(allEnrichSeqArr)")
+	# print(len(allEnrichSeqArr))
+	# print(np_allDepleteSeqArr)
+	print(f"np_allEnrichSeqArr.shape {np_allEnrichSeqArr.shape}, np_allDepleteSeqArr.shape {np_allDepleteSeqArr.shape}");
+	# Data = {"EnrichedData": np_allEnrichSeqArr, "DepletedData": np_allDepleteSeqArr};
+	out_filename_d = '/project/rohs_102/share/nucleosome_occupancy_depleted_'+ + str(section) + '_' + str(index_str) + '.txt';
+	out_filename_e = '/project/rohs_102/share/nucleosome_occupancy_enriched_'+ + str(section) + '_' + str(index_str) + '.txt';
+	# out_filename_d = '/Users/yibeijia/Downloads/nucleosome_occupancy/nucleosome_occupancy_depleted_'+ str(section) + '.txt';
+	# out_filename_e = '/Users/yibeijia/Downloads/nucleosome_occupancy/nucleosome_occupancy_enriched_'+ str(section) + '.txt';
+	with open(out_filename_d,"w+") as f:
+		f.write("\n".join("".join(map(str, x)) for x in (np_allEnrichSeqArr)))
+	# num_sub_array = 1;
+	# sub_size = math.floor(nrow_enrich / num_sub_array);
+	# for index in range(0, num_sub_array):
+	# 	index_str = index;
+	# 	sub_arr_start = sub_size*index;
+	# 	sub_arr_end = sub_size*(index+1);
+	# 	if (sub_arr_end > nrow_enrich):
+	# 		sub_arr_end = nrow_enrich;
+	# 	np_allEnrichSeqArr = np.array(allEnrichSeqArr[sub_arr_start:sub_arr_end])
+	# 	np_allDepleteSeqArr = np.array(allDepleteSeqArr[sub_arr_start:sub_arr_end])
+	# 	# print(np_allDepleteSeqArr)
+	# 	print(f"np_allEnrichSeqArr.shape {np_allEnrichSeqArr.shape}, np_allDepleteSeqArr.shape {np_allDepleteSeqArr.shape}");
+	# 	# Data = {"EnrichedData": np_allEnrichSeqArr, "DepletedData": np_allDepleteSeqArr};
+	# 	# out_filename_d = '/project/rohs_102/share/nucleosome_occupancy_depleted_'+ + str(section) + '_' + str(index_str) + '.txt';
+	# 	# out_filename_e = '/project/rohs_102/share/nucleosome_occupancy_enriched_'+ + str(section) + '_' + str(index_str) + '.txt';
+	# 	out_filename_d = '/Users/yibeijia/Downloads/nucleosome_occupancy/nucleosome_occupancy_depleted_'+ str(section) + '_' + str(index_str) + '.txt';
+	# 	out_filename_e = '/Users/yibeijia/Downloads/nucleosome_occupancy/nucleosome_occupancy_enriched_'+ str(section) + '_' + str(index_str) + '.txt';
+		
 		#out_filename = '/Users/yibeijia/Downloads/nucleosome_occupancy/train_test_data/nucleosome_occupancy_' + str(section) + '_' + str(index_str) + '.mat';
-		file1 = open(out_filename_d, "w+")
-		file1.write(allDepleteSeqArr)
-		file1.close()
-		file2 = open(out_filename_e, "w+")
-		file2.write(allEnrichSeqArr)
-		file2.close()
+		# file1 = open(out_filename_d, "w+")
+		# file1.write(allDepleteSeqArr)
+		# file1.close()
+		# with open(out_filename_d,"w+") as f:
+		# 	f.write("\n".join(" ".join(map(str, x)) for x in (np_allEnrichSeqArr)))
+		# file2 = open(out_filename_e, "w+")
+		# file2.write(allEnrichSeqArr)
+		# file2.close()
 
 
 
@@ -179,7 +199,7 @@ def main():
 	##### ########## ########## ########## ########## #####
 	##### Get the sequencnes in depleted ir enriched regions
 	data = readInputAsArray('/project/rohs_108/yibeijia/nucleosome_occupancy/InVitro_regions_out.txt');
-	#data = readInputAsArray('/Users/yibeijia/Downloads/nucleosome_occupancy/InVitro_regions_out.txt')
+	# data = readInputAsArray('/Users/yibeijia/Downloads/nucleosome_occupancy/InVitro_regions_out.txt')
 	encodeNucSeq(data, sys.argv[1], sys.argv[2])
 	# dna="ACGTAC";
 	# encodedDna=oneHotEncode(dna)
