@@ -4,6 +4,10 @@ import scipy.io
 import sys
 import math
 
+# ####################### ####################### ####################### ######################
+# This function outputs all the nucleosome positions for enriched/depleted regions
+# Cutoff is determined by threshold_enriched and threshold_depleted
+# Output sequence has minimum 50 bp in length
 def getNucleosomeRegions(data, out):
 	arr = []
 	Enriched_Regions = []
@@ -23,18 +27,16 @@ def getNucleosomeRegions(data, out):
 	e_count = 0;
 	curr_chr = 0;
 	curr_pos = 0;
-	# e_count_loc = 0;
 	d_count = 0;
+	# minimum consecutive length
 	consec_length = 50;
 
 	for lines in data:
 		line=lines.split("\n")[0].split('\t')
-		# arr.append([])
 		if line[0] == "Chromosome":
 			print("Skipped Header")
 			continue;
-		# position = line[0]+":"+(line[1)]
-		# arr.append({'pos': position, 'score':float(line[2])})
+# Find Enriched/Depleted Region
 		if int(line[0]) != curr_chr:
 			print("Processing Chr ");
 			print(line[0]);
@@ -45,7 +47,6 @@ def getNucleosomeRegions(data, out):
 			d_start = 0;
 			d_end = 0;
 			curr_chr = int(line[0]);
-
 		# Enriched
 		if float(line[2]) >= threshold_enriched:
 			if e_count == 0:
@@ -98,9 +99,6 @@ def getNucleosomeRegions(data, out):
 			seq = fetchSeqence(chromosome, reg[0], reg[1]);
 			pt(f'{reg} {reg_length} {seq}', 0);
 			string += str(reg) + " " + str(reg_length) + " " + str(seq) + "\n";
-
-			
-
 	string += "Depleted_Regions \n";
 	pt("Depleted_Regions", 0)
 	for chromosome in range(16):
@@ -123,10 +121,83 @@ def getNucleosomeRegions(data, out):
 	f.close()
 	return Enriched_Regions, Depleted_Regions;
 
+# ####################### ####################### ####################### ######################
+# This function outputs all the nucleosome positions for neutral regions
+# Cutoff is determined by threshold_enriched and threshold_depleted
+# Output sequence has minimum 50 bp in length
+def getNucleosomeNeutralRegions(data, out):
+	arr = []
+	Neutral_Regions = []
+
+	# Each row is a chromosome, elements are tuples of start and end positions
+	for i in range(16):
+		Neutral_Regions.append([])
+	string = ""
+	j = 0;
+
+	# cut off for neutral sequences
+	threshold_enriched = 0.5;
+	threshold_depleted = -0.5;
+
+	curr_chr = 0;
+	curr_pos = 0;
+
+	# minimum consecutive length
+	consec_length = 100;
+
+	for lines in data:
+		line=lines.split("\n")[0].split('\t')
+		if line[0] == "Chromosome":
+			print("Skipped Header")
+			continue;
+		# Find Neutral positioning sequences
+		if int(line[0]) != curr_chr:
+			print("Processing Chr ");
+			print(line[0]);
+			count = 0;
+			start = 0;
+			end = 0;
+			curr_chr = int(line[0]);
+		if float(line[2]) <= threshold_enriched and float(line[2]) >= threshold_depleted:
+
+			# Found neutral region
+			if count == 0:
+				start = int(line[1]);
+			count += 1;
+		else:
+			if count >= consec_length:
+				end = int(line[1]);
+				Neutral_Regions[curr_chr-1].append((start, end));
+			count = 0;
+	num_seq = 0;
+	for chromosome in range(len(Neutral_Regions)):
+		print(f"chromosome {chromosome+1}  has {len(Neutral_Regions[chromosome])} seqs")
+		num_seq += len(Neutral_Regions[chromosome])
+
+	print(f"# of Sequence in Neutral Region: {num_seq}")
+	print("Fetching Neutral Region Seqeuences \n");
+	string += "Neutral_Regions \n";
+	for chromosome in range(16):
+		print(f"Fetching for chromosome {chromosome+1} ")
+		string += "chromosome: \n";
+		string += str(chromosome+1) + "\n";
+		for reg in Neutral_Regions[chromosome]:
+			reg_length = reg[1] - reg[0] + 1;
+			seq = fetchSeqence(chromosome, reg[0], reg[1]);
+			string += str(reg) + " " + str(reg_length) + " " + str(seq) + "\n";
+
+	# write out the sequence in fasta format
+	f = open(out, 'w+');
+	f.write(string)
+	f.write("\n")
+	f.close()
+	return Neutral_Regions;
+
 def pt(content, debug):
 	if debug == 1:
 		print(content)
 
+#mdenv
 def fetchSeqence(chromosome, start, end):
 	from Bio import Entrez, SeqIO
 	GI = ["330443391",
@@ -367,22 +438,25 @@ def encodeNucSeq(data, total_sections, section):
 
 def main():
 	##### ########## ########## ########## ########## #####
+	#conda activate mdenv
+
 	#Get the sequencnes in depleted ir enriched regions
-	# data = readInputAsArray('/Users/yibeijia/Downloads/nucleosome_occupancy/GSE13622_RAW/normalizedMap/GSM351491_InVitro_normalized.tab')
-	# print(getNucleosomeRegions(data,'regions_out.txt'))
-	# tic = time.perf_counter();
+	data = readInputAsArray('/Users/yibeijia/Downloads/data/GSE13622_RAW/GSM351491_InVitro_normalized.tab')
+	tic = time.perf_counter();
+	# getNucleosomeNeutralRegions(data,'/Users/yibeijia/Downloads/data/neutral_regions_out.txt')
+	getNucleosomeNeutralRegions(data,'/Users/yibeijia/Downloads/data/neutral_regions_out.txt')
 	# getNucleosomeRegions(data,'InVitro_regions_out.txt');
-	# toc = time.perf_counter();
-	# print(f"Getting the nucleosome regions took {toc - tic:0.4f} seconds");
+	toc = time.perf_counter();
+	print(f"Getting the nucleosome regions took {toc - tic:0.4f} seconds");
 
 	# getNucleosomeSeq(Enriched_Regions)
 	# getNucleosomeSeq(Enriched_Regions)
 
 	##### ########## ########## ########## ########## #####
 	##### Get the sequencnes in depleted ir enriched regions
-	data = readInputAsArray('/project/rohs_108/yibeijia/nucleosome_occupancy/InVitro_regions_out.txt');
+	# data = readInputAsArray('/project/rohs_108/yibeijia/nucleosome_occupancy/InVitro_regions_out.txt');
 	#data = readInputAsArray('/Users/yibeijia/Downloads/nucleosome_occupancy/InVitro_regions_out.txt')
-	encodeNucSeq(data, sys.argv[1], sys.argv[2])
+	# encodeNucSeq(data, sys.argv[1], sys.argv[2])
 	# dna="ACGTAC";
 	# encodedDna=oneHotEncode(dna)
 	# print("dna\n",list(dna))
