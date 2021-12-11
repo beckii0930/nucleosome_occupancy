@@ -83,13 +83,12 @@ def cluster2seq(Ecluster, Eseqs):
 #Dcluster = readInputAsArray('/Users/yibeijia/Downloads/nucleosome_occupancy/tbinet_stuff/cluster_seq/Dseqs80.clstr')
 # Dcluster = readInputAsArray('/scratch2/yibeijia/data/Dseqs80.clstr')
 Nseqs = readInputAsArray('/Users/yibeijia/Downloads/data/Nseqs_labeled.txt')
-Ncluster = readInputAsArray('/Users/yibeijia/Downloads/data/Nseqs80.clstr')
-# print(">>>>>>>>Preprocessing Enriched data")
-# E_train_data, E_test_data = cluster2seq(Ecluster, Eseqs)
-# print(">>>>>>>>Preprocessing Depleted data")
-# D_train_data, D_test_data = cluster2seq(Dcluster, Dseqs)
-print(">>>>>>>>Preprocessing Neutral data")
-N_train_data, N_test_data = cluster2seq(Dcluster, Dseqs)
+Nseqs = readInputAsArray('/Users/yibeijia/Downloads/data/Nseqs_labeled.txt')
+print(">>>>>>>>Preprocessing Enriched data")
+E_train_data, E_test_data = cluster2seq(Ecluster, Eseqs)
+print(">>>>>>>>Preprocessing Depleted data")
+D_train_data, D_test_data = cluster2seq(Dcluster, Dseqs)
+
 ## Experiemnt 1: combine E & D to create training, testing dataset & labels
 ## train test from different cluster
 # print(">>>>>>>>Preparing Train Test dataset")
