@@ -441,10 +441,11 @@ def main():
 	#conda activate mdenv
 
 	#Get the sequencnes in depleted ir enriched regions
-	data = readInputAsArray('/Users/yibeijia/Downloads/data/GSE13622_RAW/GSM351491_InVitro_normalized.tab')
+	#data = readInputAsArray('/Users/yibeijia/Downloads/data/GSE13622_RAW/GSM351491_InVitro_normalized.tab')
+	data = readInputAsArray('/project/rohs_108/yibeijia/nucleosome_occupancy/data/GSM351491_InVitro_normalized.tab')
 	tic = time.perf_counter();
 	# getNucleosomeNeutralRegions(data,'/Users/yibeijia/Downloads/data/neutral_regions_out.txt')
-	getNucleosomeNeutralRegions(data,'/Users/yibeijia/Downloads/data/neutral_regions_out.txt')
+	getNucleosomeNeutralRegions(data,'/project/rohs_102/share/nucleosome_occupancy_data/neutral_regions_out.txt')
 	# getNucleosomeRegions(data,'InVitro_regions_out.txt');
 	toc = time.perf_counter();
 	print(f"Getting the nucleosome regions took {toc - tic:0.4f} seconds");
