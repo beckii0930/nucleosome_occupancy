@@ -75,14 +75,15 @@ def cluster2seq(Ecluster, Eseqs):
     return np.array(E_train_data), np.array(E_test_data)
 
 #Eseqs = readInputAsArray('/Users/yibeijia/Downloads/nucleosome_occupancy/tbinet_stuff/cluster_seq/Eseqs.txt')[1:]
-Eseqs = readInputAsArray('/scratch2/yibeijia/data/Eseqs.txt')[1:]
+# Eseqs = readInputAsArray('/scratch2/yibeijia/data/Eseqs.txt')[1:]
 #Dseqs = readInputAsArray('/Users/yibeijia/Downloads/nucleosome_occupancy/tbinet_stuff/cluster_seq/Dseqs.txt')[1:]
-Dseqs = readInputAsArray('/scratch2/yibeijia/data/Dseqs.txt')[1:]
-
+# Dseqs = readInputAsArray('/scratch2/yibeijia/data/Dseqs.txt')[1:]
 #Ecluster = readInputAsArray('/Users/yibeijia/Downloads/nucleosome_occupancy/tbinet_stuff/cluster_seq/Eseqs80.clstr')
-Ecluster = readInputAsArray('/scratch2/yibeijia/data/Eseqs80.clstr')
+# Ecluster = readInputAsArray('/scratch2/yibeijia/data/Eseqs80.clstr')
 #Dcluster = readInputAsArray('/Users/yibeijia/Downloads/nucleosome_occupancy/tbinet_stuff/cluster_seq/Dseqs80.clstr')
-Dcluster = readInputAsArray('/scratch2/yibeijia/data/Dseqs80.clstr')
+# Dcluster = readInputAsArray('/scratch2/yibeijia/data/Dseqs80.clstr')
+Nseqs = readInputAsArray('/Users/yibeijia/Downloads/data/Nseqs_labeled.txt')
+Nseqs = readInputAsArray('/Users/yibeijia/Downloads/data/Nseqs_labeled.txt')
 print(">>>>>>>>Preprocessing Enriched data")
 E_train_data, E_test_data = cluster2seq(Ecluster, Eseqs)
 print(">>>>>>>>Preprocessing Depleted data")
