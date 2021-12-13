@@ -75,7 +75,8 @@ for opt, arg in opts:
 print ('Input file is "', inputmodel)
 # print ('Output file is "', output)
 
-model = load_model("./model/tbinet.h5")
+#model = load_model("./model/tbinet.h5")
+model = load_model("./model2/tbinet.h5")
 model.load_weights(inputmodel)
 print('model summary')
 model.summary()
