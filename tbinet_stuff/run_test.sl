@@ -1,9 +1,9 @@
 #!/bin/bash
 
-#SBATCH --nodes=2
+#SBATCH --nodes=1
 #SBATCH --ntasks-per-node=1
 #SBATCH --cpus-per-task=8
-#SBATCH --gres=gpu:2
+#SBATCH --gres=gpu:1
 #SBATCH --time=6:00:00
 #SBATCH --mem=64GB
 #SBATCH --output=test_model2.out
@@ -18,7 +18,7 @@ module load cuda/10.1.243
 
 # python3 test.py
 
-for f in ./model/*.hdf5
+for f in ./model2/*.hdf5
 do
     python3 test.py -i $f
 done

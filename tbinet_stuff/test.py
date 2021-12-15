@@ -82,8 +82,8 @@ print('model summary')
 model.summary()
 
 ### Calculate averaged AUROC and AUPR
-tpreds = model.predict_classes(testmat['Test_data'])
-#tpreds = model.predict(testmat['Test_data'],verbose=1)
+#tpreds = model.predict_classes(testmat['Test_data'])
+tpreds = model.predict(testmat['Test_data'],verbose=1)
 tpreds_temp = np.copy(tpreds)
 reverse_start_id = int(testmat['Test_labels'].shape[0]/2)
 
