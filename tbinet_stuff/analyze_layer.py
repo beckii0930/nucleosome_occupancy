@@ -1,5 +1,3 @@
-## TODO: get the layers from the model.
-## then print and visualize
 import numpy as np
 import scipy.io
 from sklearn import metrics
@@ -22,42 +20,84 @@ from keras.layers.wrappers import Bidirectional, TimeDistributed
 from keras.models import load_model
 from keras.callbacks import ModelCheckpoint, EarlyStopping
 from keras import backend as K
+import tensorflow.keras as keras
+import tensorflow as tf
+import matplotlib.pyplot as plt
 
-def layer_to_visualize(model, layer):
-    inputs = [K.learning_phase()] + model.inputs
-
-    _convout1_f = K.function(inputs, [layer.output])
-    def convout1_f(X):
-        # The [0] is to disable the training phase flag
-        return _convout1_f([0] + [X])
-
-    convolutions = convout1_f(img_to_visualize)
-    convolutions = np.squeeze(convolutions)
-
-    print ('Shape of conv:', convolutions.shape)
-
-    n = convolutions.shape[0]
-    n = int(np.ceil(np.sqrt(n)))
-
-    # Visualization of each filter of the layer
-    fig = plt.figure(figsize=(12,8))
-    for i in range(len(convolutions)):
-        ax = fig.add_subplot(n,n,i+1)
-        ax.imshow(convolutions[i], cmap='gray')
-
-data_folder = "/Users/yibeijia/Downloads/nucleosome_occupancy/tbinet_stuff/model/"
-#data_folder = "/scratch2/yibeijia/nucleosome_occupancy/tbinet_stuff/model/"
+data_folder = "/Users/yibeijia/Downloads/nucleosome_occupancy/tbinet_stuff/model2/"
 model = load_model(data_folder+"tbinet.h5")
-keras.utils.plot_model(model, show_shapes=True, dpi=90)
-# choose any image to want by specifying the index
-img_to_visualize = X_train[65]
+model.load_weights("/Users/yibeijia/Downloads/nucleosome_occupancy/tbinet_stuff/model2/tbinet.12-0.12.hdf5")
 
-# To understand how the attention has helped improve the performance 
-# and interpretability of TF-DNA binding prediction, 
-# we visualized the attention scores generated from TBiNet
+print("model.summary()")
+print(model.summary())
 
-# Conv1D layer
+layer_outputs = [layer.output for layer in model.layers]
 
-# attention layer: get attentino scores from tbinet
-# attention vector ,size 75, for each DNA seq
-# layer_to_visualize(model, convout1)
+# Run the model to predict once
+feature_map_model = tf.keras.models.Model(inputs=model.inputs, outputs=layer_outputs)
+
+# data_folder = "./data/"
+data_folder = "../data/train_test_data/"
+testmat = scipy.io.loadmat(data_folder+'Test_data.mat')
+feature_maps = feature_map_model.predict(np.transpose(testmat['Test_data'],axes=(0,1,2)))
+
+labels = testmat['Test_labels']
+ones = np.flatnonzero(labels == np.max(labels)).T
+zeros = np.flatnonzero(labels == np.min(labels)).T
+print(f'ones.shape {ones.shape}')
+print(f'zeros.shape {zeros.shape}')
+
+def plot_feature_map(y, plt_title):
+    plt.rcParams["figure.figsize"] = 5,2
+    x = range(1,10)
+
+    fig, (ax,ax2) = plt.subplots(nrows=2, sharex=True)
+
+    extent = [x[0]-(x[1]-x[0])/2., x[-1]+(x[1]-x[0])/2.,0,1]
+    ax.imshow(y[np.newaxis,:], cmap="plasma", aspect="auto", extent=extent)
+    ax.set_yticks([])
+    ax.set_xlim(extent[0], extent[1])
+
+    ax2.plot(x,y)
+    fig.suptitle(plt_title)
+    plt.tight_layout()
+    plt.show()
+
+def plot_both_feature_maps(y0, y1, plt_title):
+    plt.rcParams["figure.figsize"] = 5,2
+    x = range(1,10)
+    data = np.concatenate(([y0], [y1]))
+    print(data)
+    fig, axis = plt.subplots()
+
+    extent = [x[0]-(x[1]-x[0])/2., x[-1]+(x[1]-x[0])/2.,0,1]
+    heatmap = axis.pcolor(data, cmap=plt.cm.Blues) 
+    axis.set_yticks(np.arange(data.shape[0])+0.5, minor=False)
+    axis.set_xticks(np.arange(data.shape[1])+0.5, minor=False)
+    
+    row_labels = ["Depleted - 0", "Enriched - 1"]
+    axis.set_yticklabels(row_labels, minor=False)
+    axis.set_xticklabels(x, minor=False)
+    fig.suptitle(plt_title)
+    plt.colorbar(heatmap)
+    plt.tight_layout()
+    plt.show()
+
+
+for layer_name, feature_map in zip(layer_names, feature_maps):
+
+    if layer_name == 'attention':
+        print(feature_map)
+        feature_map -= feature_map.mean()
+        feature_map /= feature_map.std ()
+        print(f'layer_name: {layer_name}')
+        print(f'feature_map.shape: {feature_map.shape}')
+        feature_map_ones = feature_map[ones]
+        feature_map_zeros = feature_map[zeros]
+        print(f'feature_map_ones.shape: {feature_map_ones.shape}')
+        print(f'feature_map_zeros.shape: {feature_map_zeros.shape}')
+        feature_map_avg_ones = feature_map_ones.sum(axis=0)
+        feature_map_avg_zeros = feature_map_zeros.sum(axis=0)
+        plot_feature_map(feature_map_avg_ones, "Feature Map Avg Ones")
+        plot_feature_map(feature_map_avg_zeros, "Feature Map Avg Zeros")
+        plot_both_feature_maps(feature_map_avg_ones, feature_map_avg_zeros,"Feature Maps") 
