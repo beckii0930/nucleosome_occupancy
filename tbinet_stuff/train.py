@@ -67,7 +67,8 @@ output = Dropout(0.5)(output)
 flat_output = Flatten()(output)
 
 #FC Layer
-FC_output = Dense(695)(flat_output)
+# FC_output = Dense(695)(flat_output)
+FC_output = Dense(395)(flat_output)
 FC_output = Activation('relu')(FC_output)
 
 #Output Layer
@@ -84,13 +85,13 @@ model.summary()
 
 # checkpointer = ModelCheckpoint(filepath="./model/tbinet_loss.temp_check.hdf5", verbose=1, save_best_only=False)
 # checkpointer2 = ModelCheckpoint(filepath="./model/tbinet_acc.{epoch:02d}-{val_acc:.2f}.hdf5", monitor='val_acc',verbose=1, save_best_only=False)
-checkpointer = ModelCheckpoint(filepath="./model2/tbinet.{epoch:02d}-{val_loss:.2f}.hdf5", verbose=1, save_best_only=False)
+checkpointer = ModelCheckpoint(filepath="./model2_reduced/tbinet.{epoch:02d}-{val_loss:.2f}.hdf5", verbose=1, save_best_only=False)
 earlystopper = EarlyStopping(monitor='val_loss', patience=10, verbose=1)
 
 history = model.fit(X_train, y_train, batch_size=100, epochs=60, shuffle=True, verbose=1, validation_data=(validmat['Test_data'],validmat['Test_labels'].T), callbacks=[checkpointer,earlystopper])
 
 # model.save('./model/tbinet_tmp.h5')
-model.save('./model2/tbinet.h5')
+model.save('./model2_reduced/tbinet.h5')
 
 ####### Learning curve
 print(history.history['loss'])
@@ -111,4 +112,4 @@ plt.title('model loss')
 plt.ylabel('loss')
 plt.xlabel('epoch')
 plt.legend(['train', 'test'], loc='upper left')
-plt.savefig("./model2/model_loss.png")
+plt.savefig("./model2_reduced/model_loss.png")
