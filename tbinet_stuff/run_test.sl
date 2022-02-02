@@ -6,7 +6,7 @@
 #SBATCH --gres=gpu:1
 #SBATCH --time=6:00:00
 #SBATCH --mem=64GB
-#SBATCH --output=test_model2_REDUCED_dense10.out
+#SBATCH --output=test_model3_removeLSTM.out
 #SBATCH --partition=gpu
 #SBATCH --mail-user=yibeijia@usc.edu
 
@@ -18,7 +18,7 @@ module load cuda/10.1.243
 
 # python3 test.py
 
-for f in ./model2_reduced_dense10/*.hdf5
+for f in ./model3_removeLSTM/*.hdf5
 do
     python3 test.py -i $f
 done
