@@ -14,6 +14,7 @@ tbinet_stuff/model
 tbinet_stuff/model2
 tbinet_stuff/cluster_seq
 
+model2_dense395/
 model2_reduced_dense10
 model2_reduced_dense100
 model3_removeLSTM
