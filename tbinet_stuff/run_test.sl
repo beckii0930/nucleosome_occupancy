@@ -18,7 +18,7 @@ module load cuda/10.1.243
 
 # python3 test.py
 
-for f in ./model3_removeLSTM/*.hdf5
+for f in ./model3_removeLSTM_addDense/*.hdf5
 do
     python3 test.py -i $f
 done

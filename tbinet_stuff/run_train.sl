@@ -6,7 +6,7 @@
 #SBATCH --gres=gpu:2
 #SBATCH --time=24:00:00
 #SBATCH --mem=64GB
-#SBATCH --output=train_model3_removeLSTM.out
+#SBATCH --output=train_model3_removeLSTM_addDense.out
 #--partition=rohs
 #SBATCH --partition=gpu
 #SBATCH --mail-user=yibeijia@usc.edu

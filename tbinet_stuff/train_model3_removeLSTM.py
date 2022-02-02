@@ -92,7 +92,7 @@ model.summary()
 
 # checkpointer = ModelCheckpoint(filepath="./model/tbinet_loss.temp_check.hdf5", verbose=1, save_best_only=False)
 # checkpointer2 = ModelCheckpoint(filepath="./model/tbinet_acc.{epoch:02d}-{val_acc:.2f}.hdf5", monitor='val_acc',verbose=1, save_best_only=False)
-checkpointer = ModelCheckpoint(filepath="./model3_removeLSTM/tbinet.{epoch:02d}-{val_loss:.2f}.hdf5", verbose=1, save_best_only=False)
+checkpointer = ModelCheckpoint(filepath="./model3_removeLSTM_addDense/tbinet.{epoch:02d}-{val_loss:.2f}.hdf5", verbose=1, save_best_only=False)
 #checkpointer = ModelCheckpoint(filepath="./model2_reduced_dense10/tbinet.{epoch:02d}-{val_loss:.2f}.hdf5", verbose=1, save_best_only=False)
 earlystopper = EarlyStopping(monitor='val_loss', patience=10, verbose=1)
 
@@ -100,7 +100,7 @@ history = model.fit(X_train, y_train, batch_size=100, epochs=60, shuffle=True, v
 
 # model.save('./model/tbinet_tmp.h5')
 #model.save('./model2_reduced_dense10/tbinet.h5')
-model.save('./model3_removeLSTM/tbinet.h5')
+model.save('./model3_removeLSTM_addDense/tbinet.h5')
 ####### Learning curve
 print(history.history['loss'])
 print(history.history['val_loss'])
@@ -121,4 +121,4 @@ plt.ylabel('loss')
 plt.xlabel('epoch')
 plt.legend(['train', 'test'], loc='upper left')
 #plt.savefig("./model2_reduced_dense10/model_loss.png")
-plt.savefig("./model3_removeLSTM/model_loss.png")
+plt.savefig("./model3_removeLSTM_addDense/model_loss.png")

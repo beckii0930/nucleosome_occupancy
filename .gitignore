@@ -19,4 +19,4 @@ model2_dense395/
 model2_reduced_dense10
 model2_reduced_dense100
 model3_removeLSTM
-
+model3_removeLSTM_addDense
