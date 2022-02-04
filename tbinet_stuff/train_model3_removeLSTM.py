@@ -71,12 +71,11 @@ flat_output = Flatten()(output)
 # FC_output = Dense(695)(flat_output)
 #FC_output = Dense(395)(flat_output)
 #FC_output = Dense(100)(flat_output)
-FC_output = Dense(100,kernel_constraint=nonneg())(flat_output)
+FC_output = Dense(395,kernel_constraint=nonneg())(flat_output)
 FC_output = Activation('relu')(FC_output)
 
-FC_output = Dense(100,kernel_constraint=nonneg())(FC_output)
+FC_output = Dense(395,kernel_constraint=nonneg())(FC_output)
 FC_output = Activation('relu')(FC_output)
-
 
 #Output Layer
 output = Dense(1)(FC_output)

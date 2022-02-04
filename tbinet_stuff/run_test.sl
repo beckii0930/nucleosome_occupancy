@@ -6,7 +6,7 @@
 #SBATCH --gres=gpu:1
 #SBATCH --time=6:00:00
 #SBATCH --mem=64GB
-#SBATCH --output=test_model3_removeLSTM.out
+#SBATCH --output=test_model3_removeLSTM_addDense.out
 #SBATCH --partition=gpu
 #SBATCH --mail-user=yibeijia@usc.edu
 
