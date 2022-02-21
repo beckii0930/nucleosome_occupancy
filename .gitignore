@@ -12,6 +12,8 @@ tbinet/
 tbinet
 tbinet_stuff/model
 tbinet_stuff/model2
+train_dense10_kernel10_run*
+
 tbinet_stuff/cluster_seq
 ../data
 model2_reduced/
