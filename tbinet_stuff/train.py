@@ -24,6 +24,10 @@ from keras import optimizers
 from keras import backend as K
 from keras import regularizers
 print("all packages loaded")
+if len(sys.argv) != 2:
+    print("python3 train.py model_folder")
+
+model_folder = sys.argv[1]
 
 data_folder = "/scratch2/yibeijia/data/train_test_data/"
 # data_folder = "/Users/yibeijia/Downloads/nucleosome_occupancy/data/train_test_data/"
@@ -46,7 +50,7 @@ sequence_input = Input(shape=(147,4))
 # Convolutional Layer
 # output = Conv1D(320,kernel_size=26,padding="valid",activation="relu")(sequence_input)
 # output = MaxPooling1D(pool_size=13, strides=13)(output)
-output = Conv1D(320,kernel_size=10,padding="valid",activation="relu")(sequence_input)
+output = Conv1D(320,kernel_size=10,padding="same",activation="relu")(sequence_input)
 output = MaxPooling1D(pool_size=5, strides=1)(output)
 output = Dropout(0.2)(output)
 
@@ -85,33 +89,24 @@ model.compile(loss='binary_crossentropy', optimizer='adam')
 print('model summary')
 model.summary()
 
-# checkpointer = ModelCheckpoint(filepath="./model/tbinet_loss.temp_check.hdf5", verbose=1, save_best_only=False)
-# checkpointer2 = ModelCheckpoint(filepath="./model/tbinet_acc.{epoch:02d}-{val_acc:.2f}.hdf5", monitor='val_acc',verbose=1, save_best_only=False)
-checkpointer = ModelCheckpoint(filepath="./model2_reduced_dense10/tbinet.{epoch:02d}-{val_loss:.2f}.hdf5", verbose=1, save_best_only=False)
+checkpointer = ModelCheckpoint(filepath=model_folder+"tbinet.{epoch:02d}-{val_loss:.2f}.hdf5", verbose=1, save_best_only=False)
 earlystopper = EarlyStopping(monitor='val_loss', patience=10, verbose=1)
 
 history = model.fit(X_train, y_train, batch_size=100, epochs=60, shuffle=True, verbose=1, validation_data=(validmat['Test_data'],validmat['Test_labels'].T), callbacks=[checkpointer,earlystopper])
 
 # model.save('./model/tbinet_tmp.h5')
-model.save('./model2_reduced_dense10/tbinet.h5')
+model.save(model_folder+'tbinet.h5')
 
 ####### Learning curve
 print(history.history['loss'])
 print(history.history['val_loss'])
 print(history.history.keys())
+
 # summarize history for accuracy
-# plt.plot(history.history['accuracy'])
-# plt.plot(history.history['val_accuracy'])
-# plt.title('model accuracy')
-# plt.ylabel('accuracy')
-# plt.xlabel('epoch')
-# plt.legend(['train', 'test'], loc='upper left')
-# plt.savefig("model_accuracy.png")
-# summarize history for loss
 plt.plot(history.history['loss'], label='train')
 plt.plot(history.history['val_loss'], label='test')
 plt.title('model loss')
 plt.ylabel('loss')
 plt.xlabel('epoch')
 plt.legend(['train', 'test'], loc='upper left')
-plt.savefig("./model2_reduced_dense10/model_loss.png")
+plt.savefig(model_folder+"model_loss.png")
