@@ -16,6 +16,7 @@ train_dense10_kernel10_run*
 
 tbinet_stuff/cluster_seq
 ../data
+./data
 model2_reduced/
 model2_dense395/
 model2_reduced_dense10
