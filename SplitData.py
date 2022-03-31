@@ -14,18 +14,20 @@ Ndata_list = np.array([])
 N=1
 print(f"N is: {N}")
 # for i in range(1, 51):
-for i in range(1, 2):
+for i in range(1, 6):
     print(i)
     # fname = '/scratch2/yibeijia/data/nucleosome_occupancy_' + str(i) + '.mat'
     # fname = '/Users/yibeijia/Downloads/nucleosome_occupancy/data/nucleosome_occupancy_' + str(i) + '.mat'
-    fname = '/Users/yibeijia/Downloads/nucleosome_occupancy/data/train_test_data/sampleSeqs.mat'
+    fname = '/Users/yibeijia/Downloads/nucleosome_occupancy/data/train_test_data/wormSeqs_'+str(i)+'.mat'
     if os.path.isfile(fname):
         mat_fname = pjoin(fname)
         mat_contents = sio.loadmat(mat_fname)
         
         edata=mat_contents['EnrichedData']
-        ddata=mat_contents['DepletedData']
-        ndata=mat_contents['NeutralData']
+        ddata=np.array([])# when the seqs are all enriched
+        ndata=np.array([])
+        # ddata=mat_contents['DepletedData']
+        # ndata=mat_contents['NeutralData']
 
         if edata.size >0:
             if Edata_list.size == 0:
@@ -89,27 +91,46 @@ print(Ndata_list.shape)
 toc=time.perf_counter()
 print(f"Create master list took {toc - tic:0.4f} seconds")
 
-from sklearn.model_selection import train_test_split
-
+D_empty = True
+E_empty = True
+Ddata_labels=np.array([])
+Edata_labels=np.array([])
+data_labels=np.array([])
 data_list =np.empty((1, 1, 1))
-if (Ddata_list.shape[0] > 0 and Edata_list.shape[0] > 0):
+start = True
+if Ddata_list.size >0:
+    if (Ddata_list.shape[0] > 0):
+        print("D non empty")
+        D_empty =False
+        Ddata_labels = np.zeros(Ddata_list.shape[0])
+
+if Edata_list.size >0:
+    if (Edata_list.shape[0] > 0):
+        if start:
+            # print(Edata_list[0])
+            start=False
+        print("E non empty")
+        E_empty =False
+        Edata_labels = np.ones(Edata_list.shape[0])
+
+if (E_empty==False and D_empty==False):
     print("both non empty")
-    data_list = np.concatenate((Edata_list, Ddata_list), axis=0)
-elif (Ddata_list.shape[0] > 0):
+    Test_labels =  np.concatenate((Edata_labels, Ddata_labels), axis=0)
+    Test_data = np.concatenate((Edata_list, Ddata_list), axis=0)
+elif (E_empty and D_empty==False):
     print("D non empty, E is empty")
-    data_list = Ddata_list
-elif (Edata_list.shape[0] > 0):
+    Test_labels =  Ddata_labels
+    Test_data=Ddata_list
+elif (E_empty==False and D_empty):
     print("E non empty, D is empty")
-    data_list = Edata_list
+    Test_labels = Edata_labels
+    Test_data=Edata_list
+
 # print(data_list[2][0:4])
 ## Decide to not mix neutral data in the dataset because training is not with the neutral data.
-
-print(f" All data shape is: {data_list.shape}")
-
-Ddata_labels = np.zeros(Ddata_list.shape[0])
-Edata_labels = np.ones(Edata_list.shape[0])
-data_labels =  np.concatenate((Edata_labels, Ddata_labels), axis=0)
-print(f" All data label shape is: {data_labels.shape}")
+print(f" All data shape is: {Test_data.shape}")
+print(f" All data label shape is: {Test_labels.shape}")
+# from sklearn.model_selection import train_test_split
 # Train_data, Test_data, Train_labels, Test_labels = train_test_split(data_list, data_labels, test_size=0.40, random_state=42)
 
 # print(f"No. of training sequeces: {Train_data.shape[0]}")
@@ -121,10 +142,11 @@ print(f" All data label shape is: {data_labels.shape}")
 
 # Data = {"Test_data" : np.array(Test_data), "Test_labels" : Test_labels}
 # sio.savemat('/Users/yibeijia/Downloads/nucleosome_occupancy/data/train_test_data/Test_data.mat', Data,  do_compression=True)
-Test_data = np.concatenate((Edata_list, Ddata_list), axis=0)
-Test_labels = data_labels 
+# Test_data = np.concatenate((Edata_list, Ddata_list), axis=0)
+# Test_labels = data_labels 
 Data = {"Test_data" : np.array(Test_data), "Test_labels" : Test_labels}   
 print(f"No. of test sequeces: {Test_data.shape[0]}")
-sio.savemat('/Users/yibeijia/Downloads/nucleosome_occupancy/data/train_test_data/SampleTest.mat', Data, do_compression=True)
+# sio.savemat('/Users/yibeijia/Downloads/nucleosome_occupancy/data/train_test_data/wormTest.mat', Data
+sio.savemat('/Users/yibeijia/Downloads/nucleosome_occupancy/data/train_test_data/wormTest.mat', Data, do_compression=True)
 # print(Data)
 # sio.savemat('/scratch2/yibeijia/data/train_test_data/Test_data.mat',Data, do_compression=True)

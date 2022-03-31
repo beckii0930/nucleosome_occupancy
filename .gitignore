@@ -1,5 +1,7 @@
 # No mat files and output from slurm
-
+*.pptx
+*.h5
+*.npy
 *.mat
 *.out
 **/tbinet_stuff/cluster_seq/Eseqs.txt

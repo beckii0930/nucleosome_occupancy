@@ -51,6 +51,7 @@ def get_aurocs_and_auprs(tpreds, tobs):
 ### Load data (test)
 data_folder = "/Users/yibeijia/Downloads/nucleosome_occupancy/data/train_test_data/"
 data_folder = "/scratch2/yibeijia/data/train_test_data/"
+data_folder = "/Users/yibeijia/Downloads/nucleosome_occupancy/data/train_test_data/"
 
 testmat = scipy.io.loadmat(data_folder+'Test_data.mat')
 

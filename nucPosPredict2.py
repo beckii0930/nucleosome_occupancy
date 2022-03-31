@@ -115,6 +115,7 @@ def processYeastData(data):
 	return string
 
 def processOtherData(data, species):
+	print(f"species: {species}")
 	# line format is [chr, s_pos, e_pos, seq]
 	Depleted_Regions = []
 	Enriched_Regions = []
@@ -158,7 +159,7 @@ def processOtherData(data, species):
 		e_end=int(float(line[2]))
 		Enriched_Regions[len(All_chromosomes)-1].append((e_start, e_end));
 		
-		reg_length = e_start -e_end
+		reg_length = e_end - e_start
 		string += "(" + str(line[1]) + ", "+ str(line[2])+ ") " + str(reg_length) + " " + line[3] + "\n";
 
 		if start:
@@ -173,18 +174,18 @@ def processOtherData(data, species):
 			e_start_prev=e_start
 			e_end_prev=e_end
 
-	print(">>>>>>>>>>> Getting Depleted Seqs")
-	string += "Depleted_Regions \n";
-	for chromosome in range(len(All_chromosomes)):
+# 	print(">>>>>>>>>>> Getting Depleted Seqs")
+# 	string += "Depleted_Regions \n";
+# 	for chromosome in range(len(All_chromosomes)):
 
-		string += "chromosome: \n";
-		pt("chromosome: ", 0);
-		string += All_chromosomes[chromosome] + "\n";
+# 		string += "chromosome: \n";
+# 		pt("chromosome: ", 0);
+# 		string += All_chromosomes[chromosome] + "\n";
 
-		for reg in Depleted_Regions[chromosome]:
-			reg_length = reg[1] - reg[0] + 1;
-			seq = fetchSeqence(All_chromosomes[chromosome], reg[0], reg[1],species);
-			string += str(reg) + " " + str(reg_length) + " " + str(seq) + "\n";
+# 		for reg in Depleted_Regions[chromosome]:
+# 			reg_length = reg[1] - reg[0] + 1;
+# 			seq = fetchSeqence(All_chromosomes[chromosome], reg[0], reg[1],species);
+# 			string += str(reg) + " " + str(reg_length) + " " + str(seq) + "\n";
 
 	return string;
 
@@ -200,13 +201,13 @@ def getNucleosomeRegions(data, out, species):
 	# process other dataset
 	else: 
 		string= processOtherData(data,species)
-	return;
+	# return;
 	# write out the sequence in fasta format
 	f = open(out, 'w+');
 	f.write(string)
 	f.write("\n")
 	f.close()
-	return Enriched_Regions, Depleted_Regions;
+	return ;
 
 # ####################### ####################### ####################### ######################
 # This function outputs all the nucleosome positions for neutral regions
@@ -347,11 +348,14 @@ def oneHotEncode(seq):
     # return np.array(seq2);
 
 
-def encodeNucSeq(data, total_sections, section):
+def encodeNucSeq(data, total_sections, section, species):
 
 	enrichSeqCount = depleteSeqCount = neutralSeqCount = 0;
-	depleteLineStart = neutralLineStart = 0;
-	enrich = neutral = deplete = False;
+	depleteLineStart = -1
+	neutralLineStart = -1;
+	enrich = False;
+	neutral = False;
+	deplete = False;
 
 	# Count # of enriched sequences
 	total_lines = 0;
@@ -363,14 +367,14 @@ def encodeNucSeq(data, total_sections, section):
 		if line[0] == "Enriched_Regions":
 			print("in enriched region\n")
 			enrich = True;
-			
-		if line[0] == "Depleted_Regions":
+
+		elif line[0] == "Depleted_Regions":
 			print("in depleted region\n")
 			enrich = False;
 			deplete = True
 			depleteLineStart = total_lines;
 
-		if line[0] == "Neutral_Regions":
+		elif line[0] == "Neutral_Regions":
 			print("in neutral region\n")
 			neutral = True;
 			enrich = False;
@@ -426,17 +430,14 @@ def encodeNucSeq(data, total_sections, section):
 		# debug
 		line=lines.split("\n")[0].split(' ')
 
-		if line_count < depleteLineStart:
-			# print("in enriched region\n")
+		if line_count < depleteLineStart or depleteLineStart<0:
 			enrich = True;
 			
-		if line_count >= depleteLineStart:
-			# print("in depleted region\n")
+		if line_count >= depleteLineStart and depleteLineStart >0:
 			enrich = False;
 			deplete = True;
 
-		if line_count >= neutralLineStart:
-			# print("in depleted region\n")
+		if line_count >= neutralLineStart and neutralLineStart >0:
 			deplete = False;	
 			neutral = True;	
 
@@ -460,14 +461,18 @@ def encodeNucSeq(data, total_sections, section):
 					curr_seq = line[3][curr_start: curr_end+1];
 
 			if enrich:
+				# print("in enrich")
 				encodedDNAArr = oneHotEncode(curr_seq);
 				allEnrichSeqArr+=[encodedDNAArr];
+
 				
 			elif deplete:
+				# print("in deplete")
 				encodedDNAArr = oneHotEncode(curr_seq);
 				allDepleteSeqArr+=[encodedDNAArr];
 
-			else:
+			elif neutral:
+				# print("in neutral")
 				encodedDNAArr = oneHotEncode(curr_seq);
 				allNeutralSeqArr+=[encodedDNAArr];
 		else:
@@ -475,67 +480,91 @@ def encodeNucSeq(data, total_sections, section):
 	# print(allEnrichSeqArr);
 	toc = time.perf_counter();
 	print(f"Getting the DNA encoded took {toc - tic:0.4f} seconds");
+	print(len(allEnrichSeqArr))
+	print(len(allEnrichSeqArr[0]))
+	print(len(allEnrichSeqArr[0][0]))
+	print(len(allEnrichSeqArr[1]))
+	print(len(allEnrichSeqArr[1][0]))
+
 	nrow_enrich = len(allEnrichSeqArr);
 	nrow_deplete = len(allDepleteSeqArr)
 	nrow_neutral = len(allNeutralSeqArr)
+	np_allEnrichSeqArr= np.array([])
+	np_allDepleteSeqArr= np.array([])
+	np_allNeutralSeqArr= np.array([])
+	print(f"nrow_enrich: {nrow_enrich}")
+	print(f"nrow_deplete: {nrow_deplete}")
+	print(f"nrow_neutral: {nrow_neutral}")
 
 	# split files if they get too large
-	if (nrow_enrich > 100000000):
-		num_sub_array = 10;
-		sub_size = math.floor(nrow_enrich / num_sub_array);
-		for index in range(0, num_sub_array):
-			index_str = index;
-			sub_arr_start = sub_size*index;
-			sub_arr_end = sub_size*(index+1);
-			if (sub_arr_end > nrow_enrich):
-				sub_arr_end = nrow_enrich;
-			np_allEnrichSeqArr = np.array(allEnrichSeqArr[sub_arr_start:sub_arr_end])
-			# np_allDepleteSeqArr = np.array(allDepleteSeqArr)
-			# print(np_allDepleteSeqArr)
-	else:
-		np_allEnrichSeqArr = np.array(allEnrichSeqArr)
+	if nrow_enrich!=0:
+		print("creating enriched arr")
+
+		if (nrow_enrich > 100000000):
+			num_sub_array = 10;
+			sub_size = math.floor(nrow_enrich / num_sub_array);
+			for index in range(0, num_sub_array):
+				index_str = index;
+				sub_arr_start = sub_size*index;
+				sub_arr_end = sub_size*(index+1);
+				if (sub_arr_end > nrow_enrich):
+					sub_arr_end = nrow_enrich;
+				np_allEnrichSeqArr = np.array(allEnrichSeqArr[sub_arr_start:sub_arr_end])
+				# np_allDepleteSeqArr = np.array(allDepleteSeqArr)
+				# print(np_allDepleteSeqArr)
+		else:
+			np_allEnrichSeqArr = np.array(allEnrichSeqArr)
 
 	# split files if they get too large
-	if (nrow_deplete > 100000000):
-		num_sub_array = 20;
-		sub_size = math.floor(nrow_deplete / num_sub_array);
-		for index in range(0, num_sub_array):
-			index_str = index;
-			sub_arr_start = sub_size*index;
-			sub_arr_end = sub_size*(index+1);
-			if (sub_arr_end > nrow_deplete):
-				sub_arr_end = nrow_enrich;
-			# np_allEnrichSeqArr = np.array(allEnrichSeqArr)
-			np_allDepleteSeqArr = np.array(allDepleteSeqArr[sub_arr_start:sub_arr_end])
-			# print(np_allDepleteSeqArr)
-	else:
-		print("deplete")
-		print(len(allDepleteSeqArr))
-		print(len(allDepleteSeqArr[0]))
-		print(len(allDepleteSeqArr[0][0]))
-		np_allDepleteSeqArr = np.array(allDepleteSeqArr)
+	if nrow_deplete!=0:
+		print("creating depleted arr")
 
-	if (nrow_neutral > 100000000):
-		num_sub_array = 20;
-		sub_size = math.floor(nrow_neutral / num_sub_array);
-		for index in range(0, num_sub_array):
-			index_str = index;
-			sub_arr_start = sub_size*index;
-			sub_arr_end = sub_size*(index+1);
-			if (sub_arr_end > nrow_deplete):
-				sub_arr_end = nrow_enrich;
-			# np_allEnrichSeqArr = np.array(allEnrichSeqArr)
-			np_allNeutralSeqArr = np.array(allNeutralSeqArr[sub_arr_start:sub_arr_end])
-			# print(np_allDepleteSeqArr)	
-	else:
-		np_allNeutralSeqArr = np.array(allNeutralSeqArr)
+		if (nrow_deplete > 100000000):
+			num_sub_array = 20;
+			sub_size = math.floor(nrow_deplete / num_sub_array);
+			for index in range(0, num_sub_array):
+				index_str = index;
+				sub_arr_start = sub_size*index;
+				sub_arr_end = sub_size*(index+1);
+				if (sub_arr_end > nrow_deplete):
+					sub_arr_end = nrow_enrich;
+				# np_allEnrichSeqArr = np.array(allEnrichSeqArr)
+				np_allDepleteSeqArr = np.array(allDepleteSeqArr[sub_arr_start:sub_arr_end])
+				# print(np_allDepleteSeqArr)
+		else:
+			print("deplete")
+			print(len(allDepleteSeqArr))
+			# print(len(allDepleteSeqArr[0]))
+			# print(len(allDepleteSeqArr[0][0]))
+			np_allDepleteSeqArr = np.array(allDepleteSeqArr)
+
+	if nrow_neutral!=0:
+		print("creating neutral arr")
+		if (nrow_neutral > 100000000):
+			num_sub_array = 20;
+			sub_size = math.floor(nrow_neutral / num_sub_array);
+			for index in range(0, num_sub_array):
+				index_str = index;
+				sub_arr_start = sub_size*index;
+				sub_arr_end = sub_size*(index+1);
+				if (sub_arr_end > nrow_deplete):
+					sub_arr_end = nrow_enrich;
+				# np_allEnrichSeqArr = np.array(allEnrichSeqArr)
+				np_allNeutralSeqArr = np.array(allNeutralSeqArr[sub_arr_start:sub_arr_end])
+				# print(np_allDepleteSeqArr)	
+		else:
+			np_allNeutralSeqArr = np.array(allNeutralSeqArr)
 
 	print(f"np_allEnrichSeqArr.shape {np_allEnrichSeqArr.shape}, np_allDepleteSeqArr.shape {np_allDepleteSeqArr.shape}, np_allNeutralArr.shape {np_allNeutralSeqArr.shape}");
-	Data = {"EnrichedData": np_allEnrichSeqArr, "DepletedData": np_allDepleteSeqArr, "NeutralData": np_allNeutralSeqArr};
+	# Data = {"EnrichedData": np_allEnrichSeqArr, "DepletedData": np_allDepleteSeqArr, "NeutralData": np_allNeutralSeqArr};
+	Data = {"EnrichedData": np_allEnrichSeqArr}
 	# mat_filename = '/scratch2/yibeijia/data/nucleosome_occupancy_' + str(section) + '.mat';
 	#mat_filename = '/Users/yibeijia/Downloads/nucleosome_occupancy/train_test_data/nucleosome_occupancy_' + str(section) + '.mat';
 	# print(Data)
-	mat_filename = '/Users/yibeijia/Downloads/nucleosome_occupancy/data/train_test_data/sampleSeqs.mat';
+	# mat_filename = '/Users/yibeijia/Downloads/nucleosome_occupancy/data/train_test_data/sampleSeqs.mat';
+	# mat_filename = '/Users/yibeijia/Downloads/nucleosome_occupancy/data/train_test_data/'+species+'Seqs_'+str(section) + '.mat';
+	mat_filename = '/project/rohs_108/yibeijia/nucleosome_occupancy/data/train_test_data/'+species+'Seqs_'+str(section) + '.mat';
+	# print(Data).mat'
 	scipy.io.savemat(mat_filename, Data,  do_compression=True);
 
 def main():
@@ -545,29 +574,32 @@ def main():
 	#Get the sequencnes in depleted ir enriched regions
 	#data = readInputAsArray('/Users/yibeijia/Downloads/data/GSE13622_RAW/GSM351491_InVitro_normalized.tab')
 	# data = readInputAsArray('/project/rohs_108/yibeijia/nucleosome_occupancy/data/GSM351491_InVitro_normalized.tab')
-	data = readInputAsArray('/Users/yibeijia/Downloads/data/NBS/size.147.plusOrMinus1bp.worm.GSM514735.clean.seq.bed.uniq')
-	tic = time.perf_counter();
+	# data = readInputAsArray('/Users/yibeijia/Downloads/data/NBS/size.147.plusOrMinus1bp.worm.GSM514735.clean.seq.bed.uniq')
+	# data = readInputAsArray('/Users/yibeijia/Downloads/data/NBS/size.147.plusOrMinus1bp.human.GSM907783.clean.seq.uniq')
+	# getNucleosomeRegions(data,'/Users/yibeijia/Downloads/data/human_enriched_regions_out.txt', "human")
+
+	# data = readInputAsArray('/Users/yibeijia/Downloads/data/NBS/size.147.plusOrMinus1bp.fly.Kingston.EE.clean.seq.bed.uniq')
+	# getNucleosomeRegions(data,'/Users/yibeijia/Downloads/data/fly_enriched_regions_out.txt', "fly")
+
+	# tic = time.perf_counter();
 	# getNucleosomeNeutralRegions(data,'/Users/yibeijia/Downloads/data/neutral_regions_out.txt')
 	# getNucleosomeNeutralRegions(data,'/project/rohs_102/share/nucleosome_occupancy_data/neutral_regions_out.txt')
-	getNucleosomeRegions(data,'/Users/yibeijia/Downloads/data/worm_enriched_regions_out.txt', "worm")
 	# getNucleosomeNeutralRegions(data,'/project/rohs_102/share/nucleosome_occupancy_data/neutral_regions_out.txt')
 	# getNucleosomeRegions(data,'InVitro_regions_out.txt');
-	toc = time.perf_counter();
-	print(f"Getting the nucleosome regions took {toc - tic:0.4f} seconds");
-
-	# getNucleosomeSeq(Enriched_Regions)
-	# getNucleosomeSeq(Enriched_Regions)
+	# toc = time.perf_counter();
+	# print(f"Getting the nucleosome regions took {toc - tic:0.4f} seconds");
 
 	##### ########## ########## ########## ########## #####
 	##### Get the sequencnes in depleted ir enriched regions
+	# data = readInputAsArray('/Users/yibeijia/Downloads/data/human_enriched_regions_out.txt')
+	data = readInputAsArray('/project/rohs_108/yibeijia/data/human_enriched_regions_out.txt')
+	encodeNucSeq(data, sys.argv[1], sys.argv[2],'human')
+	# data = readInputAsArray('/Users/yibeijia/Downloads/data/fly_enriched_regions_out.txt')
+	# encodeNucSeq(data, sys.argv[1], sys.argv[2],'fly')
 	# data = readInputAsArray('/project/rohs_108/yibeijia/nucleosome_occupancy/InVitro_regions_out.txt');
 	# data = readInputAsArray('/Users/yibeijia/Downloads/nucleosome_occupancy/InVitro_regions_out.txt')
-
+	# data = readInputAsArray('/Users/yibeijia/Downloads/data/worm_enriched_regions_out.txt')
 	# data = readInputAsArray('/Users/yibeijia/Downloads/nucleosome_occupancy/sampleSeqs.txt')
-	# encodeNucSeq(data, sys.argv[1], sys.argv[2])
+	# encodeNucSeq(data, sys.argv[1], sys.argv[2],'worm')
 	# encodeNucSeq(data, 1, 1)
-	# dna="ACGTAC";
-	# encodedDna=oneHotEncode(dna)
-	# print("dna\n",list(dna))
-	# print('encoded dna\n')
 main();
