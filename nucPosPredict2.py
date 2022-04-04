@@ -348,6 +348,9 @@ def oneHotEncode(seq):
     # return np.array(seq2);
 
 
+# ####################### ####################### ####################### ######################
+# This function outputs all the one hot encoded nucleosome sequences
+# And it outputs all sequences into a numpy array 
 def encodeNucSeq(data, total_sections, section, species):
 
 	enrichSeqCount = depleteSeqCount = neutralSeqCount = 0;
