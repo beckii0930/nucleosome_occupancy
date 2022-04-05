@@ -79,19 +79,19 @@ def cluster2seq(Ecluster, Eseqs,species):
     return np.array(E_train_data), np.array(E_test_data)
 
 import sys
-# Eseqs = readInputAsArray('/Users/yibeijia/Downloads/nucleosome_occupancy/tbinet_stuff/cluster_seq/Eseqs.txt')[1:]
-# Eseqs = readInputAsArray('/scratch2/yibeijia/data/Eseqs.txt')[1:]
-# Ecluster = readInputAsArray('/Users/yibeijia/Downloads/nucleosome_occupancy/tbinet_stuff/cluster_seq/Eseqs80.clstr')
-# Ecluster = readInputAsArray('/scratch2/yibeijia/data/Eseqs80.clstr')
+
 species = sys.argv[1]
 Eseqs = readInputAsArray('/project/rohs_102/share/nucleosome_occupancy_data/'+species+'Eseqs.txt')[1:] # avoid the first \n
 # Eseqs = readInputAsArray('/Users/yibeijia/Downloads/data/'+species+'Eseqs.txt')[1:] # avoid the first \n
 # Eseqs = readInputAsArray('/scratch2/yibeijia/data/Eseqs.txt')[1:]
-# Ecluster = readInputAsArray('/Users/yibeijia/Downloads/nucleosome_occupancy/tbinet_stuff/cluster_seq/Eseqs80.clstr')
 if species =='human':
     Ecluster = readInputAsArray('/project/rohs_102/share/nucleosome_occupancy_data/'+species+'Eseqs80_every20.clstr')    
+elif species == 'yeast':
+    Ecluster = readInputAsArray('/Users/yibeijia/Downloads/nucleosome_occupancy/tbinet_stuff/cluster_seq/Eseqs80.clstr')
+    Ecluster = readInputAsArray('/project/rohs_102/share/nucleosome_occupancy_data/Eseqs80.clstr') 
 else:
     Ecluster = readInputAsArray('/project/rohs_102/share/nucleosome_occupancy_data/'+species+'Eseqs80_every5.clstr')
+# Ecluster = readInputAsArray('/scratch2/yibeijia/data/Eseqs80.clstr')
 # Ecluster = readInputAsArray('/Users/yibeijia/Downloads/data/'+species+'Eseqs80_every5.clstr')
 # Dseqs = readInputAsArray('/Users/yibeijia/Downloads/nucleosome_occupancy/tbinet_stuff/cluster_seq/Dseqs.txt')[1:]
 # Dseqs = readInputAsArray('/scratch2/yibeijia/data/Dseqs.txt')[1:]
@@ -102,46 +102,46 @@ else:
 # Nseqs = readInputAsArray('/Users/yibeijia/Downloads/data/Nseqs_labeled.txt')
 print(f">>>>>>>>Preprocessing Enriched data for {species}")
 E_train_data, E_test_data = cluster2seq(Ecluster, Eseqs,species)
-# print(">>>>>>>>Preprocessing Depleted data")
-# D_train_data, D_test_data = cluster2seq(Dcluster, Dseqs)
+print(">>>>>>>>Preprocessing Depleted data")
+D_train_data, D_test_data = cluster2seq(Dcluster, Dseqs)
 
 ## Experiemnt 1: combine E & D to create training, testing dataset & labels
 ## train test from different cluster
-# print(">>>>>>>>Preparing Train Test dataset")
-# Train_data = np.concatenate((E_train_data, D_train_data), axis=0)
-# Edata_labels = np.ones(E_train_data.shape[0])
-# Ddata_labels = np.zeros(D_train_data.shape[0])
-# Train_labels = np.concatenate((Edata_labels, Ddata_labels), axis=0)
-# print(f"train data  shape is: {Train_data.shape}")
-# print(f"train label shape is: {Train_labels.shape}")
+print(">>>>>>>>Preparing Train Test dataset")
+Train_data = np.concatenate((E_train_data, D_train_data), axis=0)
+Edata_labels = np.ones(E_train_data.shape[0])
+Ddata_labels = np.zeros(D_train_data.shape[0])
+Train_labels = np.concatenate((Edata_labels, Ddata_labels), axis=0)
+print(f"train data  shape is: {Train_data.shape}")
+print(f"train label shape is: {Train_labels.shape}")
 
-# Test_data = np.concatenate((E_test_data, D_test_data), axis=0)
-# Edata_labels = np.ones(E_test_data.shape[0])
-# Ddata_labels = np.zeros(D_test_data.shape[0])
-# Test_labels = np.concatenate((Edata_labels, Ddata_labels), axis=0)
-# print(f"test data shape is: {Test_data.shape}")
-# print(f"test label shape is: {Test_labels.shape}")
+Test_data = np.concatenate((E_test_data, D_test_data), axis=0)
+Edata_labels = np.ones(E_test_data.shape[0])
+Ddata_labels = np.zeros(D_test_data.shape[0])
+Test_labels = np.concatenate((Edata_labels, Ddata_labels), axis=0)
+print(f"test data shape is: {Test_data.shape}")
+print(f"test label shape is: {Test_labels.shape}")
 
 ## Experiemnt 2: combine E & D to create training, testing dataset & labels
 ## train test from same cluster
-from sklearn.model_selection import train_test_split
+# from sklearn.model_selection import train_test_split
 
-print(">>>>>>>>Preparing Train Test dataset")
-Edata_list = np.concatenate((E_train_data, E_test_data), axis=0)
-# Ddata_list = np.concatenate((D_train_data, D_test_data), axis=0)
-Edata_labels = np.ones(Edata_list.shape[0])
-# Ddata_labels = np.zeros(Ddata_list.shape[0])
+# print(">>>>>>>>Preparing Train Test dataset")
+# Edata_list = np.concatenate((E_train_data, E_test_data), axis=0)
+# # Ddata_list = np.concatenate((D_train_data, D_test_data), axis=0)
+# Edata_labels = np.ones(Edata_list.shape[0])
+# # Ddata_labels = np.zeros(Ddata_list.shape[0])
 
-# data_list = np.concatenate((Ddata_list, Edata_list), axis=0)
-# data_labels =  np.concatenate((Ddata_labels, Edata_labels), axis=0)
-Test_data=Edata_list
-Test_labels=Edata_labels
+# # data_list = np.concatenate((Ddata_list, Edata_list), axis=0)
+# # data_labels =  np.concatenate((Ddata_labels, Edata_labels), axis=0)
+# Test_data=Edata_list
+# Test_labels=Edata_labels
 
-# print(f" All data label shape is: {data_labels.shape}")
-# Train_data, Test_data, Train_labels, Test_labels = train_test_split(data_list, data_labels, test_size=0.40, random_state=42)
+# # print(f" All data label shape is: {data_labels.shape}")
+# # Train_data, Test_data, Train_labels, Test_labels = train_test_split(data_list, data_labels, test_size=0.40, random_state=42)
 
-# print(f"No. of training sequeces: {Train_data.shape[0]}")
-print(f"No. of testing sequences: {Test_data.shape[0]}")
+# # print(f"No. of training sequeces: {Train_data.shape[0]}")
+# print(f"No. of testing sequences: {Test_data.shape[0]}")
 
 ## Write to .mat file
 # Data = {"Train_data" : np.array(Train_data), "Train_labels" : Train_labels}
