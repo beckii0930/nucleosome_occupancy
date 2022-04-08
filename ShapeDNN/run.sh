@@ -7,5 +7,7 @@
 #SBATCH --mail-user=yibeijia@usc.edu
 #SBATCH --array=1-50 # job array index
 
+. ~/.bashrc
+conda activate mdenv
 python3  makeShapeDNNInput.py 50 ${SLURM_ARRAY_TASK_ID}
 #python3  nucPosPredict.py 10 $(for i in $(seq 3 10); do echo $i; done)

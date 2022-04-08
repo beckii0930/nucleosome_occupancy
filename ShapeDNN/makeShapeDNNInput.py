@@ -175,10 +175,12 @@ All_Shapes=['Buckle-FL', 'Buckle', 'EP', 'HelT-FL', 'HelT', 'MGW-FL', 'MGW',
 np_shape_E = np.array([])
 np_shape_D = np.array([])
 
-total_sections=1000
-section = 1
+total_sections=sys.argv[1]
+section = sys.argv[2]
 # All_Shapes=['Stretch']
 print("Getting Enriched Seqs")
+
+
 np_shape_E = concatAllShapeArr(seq_file+'enriched_', All_Shapes, total_sections, section) # depleted seqs output
 
 # All_Shapes=['Roll', 'Stretch']
