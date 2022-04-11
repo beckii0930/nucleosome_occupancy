@@ -265,6 +265,7 @@ species ='yeast'
 # path='/project/rohs_102/share/nucleosome_occupancy_data/'
 # path='/home/yibei/Projects/nucleosome_occupancy/tbinet_stuff/cluster_seq/'
 path='/project/rohs_108/yibeijia/nucleosome_occupancy/tbinet_stuff/cluster_seq/'
+path='/project/rohs_102/share/nucleosome_occupancy_data/'
 if species =='human': 
     Dseqs = readInputAsArray(path+'Dseqs.txt')[1:] # There is no Dseqs
     Dcluster = readInputAsArray(path+'Dseqs80.clstr')
