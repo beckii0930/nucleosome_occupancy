@@ -86,18 +86,18 @@ Eseqs = readInputAsArray('/project/rohs_102/share/nucleosome_occupancy_data/'+sp
 # Eseqs = readInputAsArray('/scratch2/yibeijia/data/Eseqs.txt')[1:]
 if species =='human':
     Ecluster = readInputAsArray('/project/rohs_102/share/nucleosome_occupancy_data/'+species+'Eseqs80_every20.clstr')    
+
 elif species == 'yeast':
     Ecluster = readInputAsArray('/Users/yibeijia/Downloads/nucleosome_occupancy/tbinet_stuff/cluster_seq/Eseqs80.clstr')
     Ecluster = readInputAsArray('/project/rohs_102/share/nucleosome_occupancy_data/Eseqs80.clstr') 
+    Dcluster = readInputAsArray('/project/rohs_102/share/nucleosome_occupancy_data/Dseqs80.clstr')
+
 else:
     Ecluster = readInputAsArray('/project/rohs_102/share/nucleosome_occupancy_data/'+species+'Eseqs80_every5.clstr')
-# Ecluster = readInputAsArray('/scratch2/yibeijia/data/Eseqs80.clstr')
-# Ecluster = readInputAsArray('/Users/yibeijia/Downloads/data/'+species+'Eseqs80_every5.clstr')
-# Dseqs = readInputAsArray('/Users/yibeijia/Downloads/nucleosome_occupancy/tbinet_stuff/cluster_seq/Dseqs.txt')[1:]
-# Dseqs = readInputAsArray('/scratch2/yibeijia/data/Dseqs.txt')[1:]
 
-# Dcluster = readInputAsArray('/Users/yibeijia/Downloads/nucleosome_occupancy/tbinet_stuff/cluster_seq/Dseqs80.clstr')
-# Dcluster = readInputAsArray('/scratch2/yibeijia/data/Dseqs80.clstr')
+Dseqs = readInputAsArray('/Users/yibeijia/Downloads/nucleosome_occupancy/tbinet_stuff/cluster_seq/Dseqs.txt')[1:]
+Dcluster = readInputAsArray('/Users/yibeijia/Downloads/nucleosome_occupancy/tbinet_stuff/cluster_seq/Dseqs80.clstr')
+
 # Nseqs = readInputAsArray('/Users/yibeijia/Downloads/data/Nseqs_labeled.txt')
 # Nseqs = readInputAsArray('/Users/yibeijia/Downloads/data/Nseqs_labeled.txt')
 print(f">>>>>>>>Preprocessing Enriched data for {species}")
