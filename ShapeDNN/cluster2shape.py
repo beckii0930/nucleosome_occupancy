@@ -168,12 +168,12 @@ def cluster2seq(Cluster, seq_file, species):
     debug=200
     all_curr_seq_index = []
     for i in range(len(Cluster)):
-        if (Cluster[i][0] == '>'and i < debug):
-#         if (Cluster[i][0] == '>'):
+#        if (Cluster[i][0] == '>'and i < debug):
+        if (Cluster[i][0] == '>'):
             curr_seq_index = []
             all_curr_seq_index += [curr_seq_index] # a 2d list of cluster indexes
-        elif (Cluster[i][0] != '>' and i < debug):
-#         elif (Cluster[i][0] != '>'):
+        #elif (Cluster[i][0] != '>' and i < debug):
+        elif (Cluster[i][0] != '>'):
             idx = int(Cluster[i].split()[2][1:-3]) #seq indexes
             curr_seq_index.append(idx)
 
@@ -190,7 +190,7 @@ def cluster2seq(Cluster, seq_file, species):
     train_clsts = []
     test_clsts = []
     seq_num = 0
-    max_seq_in_clstr = 1 # **** can change this numbe ****
+    max_seq_in_clstr = 5 # **** can change this numbe ****
     clstr_id = 0
     test_start = True
     for clstr in all_curr_seq_index:
@@ -319,8 +319,8 @@ print(f"test label shape is: {Test_labels.shape}")
 # data_path='/home/yibei/Projects/data/train_test_data/'
 data_path='/project/rohs_108/yibeijia/nucleosome_occupancy/data/train_test_data/'
 Data = {"Test_data" : np.array(Test_data), "Test_labels" : Test_labels}
-sio.savemat(data_path+species+'ShapeDNNSeqs_Test.mat', Data,  do_compression=True)
+sio.savemat(data_path+species+'ShapeDNNSeqs_Test_5seqsPerClustr.mat', Data,  do_compression=True)
 
 Data = {"Train_data" : np.array(Train_data), "Train_data" : Train_labels}
-sio.savemat(data_path+species+'ShapeDNNSeqs_Train.mat', Data,  do_compression=True)
+sio.savemat(data_path+species+'ShapeDNNSeqs_Train_5seqsPerClustr.mat', Data,  do_compression=True)
 
