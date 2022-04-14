@@ -81,11 +81,11 @@ def append_bplist_to_np_arr(lst, np_arr):
 # In[162]:
 
 
-def makeSingleShapeArr(seq_file, index):
+def makeSingleShapeArr(Seqs, index):
 #     print(">>>>>>>>> In making makeSingleShapeArr ")
     np_all_shape_arr = np.array([])
     
-    Seqs = readGZInputAsArray(seq_file)
+    
     seq_count=1
     bp_shape=False
     line = Seqs[index]
@@ -148,10 +148,16 @@ def shapeEncode(seq_file, seq_index):
 #     All_Shapes=['Buckle-FL', 'Buckle']
     
     np_shape_E = np.array([]) # enriched seqs output
+    All_Shapes_Vals = []
 
     for i in range(len(All_Shapes)):
         my_print('\ncurr shape is ', All_Shapes[i])
-        np_all_shape_arr = makeSingleShapeArr(seq_file + All_Shapes[i] + '.gz', seq_index)
+        Seqs = readGZInputAsArray(seq_file + All_Shapes[i] + '.gz')
+        All_Shapes_Vals.append(Seqs)
+
+    for i in range(len(All_Shapes_Vals)):
+        my_print('\ncurr shape is ', All_Shapes[i])
+        np_all_shape_arr = makeSingleShapeArr(All_Shapes_Vals[i], seq_index)
         if np_shape_E.shape[0] == 0:
             np_shape_E = np_all_shape_arr
         else:
@@ -169,7 +175,7 @@ def cluster2seq(Cluster, seq_file, species):
     all_curr_seq_index = []
     for i in range(2):
     #for i in range(len(Cluster)):
-#        if (Cluster[i][0] == '>'and i < debug):
+       # if (Cluster[i][0] == '>'and i < debug):
         if (Cluster[i][0] == '>'):
             curr_seq_index = []
             all_curr_seq_index += [curr_seq_index] # a 2d list of cluster indexes
@@ -291,6 +297,7 @@ else:
 print(f">>>>>>>>Preprocessing Enriched data for {species}")
 seq_file='/project/rohs_108/yibeijia/data/yibei_predictions/processed_enriched_'
 # seq_file='/home/yibei/Downloads/yibei_predictions/processed_enriched_'
+
 E_train_data, E_test_data = cluster2seq(Ecluster, seq_file, species)
 
 print(">>>>>>>>Preprocessing Depleted data")
