@@ -167,7 +167,8 @@ def shapeEncode(seq_file, seq_index):
 def cluster2seq(Cluster, seq_file, species):
     debug=200
     all_curr_seq_index = []
-    for i in range(len(Cluster)):
+    for i in range(2):
+    #for i in range(len(Cluster)):
 #        if (Cluster[i][0] == '>'and i < debug):
         if (Cluster[i][0] == '>'):
             curr_seq_index = []
@@ -241,7 +242,7 @@ def cluster2seq(Cluster, seq_file, species):
                 Train_data = np_selection_encode
             else:
                 Train_data = np.concatenate([Train_data, np_selection_encode], axis=0)
-#             print(f"train_data.shape {np.array(Train_data).shape}")
+                print(f"train_data.shape {np.array(Train_data).shape}")
         clstr_id+=1
     print("test_clsts")
     print(test_clsts)
