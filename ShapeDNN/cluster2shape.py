@@ -151,10 +151,10 @@ def shapeEncode(seq_file, seq_index):
     All_Shapes_Vals = []
 
     for i in range(len(All_Shapes)):
-        my_print('\ncurr shape is ', All_Shapes[i])
+        my_print('\nLoading shape file for ', All_Shapes[i])
         Seqs = readGZInputAsArray(seq_file + All_Shapes[i] + '.gz')
         All_Shapes_Vals.append(Seqs)
-
+    print(f"All shape files for path {seq_file} are loaded")
     for i in range(len(All_Shapes_Vals)):
         my_print('\ncurr shape is ', All_Shapes[i])
         np_all_shape_arr = makeSingleShapeArr(All_Shapes_Vals[i], seq_index)
