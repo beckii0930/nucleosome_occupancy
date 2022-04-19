@@ -193,7 +193,7 @@ def preprocessShapeFile(seq_file, All_Shapes, test_clsts, train_clsts, file_list
                                 train_out+=out_seq + ' ' + l[1] + ' '
                                 train_out+=' '.join(str(e) for e in out_seq_shape_list)+'\n'
 
-            f = open(seq_file+'processed_'+enriched+shape+".txt", "w+")
+            f = open(seq_file+'all_processed_'+enriched+shape+".txt", "w+")
             f.write(out)
             f.close()
             f = open(seq_file+'train_processed_'+enriched+shape+".txt", "w+")
@@ -277,11 +277,11 @@ def getClusterIndex(cluster_file, seq_file, species):
     # print(train_clsts)
     return test_clsts, train_clsts
 
-All_Shapes=['Buckle-FL', 'Buckle', 'EP', 'HelT-FL', 'HelT', 'MGW-FL', 'MGW',
-             'Opening-FL', 'Opening', 'ProT-FL', 'ProT', 'Rise-FL', 'Rise', 'Roll-FL',
-             'Roll', 'Shear-FL', 'Shear', 'Shift-FL', 'Shift', 'Slide-FL', 'Slide',
-             'Stagger-FL', 'Stagger', 'Stretch-FL', 'Stretch', 'Tilt-FL', 'Tilt']
-# All_Shapes=['Buckle-FL']
+# All_Shapes=['Buckle-FL', 'Buckle', 'EP', 'HelT-FL', 'HelT', 'MGW-FL', 'MGW',
+#              'Opening-FL', 'Opening', 'ProT-FL', 'ProT', 'Rise-FL', 'Rise', 'Roll-FL',
+#              'Roll', 'Shear-FL', 'Shear', 'Shift-FL', 'Shift', 'Slide-FL', 'Slide',
+#              'Stagger-FL', 'Stagger', 'Stretch-FL', 'Stretch', 'Tilt-FL', 'Tilt']
+All_Shapes=['Buckle-FL', 'Stretch']
 
 # seq_file='/project/rohs_108/yibeijia/data/yibei_predictions/'
 seq_file='/home/yibei/Downloads/yibei_predictions/'
