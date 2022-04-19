@@ -65,13 +65,13 @@ def append_bplist_to_np_arr(lst, np_arr):
 
 
 
-def preprocessShapeFile(seq_file, All_Shapes, test_clsts, train_clsts ):
+def preprocessShapeFile(seq_file, All_Shapes, test_clsts, train_clsts, file_list ):
     out = ''
     test_out = ''
     train_out = ''
     seq_count = -1
 #     debug = 0
-    file_list = ['enriched_', 'depleted_']
+    
 
     for enriched in file_list:
         print(enriched)
@@ -312,6 +312,11 @@ else:
     Eseqs = readInputAsArray(path+species+'Eseqs.txt')[1:] # avoid the first \n
     Ecluster = readInputAsArray(path+species+'Eseqs80_every5.clstr')
 
-test_clsts, train_clsts = getClusterIndex(Ecluster, seq_file, species)
-preprocessShapeFile(seq_file, All_Shapes, test_clsts, train_clsts )
+file_list = ['enriched_']
+E_test_clsts, E_train_clsts = getClusterIndex(Ecluster, seq_file, species)
+preprocessShapeFile(seq_file, All_Shapes, E_test_clsts, E_train_clsts,file_list )
+
+file_list = ['depleted_']
+D_test_clsts, D_train_clsts = getClusterIndex(Dcluster, seq_file, species)
+preprocessShapeFile(seq_file, All_Shapes, D_test_clsts, D_train_clsts,file_list )
 
