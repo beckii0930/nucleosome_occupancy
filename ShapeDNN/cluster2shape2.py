@@ -1,5 +1,11 @@
 
 ### Turn one hot encoded .mat to fasta seq
+### This is a faster version of cluster2shape
+### We encoded only max 5 seqs from each cluster using PreprocessShape.py and get the 
+### train and test sequences in each shape files.
+### Here, we encode/concat all the shape values for the sequences we selected into .mat
+### input files for training.
+
 import math
 import pandas as pd
 import numpy as np
@@ -154,11 +160,12 @@ def SeqToMat(path, All_Shapes):
 
             curr_seq = []
             if bp_shape:
-                for  item in seq:
-                    curr_seq+=[[float(i-1), float(i)]]
+                for i in range(1, len(seq)):
+                    curr_seq+=[[float(seq[i-1]), float(seq[i])]]
                 E_train_data +=[curr_seq]
             else:
-                for i in range(1, len(seq)):
+                for  item in seq:
+
                     curr_seq+=[[float(item)]]
                 E_train_data +=[curr_seq]
 
@@ -182,37 +189,42 @@ species='yeast'
 #              'Roll', 'Shear-FL', 'Shear', 'Shift-FL', 'Shift', 'Slide-FL', 'Slide',
 #              'Stagger-FL', 'Stagger', 'Stretch-FL', 'Stretch', 'Tilt-FL', 'Tilt']
 All_Shapes=['Buckle-FL', 'Stretch']
-E_train_path= seq_file+'2_train_processed_'+'enriched_'
-E_test_path= seq_file+'2_test_processed_'+'enriched_'
+E_train_path= seq_file+'train_processed_'+'enriched_'
+E_test_path= seq_file+'test_processed_'+'enriched_'
 
 np_E_train_data = SeqToMat(E_train_path, All_Shapes)
-
 np_E_test_data = SeqToMat(E_test_path, All_Shapes)
 print(f"np_E_test_data.shape: {np_E_test_data.shape}")
 print(f"np_E_train_data.shape: {np_E_train_data.shape}")
 
-    # D_path= seq_file+'all_processed_'+'depleted_'+shape+".txt"
-    # D_train_path= seq_file+'train_processed_'+'depleted_'+shape+".txt"
-    # D_test_path= seq_file+'test_processed_'+'depleted_'+shape+".txt"
-    # print(D_test_path)
+D_train_path= seq_file+'train_processed_'+'depleted_'
+D_test_path= seq_file+'test_processed_'+'depleted_'
 
-    # All_Shapes_Vals.append(Seqs)
-    # print(f"All shape files for path {seq_file} are loaded")
-    # for i in range(len(All_Shapes_Vals)):
-    #     my_print('\ncurr shape is ', All_Shapes[i])
-    #     np_all_shape_arr = makeSingleShapeArr(All_Shapes_Vals[i], seq_index)
-    #     if np_shape_E.shape[0] == 0:
-    #         np_shape_E = np_all_shape_arr
-    #     else:
-    #         ## merge: consider the base step as separate features
-    #         np_shape_E = np.concatenate([np_shape_E, np_all_shape_arr], axis=2) #(218, 146, 3)
-    
+np_D_train_data = SeqToMat(D_train_path, All_Shapes)
+np_D_test_data = SeqToMat(D_test_path, All_Shapes)
+print(f"np_D_test_data.shape: {np_D_test_data.shape}")
+print(f"np_D_train_data.shape: {np_D_train_data.shape}")
 
-# file_list = ['enriched_']
-# E_test_clsts, E_train_clsts = getClusterIndex(Ecluster, seq_file, species)
-# preprocessShapeFile(seq_file, All_Shapes, E_test_clsts, E_train_clsts,file_list )
 
-# file_list = ['depleted_']
-# D_test_clsts, D_train_clsts = getClusterIndex(Dcluster, seq_file, species)
-# preprocessShapeFile(seq_file, All_Shapes, D_test_clsts, D_train_clsts,file_list )
+Train_data = np.concatenate((np_E_train_data, np_D_train_data), axis=0)
+Edata_labels = np.ones(np_E_train_data.shape[0])
+Ddata_labels = np.zeros(np_D_train_data.shape[0])
+Train_labels = np.concatenate((Edata_labels, Ddata_labels), axis=0)
+print(f"train data  shape is: {Train_data.shape}")
+print(f"train label shape is: {Train_labels.shape}")
 
+Test_data = np.concatenate((np_E_test_data, np_D_test_data), axis=0)
+Edata_labels = np.ones(np_E_test_data.shape[0])
+Ddata_labels = np.zeros(np_D_test_data.shape[0])
+Test_labels = np.concatenate((Edata_labels, Ddata_labels), axis=0)
+print(f"test data shape is: {Test_data.shape}")
+print(f"test label shape is: {Test_labels.shape}")
+
+data_path='/project/rohs_108/yibeijia/nucleosome_occupancy/data/train_test_data/'
+data_path='/home/yibei/Projects/data/train_test_data/'
+
+Data = {"Test_data" : np.array(Test_data), "Test_labels" : Test_labels}
+sio.savemat(data_path+species+'All_Shapes_Test_5seqsPerClustr.mat', Data,  do_compression=True)
+
+Data = {"Train_data" : np.array(Train_data), "Train_data" : Train_labels}
+sio.savemat(data_path+species+'All_Seqs_Train_5seqsPerClustr.mat', Data,  do_compression=True)
