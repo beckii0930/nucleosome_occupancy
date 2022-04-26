@@ -250,4 +250,4 @@ for section in range(total_sections):
 	if (end_line > total_lines):
 		end_line = total_lines-1;
 	Data = {"Train_data" : Train_data[start_line:end_line,:,:], "Train_data" : Train_labels[start_line:end_line]}
-	sio.savemat(data_path+species+'All_Seqs_Train_5seqsPerClustr_'+str(section)+'.mat', Data,  do_compression=True)
+	sio.savemat(data_path+species+'All_Shapes_Train_5seqsPerClustr_'+str(section)+'.mat', Data,  do_compression=True)
