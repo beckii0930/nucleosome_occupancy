@@ -188,6 +188,7 @@ All_Shapes=['Buckle-FL', 'Buckle', 'EP', 'HelT-FL', 'HelT', 'MGW-FL', 'MGW',
               'Opening-FL', 'Opening', 'ProT-FL', 'ProT', 'Rise-FL', 'Rise', 'Roll-FL',
               'Roll', 'Shear-FL', 'Shear', 'Shift-FL', 'Shift', 'Slide-FL', 'Slide',
 			  'Stagger-FL', 'Stagger', 'Stretch-FL', 'Stretch', 'Tilt-FL', 'Tilt']
+print(All_Shapes)
 #All_Shapes=['Buckle-FL', 'Stretch']
 E_train_path= seq_file+'train_processed_'+'enriched_'
 E_test_path= seq_file+'test_processed_'+'enriched_'
@@ -223,31 +224,30 @@ print(f"test label shape is: {Test_labels.shape}")
 data_path='/project/rohs_108/yibeijia/nucleosome_occupancy/data/train_test_data/'
 #data_path='/home/yibei/Projects/data/train_test_data/'
 
-total_sections = 20
+section=int(sys.argv[1])
+total_sections=int(sys.argv[2])
+print(f"Current regions is: {section}\n");
 print(f"Total # of regions is: {total_sections}\n");
 
-for section in range(total_sections):
-	print(f"Current regions is: {section}\n");
-	total_lines = Test_data.shape[0]
-	section_length = math.floor(total_lines / total_sections);
-	print(f"test curr region line is {section_length}")
+total_lines = Test_data.shape[0]
+section_length = math.floor(total_lines / total_sections);
+print(f"test curr region line is {section_length}")
 
-	
-	start_line = (section-1) * section_length;
-	end_line = section * section_length-1;
-	if (end_line > total_lines):
-		end_line = total_lines-1;
-	Data = {"Test_data" : Test_data[start_line:end_line,:,:], "Test_labels" : Test_labels[start_line:end_line]}
-	#sio.savemat(data_path+species+'All_Shapes_Test_5seqsPerClustr_'+str(section)+'.mat', Data,  do_compression=True)
-	
-for section in range(total_sections):
-	total_lines = Train_data.shape[0]
-	section_length = math.floor(total_lines / total_sections);
-	print(f"train curr region line is {section_length}")
-	start_line = (section-1) * section_length;
+start_line = (section-1) * section_length;
+end_line = section * section_length-1;
+if (end_line > total_lines):
+	end_line = total_lines-1;
+Test_Data = {"Test_data" : Test_data[start_line:end_line,:,:], "Test_labels" : Test_labels[start_line:end_line]}
+sio.savemat(data_path+species+'All_Shapes_Test_5seqsPerClustr_'+str(section)+'_'+str(total_sections)+'.mat', Test_Data,  do_compression=True)
 
-	end_line = section * section_length-1;
-	if (end_line > total_lines):
-		end_line = total_lines-1;
-	Data = {"Train_data" : Train_data[start_line:end_line,:,:], "Train_data" : Train_labels[start_line:end_line]}
-	sio.savemat(data_path+species+'All_Shapes_Train_5seqsPerClustr_'+str(section)+'.mat', Data,  do_compression=True)
+print(f"Current regions is: {section}\n");
+total_lines = Train_data.shape[0]
+section_length = math.floor(total_lines / total_sections);
+print(f"train curr region line is {section_length}")
+start_line = (section-1) * section_length;
+
+end_line = section * section_length-1;
+if (end_line > total_lines):
+	end_line = total_lines-1;
+Train_Data = {"Train_data" : Train_data[start_line:end_line,:,:], "Train_data" : Train_labels[start_line:end_line]}
+sio.savemat(data_path+species+'All_Shapes_Train_5seqsPerClustr_'+str(section)+'_'+str(total_sections)+'.mat', Train_Data,  do_compression=True)
