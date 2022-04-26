@@ -175,25 +175,30 @@ def SeqToMat(path, All_Shapes):
             np_E_train_data = np.array(E_train_data)
         else:
             np_all_shape_arr = np.array(E_train_data)
-            np_E_train_data = np.concatenate([np_E_train_data, np_all_shape_arr], axis=0)
+            np_E_train_data = np.concatenate([np_E_train_data, np_all_shape_arr], axis=2)
+        print(f"np_data.shape: {np_E_train_data.shape}")
     return np_E_train_data
 
 
 
 seq_file='/project/rohs_108/yibeijia/data/yibei_predictions/'
-#seq_file='/home/yibei/Downloads/yibei_predictions/'
+seq_file='/home/yibei/Downloads/yibei_predictions/'
 species='yeast'
 
 All_Shapes=['Buckle-FL', 'Buckle', 'EP', 'HelT-FL', 'HelT', 'MGW-FL', 'MGW',
               'Opening-FL', 'Opening', 'ProT-FL', 'ProT', 'Rise-FL', 'Rise', 'Roll-FL',
               'Roll', 'Shear-FL', 'Shear', 'Shift-FL', 'Shift', 'Slide-FL', 'Slide',
 			  'Stagger-FL', 'Stagger', 'Stretch-FL', 'Stretch', 'Tilt-FL', 'Tilt']
+# All_Shapes=['Buckle-FL', 'Stretch','EP']
 print(All_Shapes)
-#All_Shapes=['Buckle-FL', 'Stretch']
+
 E_train_path= seq_file+'train_processed_'+'enriched_'
 E_test_path= seq_file+'test_processed_'+'enriched_'
 
+print("Gathering E train data")
 np_E_train_data = SeqToMat(E_train_path, All_Shapes)
+
+print("Gathering E test data")
 np_E_test_data = SeqToMat(E_test_path, All_Shapes)
 print(f"np_E_test_data.shape: {np_E_test_data.shape}")
 print(f"np_E_train_data.shape: {np_E_train_data.shape}")
@@ -201,7 +206,10 @@ print(f"np_E_train_data.shape: {np_E_train_data.shape}")
 D_train_path= seq_file+'train_processed_'+'depleted_'
 D_test_path= seq_file+'test_processed_'+'depleted_'
 
+print("Gathering D train data")
 np_D_train_data = SeqToMat(D_train_path, All_Shapes)
+
+print("Gathering D test data")
 np_D_test_data = SeqToMat(D_test_path, All_Shapes)
 print(f"np_D_test_data.shape: {np_D_test_data.shape}")
 print(f"np_D_train_data.shape: {np_D_train_data.shape}")
@@ -222,7 +230,7 @@ print(f"test data shape is: {Test_data.shape}")
 print(f"test label shape is: {Test_labels.shape}")
 
 data_path='/project/rohs_108/yibeijia/nucleosome_occupancy/data/train_test_data/'
-#data_path='/home/yibei/Projects/data/train_test_data/'
+data_path='/home/yibei/Projects/data/train_test_data/'
 
 section=int(sys.argv[1])
 total_sections=int(sys.argv[2])
