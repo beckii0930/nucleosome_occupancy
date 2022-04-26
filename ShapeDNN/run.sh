@@ -10,6 +10,6 @@
 conda activate gpuenv
 #python3  PreprocessShape.py
 
-python3 -m cProfile cluster2shape.py
-#python3 cluster2shape.py
+#python3 -m cProfile cluster2shape.py
+python3 cluster2shape2.py
 #python3  nucPosPredict.py 10 $(for i in $(seq 3 10); do echo $i; done)
