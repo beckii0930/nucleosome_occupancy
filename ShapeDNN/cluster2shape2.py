@@ -180,82 +180,72 @@ def SeqToMat(path, All_Shapes):
     return np_E_train_data
 
 
+def main(seq_file, species, All_Shapes, E_data_path, D_data_path, out_data_path):
 
-seq_file='/project/rohs_108/yibeijia/data/yibei_predictions/'
+    print(">>>>>>>>>>>>.. Processing " + E_data_path)
+    np_E_data = SeqToMat(E_data_path, All_Shapes)
+    np_D_data = SeqToMat(D_data_path, All_Shapes)
+
+    print(f"np_E_data.shape: {np_E_data.shape}")
+    print(f"np_D_data.shape: {np_D_data.shape}")
+
+    Train_Test_data = np.concatenate((np_E_data, np_D_data), axis=0)
+    Edata_labels = np.ones(np_E_data.shape[0])
+    Ddata_labels = np.zeros(np_D_data.shape[0])
+    Train_Test_labels = np.concatenate((Edata_labels, Ddata_labels), axis=0)
+    print(f"train/test data  shape is: {Train_Test_data.shape}")
+    print(f"train/test label shape is: {Train_Test_labels.shape}")
+
+    section=int(sys.argv[1])
+    total_sections=int(sys.argv[2])
+    print(f"Current regions is: {section}\n");
+    print(f"Total # of regions is: {total_sections}\n");
+
+    print(f"Current regions is: {section}\n");
+    total_lines = Train_Test_data.shape[0]
+    section_length = math.floor(total_lines / total_sections);
+    print(f"train/test curr region line is {section_length}")
+    start_line = (section-1) * section_length;
+
+    end_line = section * section_length-1;
+    if (end_line > total_lines):
+    	end_line = total_lines-1;
+
+    data_label="Train_data"
+    labels_label="Train_labels"
+    mat_out=out_data_path+species+'All_Shapes_Train_5seqsPerClustr_'
+    if 'test_processed_' in E_data_path:
+        data_label="Test_data"
+        labels_label="Test_labels"
+        mat_out=out_data_path+species+'All_Shapes_Test_5seqsPerClustr_'
+
+    DataToSave = {data_label: Train_Test_data[start_line:end_line,:,:], 
+                labels_label: Train_Test_labels[start_line:end_line]}
+    sio.savemat(mat_out+str(section)+'_'+str(total_sections)+'.mat', 
+        DataToSave,  do_compression=True)
+
+######################## ######################## Main ######################## ########################
+# seq_file='/project/rohs_108/yibeijia/data/yibei_predictions/'
 seq_file='/home/yibei/Downloads/yibei_predictions/'
 species='yeast'
 
 All_Shapes=['Buckle-FL', 'Buckle', 'EP', 'HelT-FL', 'HelT', 'MGW-FL', 'MGW',
               'Opening-FL', 'Opening', 'ProT-FL', 'ProT', 'Rise-FL', 'Rise', 'Roll-FL',
               'Roll', 'Shear-FL', 'Shear', 'Shift-FL', 'Shift', 'Slide-FL', 'Slide',
-			  'Stagger-FL', 'Stagger', 'Stretch-FL', 'Stretch', 'Tilt-FL', 'Tilt']
+              'Stagger-FL', 'Stagger', 'Stretch-FL', 'Stretch', 'Tilt-FL', 'Tilt']
 # All_Shapes=['Buckle-FL', 'Stretch','EP']
 print(All_Shapes)
 
+out_data_path='/project/rohs_108/yibeijia/nucleosome_occupancy/data/train_test_data/'
+out_data_path='/home/yibei/Projects/data/train_test_data/'
+
 E_train_path= seq_file+'train_processed_'+'enriched_'
-E_test_path= seq_file+'test_processed_'+'enriched_'
-
-print("Gathering E train data")
-np_E_train_data = SeqToMat(E_train_path, All_Shapes)
-
-print("Gathering E test data")
-np_E_test_data = SeqToMat(E_test_path, All_Shapes)
-print(f"np_E_test_data.shape: {np_E_test_data.shape}")
-print(f"np_E_train_data.shape: {np_E_train_data.shape}")
-
 D_train_path= seq_file+'train_processed_'+'depleted_'
+
+main(seq_file, species, All_Shapes, E_train_path, D_train_path, out_data_path)
+
+E_test_path= seq_file+'test_processed_'+'enriched_'
 D_test_path= seq_file+'test_processed_'+'depleted_'
 
-print("Gathering D train data")
-np_D_train_data = SeqToMat(D_train_path, All_Shapes)
+main(seq_file, species, All_Shapes, E_test_path, D_test_path, out_data_path)
 
-print("Gathering D test data")
-np_D_test_data = SeqToMat(D_test_path, All_Shapes)
-print(f"np_D_test_data.shape: {np_D_test_data.shape}")
-print(f"np_D_train_data.shape: {np_D_train_data.shape}")
-
-
-Train_data = np.concatenate((np_E_train_data, np_D_train_data), axis=0)
-Edata_labels = np.ones(np_E_train_data.shape[0])
-Ddata_labels = np.zeros(np_D_train_data.shape[0])
-Train_labels = np.concatenate((Edata_labels, Ddata_labels), axis=0)
-print(f"train data  shape is: {Train_data.shape}")
-print(f"train label shape is: {Train_labels.shape}")
-
-Test_data = np.concatenate((np_E_test_data, np_D_test_data), axis=0)
-Edata_labels = np.ones(np_E_test_data.shape[0])
-Ddata_labels = np.zeros(np_D_test_data.shape[0])
-Test_labels = np.concatenate((Edata_labels, Ddata_labels), axis=0)
-print(f"test data shape is: {Test_data.shape}")
-print(f"test label shape is: {Test_labels.shape}")
-
-data_path='/project/rohs_108/yibeijia/nucleosome_occupancy/data/train_test_data/'
-data_path='/home/yibei/Projects/data/train_test_data/'
-
-section=int(sys.argv[1])
-total_sections=int(sys.argv[2])
-print(f"Current regions is: {section}\n");
-print(f"Total # of regions is: {total_sections}\n");
-
-total_lines = Test_data.shape[0]
-section_length = math.floor(total_lines / total_sections);
-print(f"test curr region line is {section_length}")
-
-start_line = (section-1) * section_length;
-end_line = section * section_length-1;
-if (end_line > total_lines):
-	end_line = total_lines-1;
-Test_Data = {"Test_data" : Test_data[start_line:end_line,:,:], "Test_labels" : Test_labels[start_line:end_line]}
-sio.savemat(data_path+species+'All_Shapes_Test_5seqsPerClustr_'+str(section)+'_'+str(total_sections)+'.mat', Test_Data,  do_compression=True)
-
-print(f"Current regions is: {section}\n");
-total_lines = Train_data.shape[0]
-section_length = math.floor(total_lines / total_sections);
-print(f"train curr region line is {section_length}")
-start_line = (section-1) * section_length;
-
-end_line = section * section_length-1;
-if (end_line > total_lines):
-	end_line = total_lines-1;
-Train_Data = {"Train_data" : Train_data[start_line:end_line,:,:], "Train_data" : Train_labels[start_line:end_line]}
-sio.savemat(data_path+species+'All_Shapes_Train_5seqsPerClustr_'+str(section)+'_'+str(total_sections)+'.mat', Train_Data,  do_compression=True)
