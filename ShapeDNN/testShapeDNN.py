@@ -59,7 +59,7 @@ data_folder = "/project/rohs_108/yibeijia/nucleosome_occupancy/data/train_test_d
 total_sections = 5
 X_test = np.array([])
 y_test = np.array([])
-for i in range(total_sections):
+for i in range(1, total_sections):
 	test_fn = 'yeastAll_Shapes_Test_5seqsPerClustr_'+str(i+1)+'_'+str(total_sections)+'.mat'
 	print(test_fn)
 	testmat = scipy.io.loadmat(data_folder+test_fn)
@@ -71,6 +71,14 @@ for i in range(total_sections):
 		curr_y_test = np.array(testmat['Test_labels']).T
 		X_test = np.concatenate([X_test, curr_X_test], axis=0)
 		y_test = np.concatenate([y_test, curr_y_test], axis=0)
+
+print(f"X_test.shape {X_test.shape}")
+
+
+# In[7]:
+
+
+print(f"y_test.shape {y_test.shape}")
 
 ### Load model
 argv = sys.argv[1:]
@@ -103,9 +111,14 @@ model.summary()
 
 ### Calculate averaged AUROC and AUPR
 #tpreds = model.predict_classes(testmat['Test_data'])
-tpreds = model.predict(X_test,verbose=1)
+# tpreds = model.predict(X_test,verbose=1)
+
+tpreds = model.predict(np.transpose(X_test,axes=(0,2,1)),verbose=1)
 tpreds_temp = np.copy(tpreds)
 reverse_start_id = int(y_test.shape[0]/2)
+print(f"tpreds.shape {len(tpreds)}")
+
+print(f"y_test.shape {y_test.shape}")
 
 for i in range(len(tpreds)):
     print("TrueLabel=%s, Predicted=%s" % (y_test.T[i], tpreds_temp[i]))
