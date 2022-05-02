@@ -200,7 +200,7 @@ def main(seq_file, species, All_Shapes, E_data_path, D_data_path, out_data_path)
     total_sections=int(sys.argv[1])
     print(f"Current regions is: {section}\n");
     print(f"Total # of regions is: {total_sections}\n");
-
+:Q
     print(f"Current regions is: {section}\n");
     total_lines = Train_Test_data.shape[0]
     section_length = math.floor(total_lines / total_sections);
@@ -239,8 +239,8 @@ print(All_Shapes)
 out_data_path='/project/rohs_108/yibeijia/nucleosome_occupancy/data/train_test_data/'
 #out_data_path='/home/yibei/Projects/data/train_test_data/'
 
-E_train_path= seq_file+'train_processed_'+'enriched_'
-D_train_path= seq_file+'train_processed_'+'depleted_'
+#E_train_path= seq_file+'train_processed_'+'enriched_'
+#D_train_path= seq_file+'train_processed_'+'depleted_'
 
 #main(seq_file, species, All_Shapes, E_train_path, D_train_path, out_data_path)
 

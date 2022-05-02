@@ -14,6 +14,6 @@
 conda activate gpuenv2
 module load usc
 module load cuda/10.1.243
-folder=/project/rohs_108/yibeijia/nucleosome_occupancy/ShapeDNN/train_run1/
+folder=/project/rohs_108/yibeijia/nucleosome_occupancy/ShapeDNN/train_run2/
 mkdir $folder
 python3 testShapeDNN.py -i $folder

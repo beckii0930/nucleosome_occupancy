@@ -31,7 +31,9 @@ from keras import backend as K
 from keras import regularizers
 import tensorflow as tf
 print("all packages loaded")
-
+if len(sys.argv) != 2:
+    print("python3 trainShapeDNN.py model_folder")
+model_folder = sys.argv[1]
 
 # In[2]:
 
@@ -58,10 +60,7 @@ X_train = np.array([])
 y_train = np.array([])
 for i in range(total_sections):
     train_fn = 'yeastAll_Shapes_Train_5seqsPerClustr_'+str(i+1)+'_'+str(total_sections)+'.mat'
-    test_fn = 'yeastAll_Shapes_Test_5seqsPerClustr_'+str(i+1)+'_'+str(total_sections)+'.mat'
-    print(train_fn)
     trainmat = scipy.io.loadmat(data_folder+train_fn)
-    validmat = scipy.io.loadmat(data_folder+test_fn)
     if X_train.shape[0] == 0:
         X_train = np.array(trainmat['Train_data'])
         y_train = np.array(trainmat['Train_labels']).T
@@ -70,8 +69,12 @@ for i in range(total_sections):
         curr_y_train = np.array(trainmat['Train_labels']).T
         X_train = np.concatenate([X_train, curr_X_train], axis=0)
         y_train = np.concatenate([y_train, curr_y_train], axis=0)
-
-
+# first test mat is val and rest are test mats        
+valid_fn = 'yeastAll_Shapes_Test_5seqsPerClustr_1_'+str(total_sections)+'.mat'
+print(valid_fn)
+validmat = scipy.io.loadmat(data_folder+valid_fn)
+print("valid mat shape")
+print(validmat['Test_data'].shape)
 # In[6]:
 
 
@@ -118,7 +121,7 @@ attention = Dense(1)(output)
 attention = Permute((2, 1))(attention)
 attention = Activation('softmax')(attention)
 attention = Permute((2, 1))(attention)
-attention = Lambda(lambda x: K.mean(x, axis=2), name='seq_attention',output_shape=(320,))(attention)
+attention = Lambda(lambda x: K.mean(x, axis=2), name='seq_attention',output_shape=(75,))(attention)
 attention = RepeatVector(320)(attention)
 attention = Permute((2,1))(attention)
 output = multiply([output, attention])
@@ -144,14 +147,12 @@ model.compile(loss='binary_crossentropy', optimizer='adam')
 print('model summary')
 model.summary()
 
-checkpointer = ModelCheckpoint(filepath="./model/tbinet.{epoch:02d}-{val_loss:.2f}.hdf5", verbose=1, save_best_only=False)
+checkpointer = ModelCheckpoint(filepath=model_folder+"tbinet.{epoch:02d}-{val_loss:.2f}.hdf5", verbose=1, save_best_only=False)
 earlystopper = EarlyStopping(monitor='val_loss', patience=10, verbose=1)
 
 
 # In[110]:
 
-print("valid mat shape")
-print(validmat['Test_data'].shape)
 
 
 # In[111]:
@@ -164,7 +165,19 @@ b=validmat['Test_labels'].T
 
 
 # model.fit(X_train, y_train, batch_size=100, epochs=60, shuffle=True, verbose=1, validation_data=(np.transpose(validmat['Train_data'],axes=(0,2,1)),validmat['Train_vals'][:,125:815]), callbacks=[checkpointer,earlystopper])
-model.fit(X_train, y_train, batch_size=100, epochs=2, shuffle=True, verbose=1, validation_data=(validmat['Test_data'],validmat['Test_labels'].T), callbacks=[checkpointer,earlystopper])
+history = model.fit(X_train, y_train, batch_size=100, epochs=60, shuffle=True, verbose=1, validation_data=(validmat['Test_data'],validmat['Test_labels'].T), callbacks=[checkpointer,earlystopper])
 
-model.save('./model/tbinet.h5')
+model.save(model_folder+'tbinet.h5')
+print(history.history['loss'])
+print(history.history['val_loss'])
+print(history.history.keys())
+
+# summarize history for accuracy
+plt.plot(history.history['loss'], label='train')
+plt.plot(history.history['val_loss'], label='test')
+plt.title('model loss')
+plt.ylabel('loss')
+plt.xlabel('epoch')
+plt.legend(['train', 'test'], loc='upper left')
+plt.savefig(model_folder+"model_loss.png")
 

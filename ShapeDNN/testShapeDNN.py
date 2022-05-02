@@ -101,7 +101,7 @@ for opt, arg in opts:
 print ('Input file is ', inputmodel)
 # print ('Output file is "', output)
 
-model = load_model("./model/tbinet.h5")
+model = load_model(inputmodel+"tbinet.h5")
 #model = load_model("./model2_reduced/tbinet.h5")
 #model = load_model("./model2_reduced_dense10/tbinet.h5")
 #model = load_model("./model3_removeLSTM_addDense/tbinet.h5")
