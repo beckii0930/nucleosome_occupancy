@@ -242,10 +242,10 @@ out_data_path='/project/rohs_108/yibeijia/nucleosome_occupancy/data/train_test_d
 E_train_path= seq_file+'train_processed_'+'enriched_'
 D_train_path= seq_file+'train_processed_'+'depleted_'
 
-main(seq_file, species, All_Shapes, E_train_path, D_train_path, out_data_path)
+#main(seq_file, species, All_Shapes, E_train_path, D_train_path, out_data_path)
 
 E_test_path= seq_file+'test_processed_'+'enriched_'
 D_test_path= seq_file+'test_processed_'+'depleted_'
 
-#main(seq_file, species, All_Shapes, E_test_path, D_test_path, out_data_path)
+main(seq_file, species, All_Shapes, E_test_path, D_test_path, out_data_path)
 

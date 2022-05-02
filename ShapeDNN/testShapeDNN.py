@@ -52,8 +52,25 @@ def get_aurocs_and_auprs(tpreds, tobs):
 data_folder = "/Users/yibeijia/Downloads/nucleosome_occupancy/data/train_test_data/"
 data_folder = "/scratch2/yibeijia/data/train_test_data/"
 data_folder = "/Users/yibeijia/Downloads/nucleosome_occupancy/data/train_test_data/"
+data_folder = "/project/rohs_108/yibeijia/nucleosome_occupancy/data/train_test_data/"
 
-testmat = scipy.io.loadmat(data_folder+'Test_data.mat')
+
+#testmat = scipy.io.loadmat(data_folder+'Test_data.mat')
+total_sections = 5
+X_test = np.array([])
+y_test = np.array([])
+for i in range(total_sections):
+	test_fn = 'yeastAll_Shapes_Test_5seqsPerClustr_'+str(i+1)+'_'+str(total_sections)+'.mat'
+	print(test_fn)
+	testmat = scipy.io.loadmat(data_folder+test_fn)
+	if X_test.shape[0] == 0:
+		X_test = np.array(testmat['Test_data'])
+		y_test = np.array(testmat['Test_labels']).T
+	else:
+		curr_X_test = np.array(testmat['Test_data'])
+		curr_y_test = np.array(testmat['Test_labels']).T
+		X_test = np.concatenate([X_test, curr_X_test], axis=0)
+		y_test = np.concatenate([y_test, curr_y_test], axis=0)
 
 ### Load model
 argv = sys.argv[1:]
@@ -73,25 +90,25 @@ for opt, arg in opts:
         inputmodel = arg
     # elif opt in ("-o", "--ofile"):
     #     output = arg
-print ('Input file is "', inputmodel)
+print ('Input file is ', inputmodel)
 # print ('Output file is "', output)
 
-#model = load_model("./model/tbinet.h5")
+model = load_model("./model/tbinet.h5")
 #model = load_model("./model2_reduced/tbinet.h5")
 #model = load_model("./model2_reduced_dense10/tbinet.h5")
-model = load_model("./model3_removeLSTM_addDense/tbinet.h5")
-model.load_weights(inputmodel)
+#model = load_model("./model3_removeLSTM_addDense/tbinet.h5")
+#model.load_weights(inputmodel)
 print('model summary')
 model.summary()
 
 ### Calculate averaged AUROC and AUPR
 #tpreds = model.predict_classes(testmat['Test_data'])
-tpreds = model.predict(testmat['Test_data'],verbose=1)
+tpreds = model.predict(X_test,verbose=1)
 tpreds_temp = np.copy(tpreds)
-reverse_start_id = int(testmat['Test_labels'].shape[0]/2)
+reverse_start_id = int(y_test.shape[0]/2)
 
 for i in range(len(tpreds)):
-    print("TrueLabel=%s, Predicted=%s" % (testmat['Test_labels'].T[i], tpreds_temp[i]))
+    print("TrueLabel=%s, Predicted=%s" % (y_test.T[i], tpreds_temp[i]))
 
 for i in range(reverse_start_id):
     tpreds_avg_temp = (tpreds_temp[i] + tpreds_temp[reverse_start_id+i])/2.0
@@ -99,12 +116,12 @@ for i in range(reverse_start_id):
     tpreds_temp[reverse_start_id+i] = tpreds_avg_temp
 
 
-aurocs, auprs = get_aurocs_and_auprs(tpreds_temp,testmat['Test_labels'].T)
+aurocs, auprs = get_aurocs_and_auprs(tpreds_temp,y_test.T)
 print("Averaged AUROC:",np.nanmean(aurocs))
 print("Averaged AUPR:", np.nanmean(auprs))
 from sklearn.metrics import accuracy_score
 from sklearn.metrics import precision_score
 from sklearn.metrics import recall_score 
-print("accuracy_score", accuracy_score(tpreds_temp,testmat['Test_labels'].T))
-print("precision_score", precision_score(tpreds_temp,testmat['Test_labels'].T))
-print("recall_score", recall_score(tpreds_temp,testmat['Test_labels'].T))
+print("accuracy_score", accuracy_score(tpreds_temp,y_test.T))
+print("precision_score", precision_score(tpreds_temp,y_test.T))
+print("recall_score", recall_score(tpreds_temp,y_test.T))

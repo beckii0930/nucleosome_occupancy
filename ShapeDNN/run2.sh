@@ -12,5 +12,5 @@ conda activate gpuenv
 #python3  PreprocessShape.py
 
 #python3 -m cProfile cluster2shape.py
-python3 cluster2shape2.py 5 ${SLURM_ARRAY_TASK_ID}
+python3 cluster2shape3.py 5 ${SLURM_ARRAY_TASK_ID}
 #python3  nucPosPredict.py 10 $(for i in $(seq 3 10); do echo $i; done)
