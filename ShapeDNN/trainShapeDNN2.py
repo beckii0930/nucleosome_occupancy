@@ -58,10 +58,7 @@ X_train = np.array([])
 y_train = np.array([])
 for i in range(total_sections):
     train_fn = 'yeastAll_Shapes_Train_5seqsPerClustr_'+str(i+1)+'_'+str(total_sections)+'.mat'
-    test_fn = 'yeastAll_Shapes_Test_5seqsPerClustr_'+str(i+1)+'_'+str(total_sections)+'.mat'
-    print(train_fn)
     trainmat = scipy.io.loadmat(data_folder+train_fn)
-    validmat = scipy.io.loadmat(data_folder+test_fn)
     if X_train.shape[0] == 0:
         X_train = np.array(trainmat['Train_data'])
         y_train = np.array(trainmat['Train_labels']).T
@@ -70,8 +67,12 @@ for i in range(total_sections):
         curr_y_train = np.array(trainmat['Train_labels']).T
         X_train = np.concatenate([X_train, curr_X_train], axis=0)
         y_train = np.concatenate([y_train, curr_y_train], axis=0)
-
-
+        
+valid_fn = 'yeastAll_Shapes_Test_5seqsPerClustr_1_'+str(total_sections)+'.mat'
+print(valid_fn)
+validmat = scipy.io.loadmat(data_folder+valid_fn)
+print("valid mat shape")
+print(validmat['Test_data'].shape)
 # In[6]:
 
 
@@ -150,8 +151,6 @@ earlystopper = EarlyStopping(monitor='val_loss', patience=10, verbose=1)
 
 # In[110]:
 
-print("valid mat shape")
-print(validmat['Test_data'].shape)
 
 
 # In[111]:
