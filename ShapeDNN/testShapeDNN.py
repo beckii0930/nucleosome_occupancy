@@ -66,6 +66,10 @@ for i in range(1, total_sections):
 	if X_test.shape[0] == 0:
 		X_test = np.array(testmat['Test_data'])
 		y_test = np.array(testmat['Test_labels']).T
+		print('Xtest')
+		print(X_test)
+		print('y test')
+		print(y_test)
 	else:
 		curr_X_test = np.array(testmat['Test_data'])
 		curr_y_test = np.array(testmat['Test_labels']).T
@@ -124,11 +128,12 @@ with open('tpreds_temp_run1.npy', 'wb') as f:
 reverse_start_id = int(y_test.shape[0]/2)
 
 try:
+	print("in try")
 	for i in range(len(tpreds)):
-		print("ERROR!")
 	#    print("TrueLabel=%s, Predicted=%s" % (y_test.T[i], tpreds_temp[i]))
 		print("TrueLabel=%s, Predicted=%s" % (y_test[i], tpreds_temp[i]))
 except:
+	print("in except")
 	for i in range(len(tpreds)):
 		print("TrueLabel=%s, Predicted=%s" % (y_test.T[i], tpreds_temp[i]))
 
@@ -138,7 +143,19 @@ for i in range(reverse_start_id):
     tpreds_temp[i] = tpreds_avg_temp
     tpreds_temp[reverse_start_id+i] = tpreds_avg_temp
 
-aurocs, auprs = get_aurocs_and_auprs(y_test.T, tpreds_temp)
+print('tpreds_temp')
+print(tpreds_temp[1:20])
+
+print('y_test')
+print(y_test[1:20])
+try:
+	print("in try")
+	aurocs, auprs = get_aurocs_and_auprs(tpreds_temp,y_test)
+except:
+	print("in except")
+	aurocs, auprs = get_aurocs_and_auprs(tpreds_temp,y_test,y_test.T)
+
+
 #aurocs, auprs = get_aurocs_and_auprs(tpreds_temp,y_test.T)
 print("Averaged AUROC:",np.nanmean(aurocs))
 print("Averaged AUPR:", np.nanmean(auprs))

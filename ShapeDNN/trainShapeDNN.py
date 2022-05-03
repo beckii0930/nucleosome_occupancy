@@ -75,23 +75,10 @@ print(valid_fn)
 validmat = scipy.io.loadmat(data_folder+valid_fn)
 print("valid mat shape")
 print(validmat['Test_data'].shape)
-# In[6]:
-
-
 print(f"X_train.shape {X_train.shape}")
-
-
-# In[7]:
-
-
 print(f"y_train.shape {y_train.shape}")
 
-
 # ### Run TBiNet
-
-# In[109]:
-
-
 sequence_input = Input(shape=(146,54))
 sequence_input0 = tf.transpose(sequence_input, perm=[0, 2, 1])
 
@@ -142,7 +129,9 @@ output = Activation('sigmoid')(output)
 model = Model(inputs=sequence_input, outputs=output)
 
 print('compiling model')
-model.compile(loss='binary_crossentropy', optimizer='adam')
+model.compile(loss='binary_crossentropy', optimizer='adam', metrics=[tf.keras.metrics.Precision(),
+																	tf.keras.metrics.Recall(),
+																	tf.keras.metrics.Accuracy()])
 
 print('model summary')
 model.summary()
@@ -150,34 +139,70 @@ model.summary()
 checkpointer = ModelCheckpoint(filepath=model_folder+"tbinet.{epoch:02d}-{val_loss:.2f}.hdf5", verbose=1, save_best_only=False)
 earlystopper = EarlyStopping(monitor='val_loss', patience=10, verbose=1)
 
-
-# In[110]:
-
-
-
-# In[111]:
-
-
 b=validmat['Test_labels'].T
 
-
-# In[1]:
-
-
 # model.fit(X_train, y_train, batch_size=100, epochs=60, shuffle=True, verbose=1, validation_data=(np.transpose(validmat['Train_data'],axes=(0,2,1)),validmat['Train_vals'][:,125:815]), callbacks=[checkpointer,earlystopper])
+
 history = model.fit(X_train, y_train, batch_size=100, epochs=60, shuffle=True, verbose=1, validation_data=(validmat['Test_data'],validmat['Test_labels'].T), callbacks=[checkpointer,earlystopper])
 
 model.save(model_folder+'tbinet.h5')
-print(history.history['loss'])
-print(history.history['val_loss'])
+
+print("listing all data in history")
 print(history.history.keys())
+try:
+	print(history.history['loss'])
+	print(history.history['val_loss'])
 
-# summarize history for accuracy
-plt.plot(history.history['loss'], label='train')
-plt.plot(history.history['val_loss'], label='test')
-plt.title('model loss')
-plt.ylabel('loss')
-plt.xlabel('epoch')
-plt.legend(['train', 'test'], loc='upper left')
-plt.savefig(model_folder+"model_loss.png")
+	print(history.history['accuracy'])
+	print(history.history['val_accuracy'])
 
+	print(history.history['precision'])
+	print(history.history['val_precision'])
+
+	print(history.history['recall'])
+	print(history.history['val_recall'])
+
+	fig, axs = plt.subplots(2, 2)
+	axs[0, 0].plot(history.history['accuracy'], label='train')
+	axs[0, 0].plot(history.history['val_accuracy'], label='test')
+	axs[0, 0].set_title('model accuracy')
+	axs[0, 0].legend(['train', 'test'], loc='upper left')
+
+	axs[0, 1].plot(history.history['loss'], label='train')
+	axs[0, 1].plot(history.history['val_loss'], label='test')
+	axs[0, 1].set_title('model loss')
+	axs[0, 1].legend(['train', 'test'], loc='upper left')
+
+	axs[1, 0].plot(history.history['precision'], label='train')
+	axs[1, 0].plot(history.history['val_precision'], label='test')
+	axs[1, 0].set_title('model precision')
+	axs[1, 0].legend(['train', 'test'], loc='upper left')
+
+	axs[1, 1].plot(history.history['recall'], label='train')
+	axs[1, 1].plot(history.history['val_recall'], label='test')
+	axs[1, 1].set_title('model recall')
+	axs[1, 1].legend(['train', 'test'], loc='upper left')
+
+
+	for ax in axs.flat:
+	    ax.set(xlabel='epoch', ylabel='metric')
+	plt.savefig(model_folder+"model_metrics.png")
+
+	# Hide x labels and tick labels for top plots and y ticks for right plots.
+	#for ax in axs.flat:
+	#    ax.label_outer()
+except:
+	print("An exception occurred") 
+
+#plt.plot(history.history['accuracy'])
+#plt.plot(history.history['val_accuracy'])
+#plt.title('model accuracy')
+#plt.ylabel('accuracy')
+#
+#plt.plot(history.history['loss'], label='train')
+#plt.plot(history.history['val_loss'], label='test')
+#plt.title('model loss')
+#plt.ylabel('loss')
+#plt.xlabel('epoch')
+#plt.legend(['train', 'test'], loc='upper left')
+#plt.savefig(model_folder+"model_loss.png")
