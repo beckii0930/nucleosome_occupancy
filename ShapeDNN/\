@@ -59,7 +59,7 @@ data_folder = "/project/rohs_108/yibeijia/nucleosome_occupancy/data/train_test_d
 total_sections = 5
 X_test = np.array([])
 y_test = np.array([])
-for i in range(1, total_sections):
+for i in range(4, total_sections):
 	test_fn = 'yeastAll_Shapes_Test_5seqsPerClustr_'+str(i+1)+'_'+str(total_sections)+'.mat'
 	print(test_fn)
 	testmat = scipy.io.loadmat(data_folder+test_fn)
@@ -115,36 +115,26 @@ tpreds = model.predict(X_test,verbose=1)
 
 #tpreds = model.predict(np.transpose(X_test,axes=(0,2,1)),verbose=1)
 tpreds_temp = np.copy(tpreds)
-print(f"tpreds_temp.shape {tpreds_temp.shape}")
+reverse_start_id = int(y_test.shape[0]/2)
+print(f"tpreds.shape {len(tpreds)}")
+
 print(f"y_test.shape {y_test.shape}")
 
-
-with open('tpreds_temp_run1.npy', 'wb') as f:
-	np.save(f, tpreds_temp)
-reverse_start_id = int(y_test.shape[0]/2)
-
-try:
-	for i in range(len(tpreds)):
-		print("ERROR!")
-	#    print("TrueLabel=%s, Predicted=%s" % (y_test.T[i], tpreds_temp[i]))
-		print("TrueLabel=%s, Predicted=%s" % (y_test[i], tpreds_temp[i]))
-except:
-	for i in range(len(tpreds)):
-		print("TrueLabel=%s, Predicted=%s" % (y_test.T[i], tpreds_temp[i]))
-
+for i in range(len(tpreds)):
+    print("TrueLabel=%s, Predicted=%s" % (y_test.T[i], tpreds_temp[i]))
 
 for i in range(reverse_start_id):
     tpreds_avg_temp = (tpreds_temp[i] + tpreds_temp[reverse_start_id+i])/2.0
     tpreds_temp[i] = tpreds_avg_temp
     tpreds_temp[reverse_start_id+i] = tpreds_avg_temp
 
-aurocs, auprs = get_aurocs_and_auprs(y_test.T, tpreds_temp)
-#aurocs, auprs = get_aurocs_and_auprs(tpreds_temp,y_test.T)
+
+aurocs, auprs = get_aurocs_and_auprs(tpreds_temp,y_test.T)
 print("Averaged AUROC:",np.nanmean(aurocs))
 print("Averaged AUPR:", np.nanmean(auprs))
 from sklearn.metrics import accuracy_score
 from sklearn.metrics import precision_score
 from sklearn.metrics import recall_score 
-print("accuracy_score", accuracy_score(y_test.T,tpreds_temp))
-print("precision_score", precision_score(y_test.T,tpreds_temp))
-print("recall_score", recall_score(y_test.T,tpreds_temp))
+print("accuracy_score", accuracy_score(tpreds_temp,y_test.T))
+print("precision_score", precision_score(tpreds_temp,y_test.T))
+print("recall_score", recall_score(tpreds_temp,y_test.T))

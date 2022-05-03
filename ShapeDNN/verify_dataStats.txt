@@ -1,0 +1,9 @@
+IN train
+zero cnt is 106617
+one cnt is 87688
+total cnt is 194305
+yeastAll_Shapes_Test_5seqsPerClustr_1_5.mat
+yeastAll_Shapes_Test_5seqsPerClustr_2_5.mat
+yeastAll_Shapes_Test_5seqsPerClustr_3_5.mat
+yeastAll_Shapes_Test_5seqsPerClustr_4_5.mat
+yeastAll_Shapes_Test_5seqsPerClustr_5_5.mat

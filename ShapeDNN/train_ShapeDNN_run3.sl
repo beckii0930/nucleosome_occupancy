@@ -8,7 +8,7 @@
 #SBATCH --partition=gpu
 #SBATCH --mail-user=yibeijia@usc.edu
 
-#SBATCH --output=train_ShapeDNN_run1.out
+#SBATCH --output=train_ShapeDNN_run3.out
 
 . ~/.bashrc
 conda activate gpuenv2
