@@ -68,7 +68,7 @@ for i in range(1, total_sections):
 		y_test = np.array(testmat['Test_labels']).T
 		print('Xtest')
 		print(X_test)
-		print('y test')
+		print('y test')veraged
 		print(y_test)
 	else:
 		curr_X_test = np.array(testmat['Test_data'])
@@ -123,45 +123,40 @@ print(f"tpreds_temp.shape {tpreds_temp.shape}")
 print(f"y_test.shape {y_test.shape}")
 
 
-with open('tpreds_temp_run1.npy', 'wb') as f:
+with open(inputmodel+'tpreds_temp_run1.npy', 'wb') as f:
 	np.save(f, tpreds_temp)
+
+with open(inputmodel+'y_test_run1.npy', 'wb') as f:
+	np.save(f, y_test)
+
+for i in range(len(tpreds)):
+    if tpreds[i] <= 0.1:
+        print(f"original {tpreds[i]}")
+        tpreds[i] = 0
+        print(f"changed to {tpreds[i]}")
+    if tpreds[i] >= 0.9:
+        print(f"original {tpreds[i]}")
+        tpreds[i] = 1
+        print(f"changed to {tpreds[i]}")
+
 reverse_start_id = int(y_test.shape[0]/2)
 
-try:
-	print("in try")
-	for i in range(len(tpreds)):
-	#    print("TrueLabel=%s, Predicted=%s" % (y_test.T[i], tpreds_temp[i]))
-		print("TrueLabel=%s, Predicted=%s" % (y_test[i], tpreds_temp[i]))
-except:
-	print("in except")
-	for i in range(len(tpreds)):
-		print("TrueLabel=%s, Predicted=%s" % (y_test.T[i], tpreds_temp[i]))
-
+for i in range(len(tpreds)):
+#    print("TrueLabel=%s, Predicted=%s" % (y_test.T[i], tpreds_temp[i]))
+	print("TrueLabel=%s, Predicted=%s" % (y_test[i], tpreds_temp[i]))
 
 for i in range(reverse_start_id):
     tpreds_avg_temp = (tpreds_temp[i] + tpreds_temp[reverse_start_id+i])/2.0
     tpreds_temp[i] = tpreds_avg_temp
     tpreds_temp[reverse_start_id+i] = tpreds_avg_temp
 
-print('tpreds_temp')
-print(tpreds_temp[1:20])
-
-print('y_test')
-print(y_test[1:20])
-try:
-	print("in try")
-	aurocs, auprs = get_aurocs_and_auprs(tpreds_temp,y_test)
-except:
-	print("in except")
-	aurocs, auprs = get_aurocs_and_auprs(tpreds_temp,y_test,y_test.T)
-
-
+aurocs, auprs = get_aurocs_and_auprs(tpreds_temp,y_test)
 #aurocs, auprs = get_aurocs_and_auprs(tpreds_temp,y_test.T)
 print("Averaged AUROC:",np.nanmean(aurocs))
 print("Averaged AUPR:", np.nanmean(auprs))
 from sklearn.metrics import accuracy_score
 from sklearn.metrics import precision_score
 from sklearn.metrics import recall_score 
-print("accuracy_score", accuracy_score(y_test.T,tpreds_temp))
-print("precision_score", precision_score(y_test.T,tpreds_temp))
-print("recall_score", recall_score(y_test.T,tpreds_temp))
+print("accuracy_score", accuracy_score(y_test,tpreds))
+print("precision_score", precision_score(y_test,tpreds))
+print("recall_score", recall_score(y_test,tpreds))

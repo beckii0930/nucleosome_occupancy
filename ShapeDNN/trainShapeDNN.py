@@ -150,15 +150,19 @@ model.save(model_folder+'tbinet.h5')
 print("listing all data in history")
 print(history.history.keys())
 try:
+	print("Loss")
 	print(history.history['loss'])
 	print(history.history['val_loss'])
-
+	
+	print("accuracy")
 	print(history.history['accuracy'])
 	print(history.history['val_accuracy'])
 
+	print("precision")
 	print(history.history['precision'])
 	print(history.history['val_precision'])
 
+	print("recall")
 	print(history.history['recall'])
 	print(history.history['val_recall'])
 
