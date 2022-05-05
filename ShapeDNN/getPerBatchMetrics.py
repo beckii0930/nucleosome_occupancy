@@ -51,7 +51,7 @@ for epoch in range(len(Acc)):
 	loss = Loss[epoch]
 	prec = Prec[epoch]
 	rec = Rec[epoch]
-	print(len(acc))
+	#print(len(acc))
 	fig, axs = plt.subplots(2, 2)
 
 	axs[0, 0].plot(acc)
@@ -59,23 +59,24 @@ for epoch in range(len(Acc)):
 	axs[0, 0].set_ylim([0, 1.1])
 	axs[0, 0].xaxis.set_major_locator(MaxNLocator(integer=True))
 	axs[0, 0].tick_params(axis='x', labelrotation = 45)
-	#axs[0, 0].set_xticklabels(axs[0, 0].get_xticks(), rotation=45)
-
 
 	axs[0, 1].plot(loss)
 	axs[0, 1].set_title('Loss')
 	axs[0, 1].set_ylim([0, 1.1])
 	axs[0, 1].xaxis.set_major_locator(MaxNLocator(integer=True))
+	axs[0, 1].tick_params(axis='x', labelrotation = 45)
 
 	axs[1, 0].plot(prec)
 	axs[1, 0].set_title('Precision')
 	axs[1, 0].set_ylim([0, 1.1])
 	axs[1, 0].xaxis.set_major_locator(MaxNLocator(integer=True))
+	axs[1, 0].tick_params(axis='x', labelrotation = 45)
 
 	axs[1, 1].plot(rec)
 	axs[1, 1].set_title('Recall')
 	axs[1, 1].set_ylim([0, 1.1])
 	axs[1, 1].xaxis.set_major_locator(MaxNLocator(integer=True))
+	axs[1, 1].tick_params(axis='x', labelrotation = 45)
 
 	fig.supxlabel('Batch')
 	fig.supylabel('Metric Value')
