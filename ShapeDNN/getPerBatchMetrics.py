@@ -1,4 +1,8 @@
 import numpy as np
+import re
+ 
+import matplotlib.pyplot as plt
+from matplotlib.ticker import MaxNLocator
 
 def readInputAsArray(fileName):
 	with open(fileName, 'r') as myfile:
@@ -20,19 +24,17 @@ for i in train:
 	line = i.split()
 	if start and len(line) > 0:
 		if '1944' in line[0]:
+			#print(line)
 			for j in range(1,len(line)):
 				if 'loss' in line[j-1]:
-					print('loss')
-					Loss[epoch-1].append(float(line[j].split('x08')[0]))
+					Loss[epoch-1].append(float(line[j]))
 				elif 'precision' in line[j-1]:
-					print('precision')
-					Prec[epoch-1].append(float(line[j].split('\x')[0]))
+					Prec[epoch-1].append(float(line[j]))
 				elif 'recall' in line[j-1]:
-					print('recall')
-					Rec[epoch-1].append(float(line[j].split('\x')[0]))
+					Rec[epoch-1].append(float(line[j]))
 				elif 'accuracy' in line[j-1]:
-					print('accuracy')
-					Acc[epoch-1].append(float(line[j].split('\x')[0]))
+					acc_val = re.sub(r'[^\x20-\x7e]', '', line[j])
+					Acc[epoch-1].append(float(acc_val))
 					
 	if len(line) == 2:
 		if "Epoch" in line[0] and '/60' in line[1]:
@@ -44,15 +46,53 @@ for i in train:
 			Prec.append([])
 			Rec.append([])
 
-Acc_np = np.array(Acc)
-Loss_np = np.array(Loss)
-Prec_np = np.array(Prec)
-Rec_np = np.array(Rec)
+for epoch in range(len(Acc)):
+	acc = Acc[epoch]
+	loss = Loss[epoch]
+	prec = Prec[epoch]
+	rec = Rec[epoch]
+	fig, axs = plt.subplots(2, 2)
 
-print(Acc_np)
-print(Loss_np)
-print(Prec_np)
-print(Rec_np)
+	axs[0, 0].plot(acc)
+	axs[0, 0].set_title('Accuracy')
+	axs[0, 0].set_ylim([0, 1.1])
+	axs[0, 0].xaxis.set_major_locator(MaxNLocator(integer=True))
+
+	axs[0, 1].plot(loss)
+	axs[0, 1].set_title('Loss')
+	axs[0, 1].set_ylim([0, 1.1])
+	axs[0, 1].xaxis.set_major_locator(MaxNLocator(integer=True))
+
+	axs[1, 0].plot(prec)
+	axs[1, 0].set_title('Precision')
+	axs[1, 0].set_ylim([0, 1.1])
+	axs[1, 0].xaxis.set_major_locator(MaxNLocator(integer=True))
+
+	axs[1, 1].plot(rec)
+	axs[1, 1].set_title('Recall')
+	axs[1, 1].set_ylim([0, 1.1])
+	axs[1, 1].xaxis.set_major_locator(MaxNLocator(integer=True))
+
+	fig.supxlabel('Batch')
+	fig.supylabel('Metric Value')
+	fig.suptitle('Epoch '+str(epoch))
+	plt.tight_layout()
+
+	model_folder = '/home/yibei/Projects/nucleosome_occupancy/ShapeDNN/'
+	fig_name="./batchwise_model_metrics_epoch_"+str(epoch)+".png"
+	print("saving figure to:")
+	print(fig_name)
+	plt.savefig(fig_name)
+
+#Acc_np = np.array(Acc)
+#Loss_np = np.array(Loss)
+#Prec_np = np.array(Prec)
+#Rec_np = np.array(Rec)
+
+#print(Acc_np)
+#print(Loss_np)
+#print(Prec_np)
+#print(Rec_np)
 
 #             print(score[0][1])
 #            if (float(score[1][1:len(score[1])-1]) > 0.5):

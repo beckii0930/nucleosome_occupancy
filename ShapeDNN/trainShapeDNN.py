@@ -8,6 +8,7 @@ import numpy as np
 import h5py
 import scipy.io
 from sklearn import metrics
+from sklearn import utils
 import pandas as pd
 import os
 import sys
@@ -70,8 +71,8 @@ for i in range(total_sections):
         curr_y_train = np.array(trainmat['Train_labels']).T
         X_train_og = np.concatenate([X_train_og, curr_X_train], axis=0)
         y_train_og = np.concatenate([y_train_og, curr_y_train], axis=0)
-
-X_train, y_train = sklearn.utils.shuffle(X_train_og, y_train_og)
+X_train, y_train = utils.shuffle(X_train_og, y_train_og)
+#X_train, y_train = sklearn.utils.shuffle(X_train_og, y_train_og)
 print("some x trains:")
 print(X_train[1:5])
 
