@@ -1,6 +1,6 @@
 import numpy as np
 import re
- 
+import sys 
 import matplotlib.pyplot as plt
 from matplotlib.ticker import MaxNLocator
 
@@ -10,8 +10,16 @@ def readInputAsArray(fileName):
 	for i in range(0, len(data)):
 		data[i] = data[i].rstrip()
 	return data
-    
-train_out = '/project/rohs_108/yibeijia/nucleosome_occupancy/ShapeDNN/train_ShapeDNN_run4.out'
+if len(sys.argv) <2:
+	print('which run do u want to analyze?')
+	print('python3 getPerBatchMetrics.py 1')
+	quit();
+train_out = sys.argv[1]
+
+train_out = './train_ShapeDNN_run' + str(train_out)+'.out'
+
+print(train_out)
+#train_out = './train_ShapeDNN_run4.out'
 
 train=readInputAsArray(train_out)   
 start = False
@@ -83,7 +91,7 @@ for epoch in range(len(Acc)):
 	fig.suptitle('Epoch '+str(epoch))
 	plt.tight_layout()
 
-	model_folder = '/home/yibei/Projects/nucleosome_occupancy/ShapeDNN/'
+	model_folder = '/home/yibei/Projects/nucleosome_occupancy/ShapeDNN/train_run' + str(sys.argv[1])+'/'
 	fig_name="./batchwise_model_metrics_epoch_"+str(epoch)+".png"
 	print("saving figure to:")
 	print(fig_name)
