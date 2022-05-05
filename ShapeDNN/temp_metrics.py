@@ -54,13 +54,14 @@ tpreds = np.load('tpreds_temp_run1.npy')
 tpreds_temp = np.copy(tpreds)
 for i in range(len(tpreds)):
 	if tpreds[i] <= 0.1:
-		print(f"original {tpreds[i]}")
+		#print(f"original {tpreds[i]}")
 		tpreds[i] = 0
-		print(f"changed to {tpreds[i]}")
+		
+		#print(f"changed to {tpreds[i]}")
 	if tpreds[i] >= 0.9:
-		print(f"original {tpreds[i]}")
+		#print(f"original {tpreds[i]}")
 		tpreds[i] = 1
-		print(f"changed to {tpreds[i]}")
+		#print(f"changed to {tpreds[i]}")
 
 y_test=np.load('y_test_run1.npy')
 print(f"y_test.shape {y_test.shape}")

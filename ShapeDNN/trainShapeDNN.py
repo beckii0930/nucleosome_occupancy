@@ -15,6 +15,7 @@ import sys
 # os.environ['THEANO_FLAGS'] = "device=cuda0,force_device=True,floatX=float32,gpuarray.preallocate=\0.3"
 
 import matplotlib.pyplot as plt
+from matplotlib.ticker import MaxNLocator
 
 from keras.layers import Embedding
 from keras.models import Sequential
@@ -56,19 +57,27 @@ data_folder='/project/rohs_108/yibeijia/nucleosome_occupancy/data/train_test_dat
 
 
 total_sections = 5
-X_train = np.array([]) 
-y_train = np.array([])
+X_train_og = np.array([]) 
+y_train_og = np.array([])
 for i in range(total_sections):
     train_fn = 'yeastAll_Shapes_Train_5seqsPerClustr_'+str(i+1)+'_'+str(total_sections)+'.mat'
     trainmat = scipy.io.loadmat(data_folder+train_fn)
-    if X_train.shape[0] == 0:
-        X_train = np.array(trainmat['Train_data'])
-        y_train = np.array(trainmat['Train_labels']).T
+    if X_train_og.shape[0] == 0:
+        X_train_og = np.array(trainmat['Train_data'])
+        y_train_og = np.array(trainmat['Train_labels']).T
     else:
         curr_X_train = np.array(trainmat['Train_data'])
         curr_y_train = np.array(trainmat['Train_labels']).T
-        X_train = np.concatenate([X_train, curr_X_train], axis=0)
-        y_train = np.concatenate([y_train, curr_y_train], axis=0)
+        X_train_og = np.concatenate([X_train_og, curr_X_train], axis=0)
+        y_train_og = np.concatenate([y_train_og, curr_y_train], axis=0)
+
+X_train, y_train = sklearn.utils.shuffle(X_train_og, y_train_og)
+print("some x trains:")
+print(X_train[1:5])
+
+print("some y trains:")
+print(y_train[1:10])
+
 # first test mat is val and rest are test mats        
 valid_fn = 'yeastAll_Shapes_Test_5seqsPerClustr_1_'+str(total_sections)+'.mat'
 print(valid_fn)
@@ -169,27 +178,35 @@ try:
 	fig, axs = plt.subplots(2, 2)
 	axs[0, 0].plot(history.history['accuracy'], label='train')
 	axs[0, 0].plot(history.history['val_accuracy'], label='test')
-	axs[0, 0].set_title('model accuracy')
-	axs[0, 0].legend(['train', 'test'], loc='upper left')
+	axs[0, 0].set_title('Accuracy')
+	axs[0, 0].legend(['train', 'test'], loc='upper right',prop={'size': 8})
+	axs[0, 0].set_ylim([0, 1.1])
+	axs[0, 0].xaxis.set_major_locator(MaxNLocator(integer=True))
 
 	axs[0, 1].plot(history.history['loss'], label='train')
 	axs[0, 1].plot(history.history['val_loss'], label='test')
-	axs[0, 1].set_title('model loss')
-	axs[0, 1].legend(['train', 'test'], loc='upper left')
+	axs[0, 1].set_title('Loss')
+	axs[0, 1].legend(['train', 'test'], loc='upper right',prop={'size': 8})
+	axs[0, 1].set_ylim([0, 1.1])
+	axs[0, 1].xaxis.set_major_locator(MaxNLocator(integer=True))
 
 	axs[1, 0].plot(history.history['precision'], label='train')
 	axs[1, 0].plot(history.history['val_precision'], label='test')
-	axs[1, 0].set_title('model precision')
-	axs[1, 0].legend(['train', 'test'], loc='upper left')
+	axs[1, 0].set_title('Precision')
+	axs[1, 0].legend(['train', 'test'], loc='lower right',prop={'size': 8})
+	axs[1, 0].set_ylim([0, 1.1])
+	axs[1, 0].xaxis.set_major_locator(MaxNLocator(integer=True))
 
 	axs[1, 1].plot(history.history['recall'], label='train')
 	axs[1, 1].plot(history.history['val_recall'], label='test')
-	axs[1, 1].set_title('model recall')
-	axs[1, 1].legend(['train', 'test'], loc='upper left')
-
-
-	for ax in axs.flat:
-	    ax.set(xlabel='epoch', ylabel='metric')
+	axs[1, 1].set_title('Recall')
+	axs[1, 1].legend(['train', 'test'], loc='lower right',prop={'size': 8})
+	axs[1, 1].set_ylim([0, 1.1])
+	axs[1, 1].xaxis.set_major_locator(MaxNLocator(integer=True))
+	
+	fig.supxlabel('Epoch')
+	fig.supylabel('Metric Value')
+	plt.tight_layout()
 	plt.savefig(model_folder+"model_metrics.png")
 
 	# Hide x labels and tick labels for top plots and y ticks for right plots.
