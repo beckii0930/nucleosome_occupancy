@@ -91,8 +91,8 @@ for epoch in range(len(Acc)):
 	fig.suptitle('Epoch '+str(epoch))
 	plt.tight_layout()
 
-	model_folder = '/home/yibei/Projects/nucleosome_occupancy/ShapeDNN/train_run' + str(sys.argv[1])+'/'
-	fig_name="./batchwise_model_metrics_epoch_"+str(epoch)+".png"
+	#model_folder = '/home/yibei/Projects/nucleosome_occupancy/ShapeDNN/train_run' + str(sys.argv[1])+'/'
+	fig_name="./train_run"+str(sys.argv[1])+"/batchwise_model_metrics_epoch_"+str(epoch)+".png"
 	print("saving figure to:")
 	print(fig_name)
 	plt.savefig(fig_name)
