@@ -51,12 +51,16 @@ for epoch in range(len(Acc)):
 	loss = Loss[epoch]
 	prec = Prec[epoch]
 	rec = Rec[epoch]
+	print(len(acc))
 	fig, axs = plt.subplots(2, 2)
 
 	axs[0, 0].plot(acc)
 	axs[0, 0].set_title('Accuracy')
 	axs[0, 0].set_ylim([0, 1.1])
 	axs[0, 0].xaxis.set_major_locator(MaxNLocator(integer=True))
+	axs[0, 0].tick_params(axis='x', labelrotation = 45)
+	#axs[0, 0].set_xticklabels(axs[0, 0].get_xticks(), rotation=45)
+
 
 	axs[0, 1].plot(loss)
 	axs[0, 1].set_title('Loss')
