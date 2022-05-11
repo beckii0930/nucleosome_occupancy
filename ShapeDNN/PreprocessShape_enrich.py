@@ -65,7 +65,7 @@ def append_bplist_to_np_arr(lst, np_arr):
 
 
 
-def preprocessShapeFile(seq_file, All_Shapes, test_clsts, train_clsts, file_list ):
+def preprocessShapeFile(seq_file, All_Shapes, test_clsts, train_clsts, file_list, species):
 	out = ''
 	test_out = ''
 	train_out = ''
@@ -76,21 +76,33 @@ def preprocessShapeFile(seq_file, All_Shapes, test_clsts, train_clsts, file_list
 		print(enriched)
 		for shape in All_Shapes:
 			print(shape)
-			Seqs = readInputAsArray(seq_file + enriched+'regions_seqOnly_'+shape+'.txt')
-			#Seqs = readInputAsArray(seq_file +'humanEseqs_seqOnly_200000_'+shape+'.txt')
-			#Seqs = readInputAsArray(seq_file +'wormEseqs_seqOnly_200000_'+shape+'.txt')
-			#Seqs = readInputAsArray(seq_file +'flyEseqs_seqOnly_200000_'+shape+'.txt')
+			if species == 'yeast':
+				Seqs = readInputAsArray(seq_file + enriched+'regions_seqOnly_'+shape+'.txt')
+			else:
+				Seqs = readInputAsArray(seq_file +species+'Eseqs_seqOnly_200000_'+shape+'.txt')
+				Sequences = readInputAsArray('/project/rohs_102/share/nucleosome_occupancy_data/'+species+'Eseqs_seqOnly_200000.txt')
+				print(seq_file +species+'Eseqs_seqOnly_200000_'+shape+'.txt')
+			seq_line_cnt=0	
 			for line in Seqs:
 				l = line.split()
-				if l[1] != '3': # Only consider flanking region of size 3
-					continue;
-				curr_seq_shape_list = list_str_to_float(l[2:])
-				curr_seq = l[0]
+				if species == 'yeast':
+					if l[1] != '3': # Only consider flanking region of size 3
+						continue;
+					curr_seq_shape_list = list_str_to_float(l[2:])
+					curr_seq = l[0]
 
-				if len(curr_seq) > len(curr_seq_shape_list):
-					bp_shape = False
+					if len(curr_seq) > len(curr_seq_shape_list):
+						bp_shape = False
+					else:
+						bp_shape = True
 				else:
-					bp_shape = True
+					curr_seq_shape_list = list_str_to_float(l)
+					curr_seq=Sequences[seq_line_cnt]
+					seq_line_cnt+=1
+					if len(curr_seq_shape_list) ==146:
+						bp_shape = False
+					else:
+						bp_shape = True
 
 				if bp_shape:
 					if len(curr_seq_shape_list) < 147:
@@ -188,13 +200,13 @@ def preprocessShapeFile(seq_file, All_Shapes, test_clsts, train_clsts, file_list
 								out+=' '.join(str(e) for e in out_seq_shape_list)+'\n'
 								train_out+=out_seq + ' ' + l[1] + ' '
 								train_out+=' '.join(str(e) for e in out_seq_shape_list)+'\n'
-			f = open(seq_file+'all_processed_'+enriched+shape+".txt", "w+")
-			f.write(out)
-			f.close()
-			f = open(seq_file+'train_processed_'+enriched+shape+".txt", "w+")
+			#f = open(seq_file+'all_processed_'+enriched+shape+".txt", "w+")
+			#f.write(out)
+			#f.close()
+			f = open(seq_file+species+'_train_processed_'+enriched+shape+".txt", "w+")
 			f.write(train_out)
 			f.close()
-			f = open(seq_file+'test_processed_'+enriched+shape+".txt", "w+")
+			f = open(seq_file+species+'_test_processed_'+enriched+shape+".txt", "w+")
 			f.write(test_out)
 			f.close()
             # with gzip.open(seq_file+'processed_'+enriched+shape+'.gz', 'wb') as f:
@@ -285,36 +297,36 @@ All_Shapes=['Buckle', 'EP', 'HelT-FL', 'HelT', 'MGW-FL', 'MGW',
 
 seq_file='/project/rohs_108/yibeijia/data/yibei_predictions2/'
 #seq_file='/home/yibei/Downloads/yibei_predictions/'
-species='yeast'
+import sys
+species=sys.argv[1]
 
 #path='/project/rohs_108/yibeijia/nucleosome_occupancy/tbinet_stuff/cluster_seq/'
 path='/project/rohs_102/share/nucleosome_occupancy_data/'
 #path='/home/yibei/Projects/data/'
 
 if species =='human': 
-    Dseqs = readInputAsArray(path+'Dseqs.txt')[1:] # There is no Dseqs
-    Dcluster = readInputAsArray(path+'Dseqs80.clstr')
-    
     Eseqs = readInputAsArray(path+species+'Eseqs.txt')[1:] # avoid the first \n
     Ecluster = readInputAsArray(path+species+'Eseqs80_every20.clstr')    
-    
+    print(len(Eseqs))
+    print(len(Ecluster))
 elif species == 'yeast':
     Eseqs = readInputAsArray(path+'Eseqs.txt')[1:] # avoid the first \n
     Ecluster = readInputAsArray(path+'Eseqs80.clstr')
     
     Dcluster = readInputAsArray(path+'Dseqs80.clstr')
     Dseqs = readInputAsArray(path+'Dseqs.txt')[1:]
-
+elif species =='fly':
+	Eseqs = readInputAsArray(path+species+'Eseqs.txt')[1:] # avoid the first \n
+	Ecluster = readInputAsArray(path+species+'Eseqs80_every10.clstr')
+	print(len(Eseqs))
+	print(len(Ecluster))
 else:
-    Dseqs = readInputAsArray(path+'Dseqs.txt')[1:] # There is no Dseqs
-    Dcluster = readInputAsArray(path+'Dseqs80.clstr')
-    
     Eseqs = readInputAsArray(path+species+'Eseqs.txt')[1:] # avoid the first \n
     Ecluster = readInputAsArray(path+species+'Eseqs80_every5.clstr')
 
 file_list = ['enriched_']
 E_test_clsts, E_train_clsts = getClusterIndex(Ecluster, seq_file, species)
-preprocessShapeFile(seq_file, All_Shapes, E_test_clsts, E_train_clsts,file_list )
+preprocessShapeFile(seq_file, All_Shapes, E_test_clsts, E_train_clsts,file_list, species)
 
 #file_list = ['depleted_']
 #D_test_clsts, D_train_clsts = getClusterIndex(Dcluster, seq_file, species)

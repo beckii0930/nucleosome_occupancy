@@ -6,10 +6,10 @@
 #SBATCH --mail-type=ALL
 #SBATCH --mail-user=yibeijia@usc.edu
 #SBATCH --array=1
-
+#SBATCH --output=human_enrich.out
 . ~/.bashrc
 conda activate gpuenv
-python3  PreprocessShape_enrich.py
+python3  PreprocessShape_enrich.py human
 
 #python3 -m cProfile cluster2shape.py
 

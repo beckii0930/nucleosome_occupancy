@@ -65,7 +65,7 @@ def append_bplist_to_np_arr(lst, np_arr):
 
 
 
-def preprocessShapeFile(seq_file, All_Shapes, test_clsts, train_clsts, file_list ):
+def preprocessShapeFile(seq_file, All_Shapes, test_clsts, train_clsts, file_list, species):
 	out = ''
 	test_out = ''
 	train_out = ''
@@ -77,7 +77,7 @@ def preprocessShapeFile(seq_file, All_Shapes, test_clsts, train_clsts, file_list
 		for shape in All_Shapes:
 			print(shape)
 			#Seqs = readInputAsArray(seq_file + enriched+'regions_seqOnly_'+shape+'.txt')
-			Seqs = readInputAsArray(seq_file +'humanEseqs_seqOnly_200000_'+shape+'.txt')
+			Seqs = readInputAsArray(seq_file +species+'Eseqs_seqOnly_200000_'+shape+'.txt')
 			#Seqs = readInputAsArray(seq_file +'wormEseqs_seqOnly_200000_'+shape+'.txt')
 			#Seqs = readInputAsArray(seq_file +'flyEseqs_seqOnly_200000_'+shape+'.txt')
 			for line in Seqs:
@@ -188,13 +188,14 @@ def preprocessShapeFile(seq_file, All_Shapes, test_clsts, train_clsts, file_list
 								out+=' '.join(str(e) for e in out_seq_shape_list)+'\n'
 								train_out+=out_seq + ' ' + l[1] + ' '
 								train_out+=' '.join(str(e) for e in out_seq_shape_list)+'\n'
-			f = open(seq_file+'all_processed_'+enriched+shape+".txt", "w+")
-			f.write(out)
-			f.close()
-			f = open(seq_file+'train_processed_'+enriched+shape+".txt", "w+")
+			#f = open(seq_file+'all_processed_'+enriched+shape+".txt", "w+")
+			
+			#f.write(out)
+			#f.close()
+			f = open(seq_file+species+'_train_processed_'+enriched+shape+".txt", "w+")
 			f.write(train_out)
 			f.close()
-			f = open(seq_file+'test_processed_'+enriched+shape+".txt", "w+")
+			f = open(seq_file+species+'_test_processed_'+enriched+shape+".txt", "w+")
 			f.write(test_out)
 			f.close()
             # with gzip.open(seq_file+'processed_'+enriched+shape+'.gz', 'wb') as f:
@@ -315,5 +316,5 @@ else:
 
 file_list = ['depleted_']
 D_test_clsts, D_train_clsts = getClusterIndex(Dcluster, seq_file, species)
-preprocessShapeFile(seq_file, All_Shapes, D_test_clsts, D_train_clsts,file_list )
+preprocessShapeFile(seq_file, All_Shapes, D_test_clsts, D_train_clsts,file_list,species)
 

@@ -65,7 +65,7 @@ def append_bplist_to_np_arr(lst, np_arr):
 
 
 
-def preprocessShapeFile(seq_file, All_Shapes, test_clsts, train_clsts, file_list ):
+def preprocessShapeFile(seq_file, All_Shapes, test_clsts, train_clsts, file_list, species):
 	out = ''
 	test_out = ''
 	train_out = ''
@@ -76,8 +76,10 @@ def preprocessShapeFile(seq_file, All_Shapes, test_clsts, train_clsts, file_list
 		print(enriched)
 		for shape in All_Shapes:
 			print(shape)
-			Seqs = readInputAsArray(seq_file + enriched+'regions_seqOnly_'+shape+'.txt')
-			#Seqs = readInputAsArray(seq_file +'humanEseqs_seqOnly_200000_'+shape+'.txt')
+			if species == 'yeast':
+				Seqs = readInputAsArray(seq_file + enriched+'regions_seqOnly_'+shape+'.txt')
+			else:
+				Seqs = readInputAsArray(seq_file +species+'Eseqs_seqOnly_200000_'+shape+'.txt')
 			#Seqs = readInputAsArray(seq_file +'wormEseqs_seqOnly_200000_'+shape+'.txt')
 			#Seqs = readInputAsArray(seq_file +'flyEseqs_seqOnly_200000_'+shape+'.txt')
 			for line in Seqs:
@@ -188,13 +190,13 @@ def preprocessShapeFile(seq_file, All_Shapes, test_clsts, train_clsts, file_list
 								out+=' '.join(str(e) for e in out_seq_shape_list)+'\n'
 								train_out+=out_seq + ' ' + l[1] + ' '
 								train_out+=' '.join(str(e) for e in out_seq_shape_list)+'\n'
-			f = open(seq_file+'all_processed_'+enriched+shape+".txt", "w+")
-			f.write(out)
-			f.close()
-			f = open(seq_file+'train_processed_'+enriched+shape+".txt", "w+")
+			#f = open(seq_file+'all_processed_'+enriched+shape+".txt", "w+")
+			#f.write(out)
+			#f.close()
+			f = open(seq_file+species+'_train_processed_'+enriched+shape+".txt", "w+")
 			f.write(train_out)
 			f.close()
-			f = open(seq_file+'test_processed_'+enriched+shape+".txt", "w+")
+			f = open(seq_file+species+'_test_processed_'+enriched+shape+".txt", "w+")
 			f.write(test_out)
 			f.close()
             # with gzip.open(seq_file+'processed_'+enriched+shape+'.gz', 'wb') as f:
@@ -281,20 +283,18 @@ All_Shapes=['Buckle', 'EP', 'HelT-FL', 'HelT', 'MGW-FL', 'MGW',
 'Opening-FL', 'Opening', 'ProT-FL', 'ProT', 'Rise-FL', 'Rise', 'Roll-FL',
 'Roll', 'Shear-FL', 'Shear', 'Shift-FL', 'Shift', 'Slide-FL', 'Slide',
 'Stagger-FL', 'Stagger', 'Stretch-FL', 'Tilt-FL', 'Tilt']
-All_Shapes=['Buckle-FL', 'Stretch']
+#All_Shapes=['Buckle-FL', 'Stretch']
 
 seq_file='/project/rohs_108/yibeijia/data/yibei_predictions2/'
 #seq_file='/home/yibei/Downloads/yibei_predictions/'
-species='yeast'
+import sys
+species=sys.argv[1]
 
 #path='/project/rohs_108/yibeijia/nucleosome_occupancy/tbinet_stuff/cluster_seq/'
 path='/project/rohs_102/share/nucleosome_occupancy_data/'
 #path='/home/yibei/Projects/data/'
 
 if species =='human': 
-    Dseqs = readInputAsArray(path+'Dseqs.txt')[1:] # There is no Dseqs
-    Dcluster = readInputAsArray(path+'Dseqs80.clstr')
-    
     Eseqs = readInputAsArray(path+species+'Eseqs.txt')[1:] # avoid the first \n
     Ecluster = readInputAsArray(path+species+'Eseqs80_every20.clstr')    
     
@@ -305,18 +305,19 @@ elif species == 'yeast':
     Dcluster = readInputAsArray(path+'Dseqs80.clstr')
     Dseqs = readInputAsArray(path+'Dseqs.txt')[1:]
 
+elif species == 'fly':
+	Eseqs = readInputAsArray(path+species+'Eseqs.txt')[1:] # avoid the first \n
+	Ecluster = readInputAsArray(path+species+'Eseqs80_every10.clstr')
+
 else:
-    Dseqs = readInputAsArray(path+'Dseqs.txt')[1:] # There is no Dseqs
-    Dcluster = readInputAsArray(path+'Dseqs80.clstr')
-    
     Eseqs = readInputAsArray(path+species+'Eseqs.txt')[1:] # avoid the first \n
     Ecluster = readInputAsArray(path+species+'Eseqs80_every5.clstr')
 
-# file_list = ['enriched_']
-# E_test_clsts, E_train_clsts = getClusterIndex(Ecluster, seq_file, species)
-# preprocessShapeFile(seq_file, All_Shapes, E_test_clsts, E_train_clsts,file_list )
+#file_list = ['enriched_']
+#E_test_clsts, E_train_clsts = getClusterIndex(Ecluster, seq_file, species)
+#preprocessShapeFile(seq_file, All_Shapes, E_test_clsts, E_train_clsts,file_list, species)
 
 file_list = ['depleted_']
 D_test_clsts, D_train_clsts = getClusterIndex(Dcluster, seq_file, species)
-preprocessShapeFile(seq_file, All_Shapes, D_test_clsts, D_train_clsts,file_list )
+preprocessShapeFile(seq_file, All_Shapes, D_test_clsts, D_train_clsts,file_list, species)
 
