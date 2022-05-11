@@ -1,6 +1,7 @@
 import numpy as np
 import scipy.io
 from sklearn import metrics
+from sklearn import utils
 import pandas as pd
 import os
 os.environ['THEANO_FLAGS'] = "device=cuda0,force_device=True,floatX=float32"
@@ -57,24 +58,25 @@ data_folder = "/project/rohs_108/yibeijia/nucleosome_occupancy/data/train_test_d
 
 #testmat = scipy.io.loadmat(data_folder+'Test_data.mat')
 total_sections = 5
-X_test = np.array([])
-y_test = np.array([])
+X_test_og = np.array([])
+y_test_og = np.array([])
 for i in range(1, total_sections):
 	test_fn = 'yeastAll_Shapes_Test_5seqsPerClustr_'+str(i+1)+'_'+str(total_sections)+'.mat'
 	print(test_fn)
 	testmat = scipy.io.loadmat(data_folder+test_fn)
-	if X_test.shape[0] == 0:
-		X_test = np.array(testmat['Test_data'])
-		y_test = np.array(testmat['Test_labels']).T
+	if X_test_og.shape[0] == 0:
+		X_test_og = np.array(testmat['Test_data'])
+		y_test_og = np.array(testmat['Test_labels']).T
 		print('Xtest')
-		print(X_test)
-		print('y test')veraged
-		print(y_test)
+		print(X_test_og)
+		print('y test')
+		print(y_test_og)
 	else:
 		curr_X_test = np.array(testmat['Test_data'])
 		curr_y_test = np.array(testmat['Test_labels']).T
-		X_test = np.concatenate([X_test, curr_X_test], axis=0)
-		y_test = np.concatenate([y_test, curr_y_test], axis=0)
+		X_test_og = np.concatenate([X_test_og, curr_X_test], axis=0)
+		y_test_og = np.concatenate([y_test_og, curr_y_test], axis=0)
+X_test, y_test = utils.shuffle(X_test_og,y_test_og)
 
 print(f"X_test.shape {X_test.shape}")
 
@@ -131,19 +133,19 @@ with open(inputmodel+'y_test_run1.npy', 'wb') as f:
 
 for i in range(len(tpreds)):
     if tpreds[i] <= 0.1:
-        print(f"original {tpreds[i]}")
+#        print(f"original {tpreds[i]}")
         tpreds[i] = 0
-        print(f"changed to {tpreds[i]}")
+#        print(f"changed to {tpreds[i]}")
     if tpreds[i] >= 0.9:
-        print(f"original {tpreds[i]}")
+#        print(f"original {tpreds[i]}")
         tpreds[i] = 1
-        print(f"changed to {tpreds[i]}")
+#        print(f"changed to {tpreds[i]}")
 
 reverse_start_id = int(y_test.shape[0]/2)
 
-for i in range(len(tpreds)):
+#for i in range(len(tpreds)):
 #    print("TrueLabel=%s, Predicted=%s" % (y_test.T[i], tpreds_temp[i]))
-	print("TrueLabel=%s, Predicted=%s" % (y_test[i], tpreds_temp[i]))
+#	print("TrueLabel=%s, Predicted=%s" % (y_test[i], tpreds_temp[i]))
 
 for i in range(reverse_start_id):
     tpreds_avg_temp = (tpreds_temp[i] + tpreds_temp[reverse_start_id+i])/2.0

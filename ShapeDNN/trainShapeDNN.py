@@ -129,7 +129,7 @@ output = Dropout(0.5)(output)
 flat_output = Flatten()(output)
 
 #FC Layer
-FC_output = Dense(10)(flat_output)
+FC_output = Dense(50)(flat_output)
 FC_output = Activation('relu')(FC_output)
 
 #Output Layer
@@ -147,8 +147,8 @@ print('model summary')
 model.summary()
 
 checkpointer = ModelCheckpoint(filepath=model_folder+"tbinet.{epoch:02d}-{val_loss:.2f}.hdf5", verbose=1, save_best_only=False)
-earlystopper = EarlyStopping(monitor='val_loss', patience=10, verbose=1)
-
+#earlystopper = EarlyStopping(monitor='val_loss', patience=10, verbose=1)
+earlystopper = EarlyStopping(monitor='val_accuracy',patience=10, verbose=1)
 b=validmat['Test_labels'].T
 
 # model.fit(X_train, y_train, batch_size=100, epochs=60, shuffle=True, verbose=1, validation_data=(np.transpose(validmat['Train_data'],axes=(0,2,1)),validmat['Train_vals'][:,125:815]), callbacks=[checkpointer,earlystopper])
@@ -162,18 +162,22 @@ print(history.history.keys())
 try:
 	print("Loss")
 	print(history.history['loss'])
+	print("\n")
 	print(history.history['val_loss'])
 	
 	print("accuracy")
 	print(history.history['accuracy'])
+	print("\n")
 	print(history.history['val_accuracy'])
 
 	print("precision")
 	print(history.history['precision'])
+	print("\n")
 	print(history.history['val_precision'])
 
 	print("recall")
 	print(history.history['recall'])
+	print("\n")
 	print(history.history['val_recall'])
 
 	fig, axs = plt.subplots(2, 2)

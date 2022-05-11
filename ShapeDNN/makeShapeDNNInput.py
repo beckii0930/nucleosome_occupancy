@@ -164,7 +164,7 @@ def concatAllShapeArr(seq_file, All_Shapes, total_sections, section):
 
 ################################################## Main ##################################################
 # seq_file='/home/yibei/Downloads/yibei_predictions/'
-seq_file='/project/rohs_108/yibeijia/data/yibei_predictions/'
+seq_file='/project/rohs_108/yibeijia/data/yibei_predictions2/'
 All_Shapes=['Buckle-FL', 'Buckle', 'EP', 'HelT-FL', 'HelT', 'MGW-FL', 'MGW', 
                 'Opening-FL', 'Opening', 'ProT-FL', 'ProT', 'Rise-FL', 'Rise', 'Roll-FL',
                 'Roll', 'Shear-FL', 'Shear', 'Shift-FL', 'Shift', 'Slide-FL', 'Slide', 
@@ -177,13 +177,9 @@ np_shape_D = np.array([])
 
 total_sections=sys.argv[1]
 section = sys.argv[2]
-# All_Shapes=['Stretch']
 print("Getting Enriched Seqs")
-
-
 np_shape_E = concatAllShapeArr(seq_file+'enriched_', All_Shapes, total_sections, section) # depleted seqs output
 
-# All_Shapes=['Roll', 'Stretch']
 print("Getting Depleted Seqs")
 np_shape_D = concatAllShapeArr(seq_file+'depleted_', All_Shapes, total_sections, section) # enriched seqs output
 

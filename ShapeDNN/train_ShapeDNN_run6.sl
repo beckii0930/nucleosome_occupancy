@@ -8,12 +8,15 @@
 #SBATCH --partition=gpu
 #SBATCH --mail-user=yibeijia@usc.edu
 
-#SBATCH --output=test_ShapeDNN_run4.out
+#SBATCH --output=train_ShapeDNN_run6.out
 
 . ~/.bashrc
 conda activate gpuenv2
 module load usc
 module load cuda/10.1.243
-folder=/project/rohs_108/yibeijia/nucleosome_occupancy/ShapeDNN/train_run4/
+#python3 trainShapeDNN.py
+# dense 50 with val_accuracy as monitor 
+folder=/project/rohs_108/yibeijia/nucleosome_occupancy/ShapeDNN/train_run6/
+
 mkdir $folder
-python3 testShapeDNN.py -i $folder
+python3 trainShapeDNN.py $folder

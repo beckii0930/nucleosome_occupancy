@@ -225,7 +225,7 @@ def main(seq_file, species, All_Shapes, E_data_path, D_data_path, out_data_path)
         DataToSave,  do_compression=True)
 
 ######################## ######################## Main ######################## ########################
-seq_file='/project/rohs_108/yibeijia/data/yibei_predictions/'
+seq_file='/project/rohs_108/yibeijia/data/yibei_predictions2/'
 #seq_file='/home/yibei/Downloads/yibei_predictions/'
 species='yeast'
 
