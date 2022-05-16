@@ -6,12 +6,12 @@
 #SBATCH --mail-type=ALL
 #SBATCH --mail-user=yibeijia@usc.edu
 #SBATCH --array=1
-#SBATCH --output=worm_enrich.out
+#SBATCH --output=yeast_train.out
 . ~/.bashrc
 conda activate gpuenv
-python3  PreprocessShape_enrich.py human
+#python3  PreprocessShape_enrich.py yeast
 
 #python3 -m cProfile cluster2shape.py
 
-#python3 cluster2shape2.py 5 ${SLURM_ARRAY_TASK_ID}
+python3 -m cProfile cluster2shape_makeTrain.py 5 ${SLURM_ARRAY_TASK_ID} yeast
 #python3  nucPosPredict.py 10 $(for i in $(seq 3 10); do echo $i; done)
