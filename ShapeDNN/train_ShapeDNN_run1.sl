@@ -9,7 +9,7 @@
 #SBATCH --mail-user=yibeijia@usc.edu
 
 #SBATCH --output=train_ShapeDNN_run1.out
-
+# this time, I shuffled the valimat during vaidation to see if increase the train accuracy
 . ~/.bashrc
 conda activate gpuenv2
 module load usc

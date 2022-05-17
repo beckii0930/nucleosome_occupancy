@@ -6,7 +6,7 @@
 #SBATCH --mail-type=ALL
 #SBATCH --mail-user=yibeijia@usc.edu
 #SBATCH --array=1
-#SBATCH --output=yease_test.out
+#SBATCH --output=yeast_test.out
 . ~/.bashrc
 conda activate gpuenv
 #python3  PreprocessShape_deplete.py yeast

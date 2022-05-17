@@ -9,7 +9,7 @@
 #SBATCH --output=worm_enrich_test.out
 . ~/.bashrc
 conda activate gpuenv
-#python3  PreprocessShape_enrich.py worm
+python3  PreprocessShape_enrich.py worm
 
 #python3 -m cProfile cluster2shape.py
 

@@ -9,7 +9,7 @@
 #SBATCH --output=fly_enrich_test.out
 . ~/.bashrc
 conda activate gpuenv
-#python3  PreprocessShape_enrich.py fly
+python3  PreprocessShape_enrich.py fly
 
 #python3 -m cProfile cluster2shape.py
 

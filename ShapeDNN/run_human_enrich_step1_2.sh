@@ -9,7 +9,7 @@
 #SBATCH --output=human_enrich_test.out
 . ~/.bashrc
 conda activate gpuenv
-#python3  PreprocessShape_enrich.py human
+python3  PreprocessShape_enrich.py human
 
 #python3 -m cProfile cluster2shape.py
 

@@ -150,10 +150,10 @@ checkpointer = ModelCheckpoint(filepath=model_folder+"tbinet.{epoch:02d}-{val_lo
 #earlystopper = EarlyStopping(monitor='val_loss', patience=10, verbose=1)
 earlystopper = EarlyStopping(monitor='val_accuracy',patience=10, verbose=1)
 b=validmat['Test_labels'].T
-
+X_val, y_val = utils.shuffle(validmat['Test_data'],validmat['Test_labels'])
 # model.fit(X_train, y_train, batch_size=100, epochs=60, shuffle=True, verbose=1, validation_data=(np.transpose(validmat['Train_data'],axes=(0,2,1)),validmat['Train_vals'][:,125:815]), callbacks=[checkpointer,earlystopper])
 
-history = model.fit(X_train, y_train, batch_size=100, epochs=60, shuffle=True, verbose=1, validation_data=(validmat['Test_data'],validmat['Test_labels'].T), callbacks=[checkpointer,earlystopper])
+history = model.fit(X_train, y_train, batch_size=100, epochs=60, shuffle=True, verbose=1, validation_data=(X_val,y_val.T), callbacks=[checkpointer,earlystopper])
 
 model.save(model_folder+'tbinet.h5')
 

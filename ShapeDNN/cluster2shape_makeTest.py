@@ -200,7 +200,6 @@ def main(seq_file, species, All_Shapes, E_data_path, D_data_path, out_data_path)
     total_sections=int(sys.argv[1])
     print(f"Current regions is: {section}\n");
     print(f"Total # of regions is: {total_sections}\n");
-:Q
     print(f"Current regions is: {section}\n");
     total_lines = Train_Test_data.shape[0]
     section_length = math.floor(total_lines / total_sections);

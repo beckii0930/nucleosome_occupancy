@@ -274,15 +274,11 @@ def getClusterIndex(cluster_file, seq_file, species):
     # print(train_clsts)
     return test_clsts, train_clsts
 
-All_Shapes=['Buckle-FL', 'Buckle', 'EP', 'HelT-FL', 'HelT', 'MGW-FL', 'MGW',
-             'Opening-FL', 'Opening', 'ProT-FL', 'ProT', 'Rise-FL', 'Rise', 'Roll-FL',
-             'Roll', 'Shear-FL', 'Shear', 'Shift-FL', 'Shift', 'Slide-FL', 'Slide',
-             'Stagger-FL', 'Stagger', 'Stretch-FL', 'Stretch', 'Tilt-FL', 'Tilt']
+	All_Shapes=['Buckle-FL', 'Buckle', 'EP', 'HelT-FL', 'HelT', 'MGW-FL', 'MGW',
+				 'Opening-FL', 'Opening', 'ProT-FL', 'ProT', 'Rise-FL', 'Rise', 'Roll-FL',
+				 'Roll', 'Shear-FL', 'Shear', 'Shift-FL', 'Shift', 'Slide-FL', 'Slide',
+				 'Stagger-FL', 'Stagger', 'Stretch-FL', 'Stretch', 'Tilt-FL', 'Tilt']
 
-All_Shapes=['Buckle', 'EP', 'HelT-FL', 'HelT', 'MGW-FL', 'MGW',
-'Opening-FL', 'Opening', 'ProT-FL', 'ProT', 'Rise-FL', 'Rise', 'Roll-FL',
-'Roll', 'Shear-FL', 'Shear', 'Shift-FL', 'Shift', 'Slide-FL', 'Slide',
-'Stagger-FL', 'Stagger', 'Stretch-FL', 'Tilt-FL', 'Tilt']
 #All_Shapes=['Buckle-FL', 'Stretch']
 
 seq_file='/project/rohs_108/yibeijia/data/yibei_predictions2/'
