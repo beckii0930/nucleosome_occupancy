@@ -288,7 +288,7 @@ All_Shapes=['Buckle-FL', 'Buckle', 'EP', 'HelT-FL', 'HelT', 'MGW-FL', 'MGW',
              'Opening-FL', 'Opening', 'ProT-FL', 'ProT', 'Rise-FL', 'Rise', 'Roll-FL',
              'Roll', 'Shear-FL', 'Shear', 'Shift-FL', 'Shift', 'Slide-FL', 'Slide',
              'Stagger-FL', 'Stagger', 'Stretch-FL', 'Stretch', 'Tilt-FL', 'Tilt']
-All_Shapes=['Buckle-FL', 'Stretch']
+All_Shapes=['Buckle-FL','Stretch']
 
 seq_file='/project/rohs_108/yibeijia/data/yibei_predictions2/'
 #seq_file='/home/yibei/Downloads/yibei_predictions/'
@@ -321,7 +321,20 @@ else:
 
 file_list = ['enriched_']
 E_test_clsts, E_train_clsts = getClusterIndex(Ecluster, seq_file, species)
-preprocessShapeFile(seq_file, All_Shapes, E_test_clsts, E_train_clsts,file_list, species)
+print("E_test_clsts")
+print(E_test_clsts)
+print("E_train_clsts")
+print(E_train_clsts)
+if species != 'yeast':
+	E_test_clsts = E_test_clsts+E_train_clsts
+	print("species not yeast")
+	print("E_test_clsts")
+	print(E_test_clsts)
+	print("E_train_clsts")
+	print(E_train_clsts)
+	preprocessShapeFile(seq_file, All_Shapes, E_test_clsts, E_train_clsts,file_list, species)
+else:
+    preprocessShapeFile(seq_file, All_Shapes, E_test_clsts, E_train_clsts,file_list, species)
 
 #file_list = ['depleted_']
 #D_test_clsts, D_train_clsts = getClusterIndex(Dcluster, seq_file, species)

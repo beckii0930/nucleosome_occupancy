@@ -170,13 +170,14 @@ def SeqToMat(path, All_Shapes):
                 E_train_data +=[curr_seq]
 
         print(f"Finished loading {shape}")
-
+        print(f"b4 merge, np_E_train_data.shape: {np_E_train_data.shape}")
         if np_E_train_data.shape[0] == 0:
             np_E_train_data = np.array(E_train_data)
         else:
-            np_all_shape_arr = np.array(E_train_data)
-            np_E_train_data = np.concatenate([np_E_train_data, np_all_shape_arr], axis=2)
-        print(f"np_data.shape: {np_E_train_data.shape}")
+            np_curr_shape_arr = np.array(E_train_data)
+            print(f"np_curr_shape_arr.shape: {np_curr_shape_arr.shape}")
+            np_E_train_data = np.concatenate([np_E_train_data, np_curr_shape_arr], axis=2)
+        print(f"after merging, np_E_train_data.shape.shape: {np_E_train_data.shape}")
     return np_E_train_data
 
 
@@ -232,7 +233,7 @@ All_Shapes=['Buckle-FL', 'Buckle', 'EP', 'HelT-FL', 'HelT', 'MGW-FL', 'MGW',
               'Opening-FL', 'Opening', 'ProT-FL', 'ProT', 'Rise-FL', 'Rise', 'Roll-FL',
               'Roll', 'Shear-FL', 'Shear', 'Shift-FL', 'Shift', 'Slide-FL', 'Slide',
               'Stagger-FL', 'Stagger', 'Stretch-FL', 'Stretch', 'Tilt-FL', 'Tilt']
-# All_Shapes=['Buckle-FL', 'Stretch','EP']
+#All_Shapes=['Buckle-FL', 'Stretch','EP']
 print(All_Shapes)
 
 out_data_path='/project/rohs_108/yibeijia/nucleosome_occupancy/data/train_test_data/'

@@ -14,5 +14,5 @@ python3  PreprocessShape_enrich.py human
 #python3 -m cProfile cluster2shape.py
 
 # we are making test but it is called train
-python3 cluster2shape_makeTrain.py 5 ${SLURM_ARRAY_TASK_ID} human
+#python3 cluster2shape_makeTrain.py 5 ${SLURM_ARRAY_TASK_ID} human
 #python3  nucPosPredict.py 10 $(for i in $(seq 3 10); do echo $i; done)

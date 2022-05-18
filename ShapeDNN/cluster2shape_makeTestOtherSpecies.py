@@ -174,10 +174,9 @@ def SeqToMat(path, All_Shapes):
         if np_E_train_data.shape[0] == 0:
             np_E_train_data = np.array(E_train_data)
         else:
-            np_curr_shape_arr = np.array(E_train_data)
-            print(f"np_curr_shape_arr.shape: {np_curr_shape_arr.shape}")
-            np_E_train_data = np.concatenate([np_E_train_data, np_curr_shape_arr], axis=2)
-        print(f"after merging,  np_data.shape: {np_E_train_data.shape}")
+            np_all_shape_arr = np.array(E_train_data)
+            np_E_train_data = np.concatenate([np_E_train_data, np_all_shape_arr], axis=2)
+        print(f"np_data.shape: {np_E_train_data.shape}")
     return np_E_train_data
 
 
@@ -201,6 +200,7 @@ def main(seq_file, species, All_Shapes, E_data_path, D_data_path, out_data_path)
     total_sections=int(sys.argv[1])
     print(f"Current regions is: {section}\n");
     print(f"Total # of regions is: {total_sections}\n");
+
     print(f"Current regions is: {section}\n");
     total_lines = Train_Test_data.shape[0]
     section_length = math.floor(total_lines / total_sections);
@@ -227,7 +227,6 @@ def main(seq_file, species, All_Shapes, E_data_path, D_data_path, out_data_path)
 ######################## ######################## Main ######################## ########################
 seq_file='/project/rohs_108/yibeijia/data/yibei_predictions2/'
 #seq_file='/home/yibei/Downloads/yibei_predictions/'
-species='yeast'
 
 All_Shapes=['Buckle-FL', 'Buckle', 'EP', 'HelT-FL', 'HelT', 'MGW-FL', 'MGW',
               'Opening-FL', 'Opening', 'ProT-FL', 'ProT', 'Rise-FL', 'Rise', 'Roll-FL',
@@ -238,14 +237,14 @@ print(All_Shapes)
 
 out_data_path='/project/rohs_108/yibeijia/nucleosome_occupancy/data/train_test_data/'
 #out_data_path='/home/yibei/Projects/data/train_test_data/'
+species=sys.argv[3]
+E_train_path= seq_file+species+'_train_processed_'+'enriched_'
+D_train_path= seq_file+species+'_train_processed_'+'depleted_'
 
-#E_train_path= seq_file+'train_processed_'+'enriched_'
-#D_train_path= seq_file+'train_processed_'+'depleted_'
+main(seq_file, species, All_Shapes, E_train_path, D_train_path, out_data_path)
 
-#main(seq_file, species, All_Shapes, E_train_path, D_train_path, out_data_path)
+#E_test_path= seq_file+'test_processed_'+'enriched_'
+#D_test_path= seq_file+'test_processed_'+'depleted_'
 
-E_test_path= seq_file+species+'_test_processed_'+'enriched_'
-D_test_path= seq_file+species+'_test_processed_'+'depleted_'
-
-main(seq_file, species, All_Shapes, E_test_path, D_test_path, out_data_path)
+#main(seq_file, species, All_Shapes, E_test_path, D_test_path, out_data_path)
 

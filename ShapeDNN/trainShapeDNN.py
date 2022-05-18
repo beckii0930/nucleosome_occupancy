@@ -73,11 +73,18 @@ for i in range(total_sections):
         y_train_og = np.concatenate([y_train_og, curr_y_train], axis=0)
 X_train, y_train = utils.shuffle(X_train_og, y_train_og)
 #X_train, y_train = sklearn.utils.shuffle(X_train_og, y_train_og)
-print("some x trains:")
-print(X_train[1:5])
+array_sum = np.sum(X_train)
+array_has_nan = np.isnan(array_sum)
+if array_has_nan == True:
+	print("NaN in train")
+	exit()
 
-print("some y trains:")
-print(y_train[1:10])
+array_sum = np.sum(y_train)
+array_has_nan = np.isnan(array_sum)
+if array_has_nan == True:
+	print("NaN in test")
+	exit()
+print("No NaN in train or test data")	
 
 # first test mat is val and rest are test mats        
 valid_fn = 'yeastAll_Shapes_Test_5seqsPerClustr_1_'+str(total_sections)+'.mat'
@@ -149,11 +156,27 @@ model.summary()
 checkpointer = ModelCheckpoint(filepath=model_folder+"tbinet.{epoch:02d}-{val_loss:.2f}.hdf5", verbose=1, save_best_only=False)
 #earlystopper = EarlyStopping(monitor='val_loss', patience=10, verbose=1)
 earlystopper = EarlyStopping(monitor='val_accuracy',patience=10, verbose=1)
+reduce_lr = ReduceLROnPlateau(monitor='val_loss', factor=0.2,
+                              patience=5, min_lr=0.001)
+
 b=validmat['Test_labels'].T
 X_val, y_val = utils.shuffle(validmat['Test_data'],validmat['Test_labels'])
+array_sum = np.sum(X_val)
+array_has_nan = np.isnan(array_sum)
+if array_has_nan:
+	print('Nan in X validation')
+	exit()
+array_sum = np.sum(y_val)
+array_has_nan = np.isnan(array_sum)
+if array_has_nan:
+	print('Nan in y validation')
+	exit()
+print('No Nan in validation')
+	
 # model.fit(X_train, y_train, batch_size=100, epochs=60, shuffle=True, verbose=1, validation_data=(np.transpose(validmat['Train_data'],axes=(0,2,1)),validmat['Train_vals'][:,125:815]), callbacks=[checkpointer,earlystopper])
 
-history = model.fit(X_train, y_train, batch_size=100, epochs=60, shuffle=True, verbose=1, validation_data=(X_val,y_val.T), callbacks=[checkpointer,earlystopper])
+# added reduce learning rate callback to slow down learning rate
+history = model.fit(X_train, y_train, batch_size=100, epochs=60, shuffle=True, verbose=1, validation_data=(X_val,y_val.T), callbacks=[checkpointer,earlystopper, reduce_lr])
 
 model.save(model_folder+'tbinet.h5')
 

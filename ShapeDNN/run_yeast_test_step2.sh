@@ -5,7 +5,7 @@
 #SBATCH -N 1
 #SBATCH --mail-type=ALL
 #SBATCH --mail-user=yibeijia@usc.edu
-#SBATCH --array=1
+#SBATCH --array=1-5
 #SBATCH --output=yeast_test.out
 . ~/.bashrc
 conda activate gpuenv
@@ -13,5 +13,5 @@ conda activate gpuenv
 
 #python3 -m cProfile cluster2shape.py
 
-python3 -m cProfile cluster2shape_makeTest.py 5 ${SLURM_ARRAY_TASK_ID} yeast
+python3 cluster2shape_makeTest.py 5 ${SLURM_ARRAY_TASK_ID} yeast
 #python3  nucPosPredict.py 10 $(for i in $(seq 3 10); do echo $i; done)
