@@ -147,8 +147,8 @@ def SeqToMat(path, All_Shapes):
         E_train_Seqs = readInputAsArray(E_train_path)
 
         E_train_data = []
-
-        if len(E_train_Seqs[0].split()[0]) > len(E_train_Seqs[0].split()[2:]):
+        print(E_train_Seqs[0])
+        if len(E_train_Seqs[0].split()[0]) > len(E_train_Seqs[0].split()[1:]):
             print("base step parameter")
             bp_shape = False
         else:
@@ -174,7 +174,8 @@ def SeqToMat(path, All_Shapes):
         if np_E_train_data.shape[0] == 0:
             np_E_train_data = np.array(E_train_data)
         else:
-            np_all_shape_arr = np.array(E_train_data)
+            np_curr_shape_arr = np.array(E_train_data)
+            print(f"np_curr_shape_arr.shape: {np_curr_shape_arr.shape}")
             np_E_train_data = np.concatenate([np_E_train_data, np_all_shape_arr], axis=2)
         print(f"np_data.shape: {np_E_train_data.shape}")
     return np_E_train_data
@@ -238,8 +239,8 @@ print(All_Shapes)
 out_data_path='/project/rohs_108/yibeijia/nucleosome_occupancy/data/train_test_data/'
 #out_data_path='/home/yibei/Projects/data/train_test_data/'
 species=sys.argv[3]
-E_train_path= seq_file+species+'_train_processed_'+'enriched_'
-D_train_path= seq_file+species+'_train_processed_'+'depleted_'
+E_train_path= seq_file+species+'_test_processed_'+'enriched_'
+D_train_path= seq_file+species+'_test_processed_'+'depleted_'
 
 main(seq_file, species, All_Shapes, E_train_path, D_train_path, out_data_path)
 
