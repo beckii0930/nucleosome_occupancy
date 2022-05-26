@@ -27,10 +27,13 @@ from keras.layers.pooling import GlobalMaxPooling1D
 from keras.layers.recurrent import LSTM
 from keras.layers.wrappers import Bidirectional, TimeDistributed
 from keras.models import load_model
-from keras.callbacks import ModelCheckpoint, EarlyStopping
+from keras.callbacks import ModelCheckpoint, EarlyStopping, ReduceLROnPlateau
 from keras import optimizers
 from keras import backend as K
 from keras import regularizers
+
+
+
 import tensorflow as tf
 print("all packages loaded")
 if len(sys.argv) != 2:
@@ -160,7 +163,9 @@ reduce_lr = ReduceLROnPlateau(monitor='val_loss', factor=0.2,
                               patience=5, min_lr=0.001)
 
 b=validmat['Test_labels'].T
-X_val, y_val = utils.shuffle(validmat['Test_data'],validmat['Test_labels'])
+print(validmat['Test_data'].shape)
+print(validmat['Test_labels'].shape)
+X_val, y_val = utils.shuffle(validmat['Test_data'],validmat['Test_labels'].T)
 array_sum = np.sum(X_val)
 array_has_nan = np.isnan(array_sum)
 if array_has_nan:
@@ -176,7 +181,7 @@ print('No Nan in validation')
 # model.fit(X_train, y_train, batch_size=100, epochs=60, shuffle=True, verbose=1, validation_data=(np.transpose(validmat['Train_data'],axes=(0,2,1)),validmat['Train_vals'][:,125:815]), callbacks=[checkpointer,earlystopper])
 
 # added reduce learning rate callback to slow down learning rate
-history = model.fit(X_train, y_train, batch_size=100, epochs=60, shuffle=True, verbose=1, validation_data=(X_val,y_val.T), callbacks=[checkpointer,earlystopper, reduce_lr])
+history = model.fit(X_train, y_train, batch_size=100, epochs=60, shuffle=True, verbose=1, validation_data=(X_val,y_val), callbacks=[checkpointer,earlystopper, reduce_lr])
 
 model.save(model_folder+'tbinet.h5')
 
@@ -185,24 +190,27 @@ print(history.history.keys())
 try:
 	print("Loss")
 	print(history.history['loss'])
-	print("\n")
+	print("val_loss")
 	print(history.history['val_loss'])
+	print("\n")
 	
 	print("accuracy")
 	print(history.history['accuracy'])
-	print("\n")
+	print("val_accuracy")
 	print(history.history['val_accuracy'])
-
+	print("\n")
+	
 	print("precision")
 	print(history.history['precision'])
-	print("\n")
+	print("val_precision")
 	print(history.history['val_precision'])
-
+	print("\n")
+	
 	print("recall")
 	print(history.history['recall'])
-	print("\n")
+	print("Val recall")
 	print(history.history['val_recall'])
-
+	print("\n")
 	fig, axs = plt.subplots(2, 2)
 	axs[0, 0].plot(history.history['accuracy'], label='train')
 	axs[0, 0].plot(history.history['val_accuracy'], label='test')
