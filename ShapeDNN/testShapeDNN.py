@@ -143,8 +143,13 @@ for i in range(len(tpreds)):
 
 reverse_start_id = int(y_test.shape[0]/2)
 
-#for i in range(len(tpreds)):
-#    print("TrueLabel=%s, Predicted=%s" % (y_test.T[i], tpreds_temp[i]))
+print('y_test size')
+print(np.array(y_test).shape)
+print('tpreds size')
+print(np.array(tpreds).shape)
+
+for i in range(len(tpreds)):
+    print("TrueLabel=%s, Predicted=%s" % (y_test[i], tpreds_temp[i]))
 #	print("TrueLabel=%s, Predicted=%s" % (y_test[i], tpreds_temp[i]))
 
 for i in range(reverse_start_id):
@@ -159,10 +164,6 @@ print("Averaged AUPR:", np.nanmean(auprs))
 from sklearn.metrics import accuracy_score
 from sklearn.metrics import precision_score
 from sklearn.metrics import recall_score 
-print('y_test size')
-print(np.array(y_test).shape)
-print('tpreds size')
-print(np.array(tpreds).shape)
 print("accuracy_score", accuracy_score(y_test,tpreds))
 print("precision_score", precision_score(y_test,tpreds))
 print("recall_score", recall_score(y_test,tpreds))

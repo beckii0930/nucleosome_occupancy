@@ -10,6 +10,9 @@ def readInputAsArray(fileName):
     
 test_out = '/Users/yibeijia/Downloads/data/test_model2_REDUCED_dense10.out'
 test_out = '/Users/yibeijia/Downloads/data/test_model3_removeLSTM.out'
+import sys
+model_id=sys.argv[1]
+test_out = '/project/rohs_108/yibeijia/nucleosome_occupancy/ShapeDNN/test_ShapeDNN_run'+str(model_id)+'.out'
 test=readInputAsArray(test_out)   
 
 true = []

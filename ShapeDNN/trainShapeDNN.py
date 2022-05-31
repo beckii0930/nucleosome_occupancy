@@ -139,7 +139,7 @@ output = Dropout(0.5)(output)
 flat_output = Flatten()(output)
 
 #FC Layer
-FC_output = Dense(50)(flat_output)
+FC_output = Dense(10)(flat_output)
 FC_output = Activation('relu')(FC_output)
 
 #Output Layer
