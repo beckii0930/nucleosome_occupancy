@@ -206,7 +206,7 @@ def preprocessShapeFile(seq_file, All_Shapes, test_clsts, train_clsts, file_list
             # with gzip.open(seq_file+'test_processed_'+enriched+shape+'.gz', 'wb') as f:
             #     f.write(test_out.encode())
 
-
+# separate train/test data based on clustered sequence data
 def getClusterIndex(cluster_file, seq_file, species):
     all_curr_seq_index = []
     curr_seq_index = []
@@ -242,6 +242,10 @@ def getClusterIndex(cluster_file, seq_file, species):
     print(f"target train seqs {train_seq_num}")
     test_seq_num = total_select_seq_num - train_seq_num
     print(f"target test seqs {test_seq_num}")
+	
+    # first shuffle the cluster list
+    random.shuffle(all_curr_seq_index)
+
     for clstr in all_curr_seq_index:
         
         # 1. select the seqs from clstr
@@ -274,13 +278,13 @@ def getClusterIndex(cluster_file, seq_file, species):
     # print(train_clsts)
     return test_clsts, train_clsts
 
-#	All_Shapes=['Buckle-FL', 'Buckle', 'EP', 'HelT-FL', 'HelT', 'MGW-FL', 'MGW',
-#				 'Opening-FL', 'Opening', 'ProT-FL', 'ProT', 'Rise-FL', 'Rise', 'Roll-FL',
-#				 'Roll', 'Shear-FL', 'Shear', 'Shift-FL', 'Shift', 'Slide-FL', 'Slide',
-#				 'Stagger-FL', 'Stagger', 'Stretch-FL', 'Stretch', 'Tilt-FL', 'Tilt']
+All_Shapes=['Buckle-FL', 'Buckle', 'EP', 'HelT-FL', 'HelT', 'MGW-FL', 'MGW',
+			 'Opening-FL', 'Opening', 'ProT-FL', 'ProT', 'Rise-FL', 'Rise', 'Roll-FL',
+			 'Roll', 'Shear-FL', 'Shear', 'Shift-FL', 'Shift', 'Slide-FL', 'Slide',
+			 'Stagger-FL', 'Stagger', 'Stretch-FL', 'Stretch', 'Tilt-FL', 'Tilt']
 
-All_Shapes=['Buckle-FL', 'Stretch']
-All_Shapes=['Stagger-FL', 'Stagger','Stretch',  'Stretch-FL', 'Tilt-FL', 'Tilt']
+#All_Shapes=['Buckle-FL', 'Stretch']
+#All_Shapes=['Stagger-FL', 'Stagger','Stretch',  'Stretch-FL', 'Tilt-FL', 'Tilt']
 seq_file='/project/rohs_108/yibeijia/data/yibei_predictions2/'
 #seq_file='/home/yibei/Downloads/yibei_predictions/'
 import sys
