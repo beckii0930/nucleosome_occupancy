@@ -47,104 +47,15 @@ def my_print(name, val):
     print(f'{name}: {val}')
     return
 
-def append_list_to_np_arr(lst, np_arr):
-    bs_lst=[]
-    for i in range(len(lst)):
-#         bs_lst+= [[lst[i], lst[i]]]
-        bs_lst+= [[lst[i]]]
-    
-    np_lst=np.array([bs_lst])
-#     my_print('np_lst.shape', np_lst.shape)
-
-    if np_arr.shape[0] == 0:
-        np_arr = np_lst 
-    else:
-        np_arr = np.concatenate((np_arr, np_lst), axis=0) 
-#     my_print('np_lst.shape', np_arr.shape)
-    return np_arr
-
-def append_bplist_to_np_arr(lst, np_arr):
-    bp_lst = []
-    for i in range(1, len(lst)):
-        bp_lst+= [[lst[i-1], lst[i]]]
-    np_bp=np.array([bp_lst])
-    
-#     my_print('np_bp', np_bp.shape)
-#     my_print('np_arr', np_arr.shape)
-    if np_arr.shape[0] == 0:
-        np_arr = np_bp
-    else:
-        np_arr = np.concatenate((np_arr, np_bp), axis=0) 
-#     print(np_arr.shape)
-    return np_arr
-
-def makeSingleShapeArr(Seqs, index):
-#     print(">>>>>>>>> In making makeSingleShapeArr ")
-    np_all_shape_arr = np.array([])
-    
-    
-    seq_count=1
-    bp_shape=False
-    line = Seqs[index]
-    
-    l = line.split()
-
-    curr_seq_shape_list = list_str_to_float(l[2:]) # get the shape values only
-    if len(l[0]) > len(curr_seq_shape_list):
-#         print("base step parameter")
-        bp_shape = False
-    else:
-#         print("base pair parameter")
-        bp_shape = True
-
-    ## 1. for base pair shapes, there are 147 vals for each seq 
-    if bp_shape: 
-        if len(curr_seq_shape_list) < 147:
-            while len(curr_seq_shape_list) < 147: # if the sequence is shorter than 147
-                curr_seq_shape_list+=[0]
-
-            np_all_shape_arr = append_bplist_to_np_arr(curr_seq_shape_list, np_all_shape_arr)
-        else:
-            start = 0
-             # is a base pair shape, each 147bp seq has 147 shape vals, we use 147-2+1
-            while (start < len(curr_seq_shape_list)-146):
-                curr_start = start;
-                curr_end = 146 + start;
-                sub_seq_shape_list = curr_seq_shape_list[curr_start: curr_end+1];
-                start+=1
-                np_all_shape_arr = append_bplist_to_np_arr(sub_seq_shape_list, np_all_shape_arr)
-
-    ## 2. for base step shapes, there are 146 vals for each seq 
-    else:
-        if len(curr_seq_shape_list) < 146:
-            while len(curr_seq_shape_list) < 146: # if the sequence is shorter than 146
-                curr_seq_shape_list+=[0]
-
-            np_all_shape_arr = append_list_to_np_arr(curr_seq_shape_list, np_all_shape_arr)
-        else:
-#           print('>>>>>> Found longer sequences')
-            start = 0
-            # is a base step shape, each 147bp seq has 146 shape vals, we use 146-2+1
-            while (start < len(curr_seq_shape_list)-145):
-                curr_start = start;
-                curr_end = 145 + start;
-                sub_seq_shape_list = curr_seq_shape_list[curr_start: curr_end+1];
-                start+=1
-                np_all_shape_arr = append_list_to_np_arr(sub_seq_shape_list, np_all_shape_arr)
-    seq_count+=1
-#     my_print('np_all_shape_arr.shape', np_all_shape_arr.shape)
-    return np_all_shape_arr;
-
 def SeqToMat(path, All_Shapes):
     np_E_train_data = np.array([])
 
     for shape in All_Shapes:
 
-        my_print('\nLoading shape file for ', shape)
-
         # E_path= seq_file+'all_processed_'+'enriched_'+shape+".txt"
         E_train_path = path+shape+".txt"
         E_train_Seqs = readInputAsArray(E_train_path)
+        my_print('\nLoading shape file for ', E_train_path)
 
         E_train_data = []
 
@@ -168,27 +79,36 @@ def SeqToMat(path, All_Shapes):
 
                     curr_seq+=[[float(item)]]
                 E_train_data +=[curr_seq]
-
+        # print(E_train_data[0])
         print(f"Finished loading {shape}")
         print(f"b4 merge, np_E_train_data.shape: {np_E_train_data.shape}")
+        np_curr_shape_arr = np.array([])
         if np_E_train_data.shape[0] == 0:
             np_E_train_data = np.array(E_train_data)
+            print("In if")
+            # print(np_E_train_data)
         else:
+            print("########## ############################## in else")
             np_curr_shape_arr = np.array(E_train_data)
             print(f"np_curr_shape_arr.shape: {np_curr_shape_arr.shape}")
-            np_E_train_data = np.concatenate([np_E_train_data, np_curr_shape_arr], axis=2)
-        print(f"after merging, np_E_train_data.shape.shape: {np_E_train_data.shape}")
+            # print(np_curr_shape_arr)
+            # np_E_train_data = np.concatenate([np_E_train_data, np_curr_shape_arr], axis=1)
+            np_E_train_data = np.concatenate((np_E_train_data, np_curr_shape_arr), axis=2)
+            # print(np_E_train_data)
+            print(f"after merging, np_E_train_data.shape.shape: {np_E_train_data.shape}")
+        # print(np_E_train_data[0])
     return np_E_train_data
 
 
 def main(seq_file, species, All_Shapes, E_data_path, D_data_path, out_data_path):
 
+    print(">>>>>>>>>>>>.. Processing " + D_data_path)
+    np_D_data = SeqToMat(D_data_path, All_Shapes)
+    print(f"np_D_data.shape: {np_D_data.shape}")
+
     print(">>>>>>>>>>>>.. Processing " + E_data_path)
     np_E_data = SeqToMat(E_data_path, All_Shapes)
-    np_D_data = SeqToMat(D_data_path, All_Shapes)
-
     print(f"np_E_data.shape: {np_E_data.shape}")
-    print(f"np_D_data.shape: {np_D_data.shape}")
 
     Train_Test_data = np.concatenate((np_E_data, np_D_data), axis=0)
     Edata_labels = np.ones(np_E_data.shape[0])
@@ -201,7 +121,6 @@ def main(seq_file, species, All_Shapes, E_data_path, D_data_path, out_data_path)
     total_sections=int(sys.argv[1])
     print(f"Current regions is: {section}\n");
     print(f"Total # of regions is: {total_sections}\n");
-
     print(f"Current regions is: {section}\n");
     total_lines = Train_Test_data.shape[0]
     section_length = math.floor(total_lines / total_sections);
@@ -210,7 +129,7 @@ def main(seq_file, species, All_Shapes, E_data_path, D_data_path, out_data_path)
 
     end_line = section * section_length-1;
     if (end_line > total_lines):
-    	end_line = total_lines-1;
+        end_line = total_lines-1;
 
     data_label="Train_data"
     labels_label="Train_labels"
@@ -227,25 +146,29 @@ def main(seq_file, species, All_Shapes, E_data_path, D_data_path, out_data_path)
 
 ######################## ######################## Main ######################## ########################
 seq_file='/project/rohs_108/yibeijia/data/yibei_predictions2/'
+seq_file='/Users/yibeijia/Downloads/data/yibei_predictions2/'
 #seq_file='/home/yibei/Downloads/yibei_predictions/'
+species='yeast'
 
 All_Shapes=['Buckle-FL', 'Buckle', 'EP', 'HelT-FL', 'HelT', 'MGW-FL', 'MGW',
               'Opening-FL', 'Opening', 'ProT-FL', 'ProT', 'Rise-FL', 'Rise', 'Roll-FL',
               'Roll', 'Shear-FL', 'Shear', 'Shift-FL', 'Shift', 'Slide-FL', 'Slide',
               'Stagger-FL', 'Stagger', 'Stretch-FL', 'Stretch', 'Tilt-FL', 'Tilt']
-#All_Shapes=['Buckle-FL', 'Stretch','EP']
+# All_Shapes=['Buckle-FL', 'Stretch','Tilt-FL']
+# All_Shapes=['Buckle-FL', 'Buckle', 'EP']
 print(All_Shapes)
 
-out_data_path='/project/rohs_108/yibeijia/nucleosome_occupancy/data/train_test_data/'
+# out_data_path='/project/rohs_108/yibeijia/nucleosome_occupancy/data/train_test_data/'
+out_data_path='/Users/yibeijia/Downloads/nucleosome_occupancy/data/train_test_data'
 #out_data_path='/home/yibei/Projects/data/train_test_data/'
-species=sys.argv[3]
+
 E_train_path= seq_file+species+'_train_processed_'+'enriched_'
 D_train_path= seq_file+species+'_train_processed_'+'depleted_'
 
 main(seq_file, species, All_Shapes, E_train_path, D_train_path, out_data_path)
 
-#E_test_path= seq_file+'test_processed_'+'enriched_'
-#D_test_path= seq_file+'test_processed_'+'depleted_'
+# E_test_path= seq_file+species+'_test_processed_'+'enriched_'
+# D_test_path= seq_file+species+'_test_processed_'+'depleted_'
 
-#main(seq_file, species, All_Shapes, E_test_path, D_test_path, out_data_path)
+# main(seq_file, species, All_Shapes, E_test_path, D_test_path, out_data_path)
 

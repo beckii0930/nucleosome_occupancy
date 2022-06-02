@@ -70,129 +70,153 @@ def preprocessShapeFile(seq_file, All_Shapes, test_clsts, train_clsts, file_list
 	test_out = ''
 	train_out = ''
 	seq_count = -1
-#     debug = 0
-    
+	print(All_Shapes)
+	print('All_Shapes')
+	debug = 0
 	for enriched in file_list:
 		print(enriched)
 		for shape in All_Shapes:
+			print(' ======================================= ')
 			print(shape)
 			if species == 'yeast':
 				Seqs = readInputAsArray(seq_file + enriched+'regions_seqOnly_'+shape+'.txt')
 			else:
 				Seqs = readInputAsArray(seq_file +species+'Eseqs_seqOnly_200000_'+shape+'.txt')
-			#Seqs = readInputAsArray(seq_file +'wormEseqs_seqOnly_200000_'+shape+'.txt')
-			#Seqs = readInputAsArray(seq_file +'flyEseqs_seqOnly_200000_'+shape+'.txt')
+			line_num = 0
 			for line in Seqs:
 				l = line.split()
-				if l[1] != '3': # Only consider flanking region of size 3
+				if l[1] != '3':# Only consider flanking region of size 3
 					continue;
 				curr_seq_shape_list = list_str_to_float(l[2:])
 				curr_seq = l[0]
-
 				if len(curr_seq) > len(curr_seq_shape_list):
 					bp_shape = False
+					# print('@@@@@@ this is a bs_shape ')
 				else:
 					bp_shape = True
+					# print('@@@@@@ this is a bp_shape ')
 
 				if bp_shape:
+					# print('bp_shape')
 					if len(curr_seq_shape_list) < 147:
+						debug += 1
+
+						# print('this is a short sequence')
 						while len(curr_seq_shape_list) < 147: # if the sequence is shorter than 147
 							curr_seq_shape_list+=[0]
 							curr_seq += 'N'
+
 						seq_count+=1
 						if seq_count in test_clsts:
 							# print(f'seq {seq_count} is in test')
 							# print(curr_seq)
-							out+=curr_seq + ' ' + l[1] + ' '
-							out+=' '.join(str(e) for e in curr_seq_shape_list)+'\n'
+							# out+=curr_seq + ' ' + l[1] + ' '
+							# out+=' '.join(str(e) for e in curr_seq_shape_list)+'\n'
 							test_out+=curr_seq + ' ' + l[1] + ' '
 							test_out+=' '.join(str(e) for e in curr_seq_shape_list)+'\n'
 						elif seq_count in train_clsts:
 							# print(f'seq {seq_count} is in train')
 							# print(curr_seq)
-							out+=curr_seq + ' ' + l[1] + ' '
-							out+=' '.join(str(e) for e in curr_seq_shape_list)+'\n'
+							# out+=curr_seq + ' ' + l[1] + ' '
+							# out+=' '.join(str(e) for e in curr_seq_shape_list)+'\n'
 							train_out+=curr_seq + ' ' + l[1] + ' '
 							train_out+=' '.join(str(e) for e in curr_seq_shape_list)+'\n'
 
 					else:
+						# print('this is a long sequence')
 						start = 0
 						 # is a base pair shape, each 147bp seq has 147 shape vals, we use 147-2+1
 						while (start < len(curr_seq_shape_list)-146):
+							debug += 1
 							curr_start = start;
 							curr_end = 146 + start;
 							out_seq = curr_seq[curr_start:curr_end+1] 
 							seq_count+=1
+							# print(seq_count)
 
 							out_seq_shape_list = curr_seq_shape_list[curr_start: curr_end+1];
 							start+=1
 							if seq_count in test_clsts:
 								# print(f'seq {seq_count} is in test')
 								# print(out_seq)
-								out+=out_seq + ' ' + l[1] + ' '
-								out+=' '.join(str(e) for e in out_seq_shape_list)+'\n'
+								# out+=out_seq + ' ' + l[1] + ' '
+								# out+=' '.join(str(e) for e in out_seq_shape_list)+'\n'
 								test_out+=out_seq + ' ' + l[1] + ' '
 								test_out+=' '.join(str(e) for e in out_seq_shape_list)+'\n'
 							elif seq_count in train_clsts:
 								# print(f'seq {seq_count} is in train')
 								# print(out_seq)
-								out+=out_seq + ' ' + l[1] + ' '
-								out+=' '.join(str(e) for e in out_seq_shape_list)+'\n'
+								# out+=out_seq + ' ' + l[1] + ' '
+								# out+=' '.join(str(e) for e in out_seq_shape_list)+'\n'
 								train_out+=out_seq + ' ' + l[1] + ' '
 								train_out+=' '.join(str(e) for e in out_seq_shape_list)+'\n'
+							# else:
+								# print(f'seq {seq_count} is not chosen')
 								
 				else:
+					# print('b step shape')
+
 					if len(curr_seq_shape_list) < 146:
-						while len(curr_seq_shape_list) < 146: # if the sequence is shorter than 146
+						debug += 1
+						while len(curr_seq_shape_list) < 146: # if the sequence is shorter than 147bp
 							curr_seq_shape_list+=[0]
 							curr_seq += 'N'
 						seq_count+=1
 						if seq_count in test_clsts:
 							# print(f'seq {seq_count} is in test')
 							# print(curr_seq)
-							out+=curr_seq + ' ' + l[1] + ' '
-							out+=' '.join(str(e) for e in curr_seq_shape_list)+'\n'
+							# out+=curr_seq + ' ' + l[1] + ' '
+							# out+=' '.join(str(e) for e in curr_seq_shape_list)+'\n'
 							test_out+=curr_seq + ' ' + l[1] + ' '
 							test_out+=' '.join(str(e) for e in curr_seq_shape_list)+'\n'
 						elif seq_count in train_clsts:
 							# print(f'seq {seq_count} is in train')
 							# print(curr_seq)
-							out+=curr_seq + ' ' + l[1] + ' '
-							out+=' '.join(str(e) for e in curr_seq_shape_list)+'\n'
+							# out+=curr_seq + ' ' + l[1] + ' '
+							# out+=' '.join(str(e) for e in curr_seq_shape_list)+'\n'
 							train_out+=curr_seq + ' ' + l[1] + ' '
 							train_out+=' '.join(str(e) for e in curr_seq_shape_list)+'\n'
 					else:
-#						  print('>>>>>> Found longer sequences')
-#						  print(l[0])
-#						  print((curr_seq_shape_list))
+						# print('>>>>>> Found longer sequences')
+						  # print((curr_seq_shape_list))
 						start = 0
 						# is a base step shape, each 147bp seq has 146 shape vals, we use 146-2+1
-						while (start < len(curr_seq_shape_list)-146):
+						# print(l[0])
+						# print(curr_seq_shape_list)
+						while (start < len(curr_seq_shape_list)-145):
+							debug += 1
 							curr_start = start;
 							curr_end = 146 + start;
 							out_seq = curr_seq[curr_start:curr_end+1] 
+							# print(out_seq)
 							seq_count+=1
 
 							out_seq_shape_list = curr_seq_shape_list[curr_start: curr_end];
+							# print(out_seq_shape_list)
 							start+=1
 
 							if seq_count in test_clsts:
 								# print(f'seq {seq_count} is in test')
 								# print(out_seq)
-								out+=out_seq + ' ' + l[1] + ' '
-								out+=' '.join(str(e) for e in out_seq_shape_list)+'\n'
+								# out+=out_seq + ' ' + l[1] + ' '
+								# out+=' '.join(str(e) for e in out_seq_shape_list)+'\n'
 								test_out+=out_seq + ' ' + l[1] + ' '
 								test_out+=' '.join(str(e) for e in out_seq_shape_list)+'\n'
 							elif seq_count in train_clsts:
 								# print(f'seq {seq_count} is in train')
 								# print(out_seq)
-								out+=out_seq + ' ' + l[1] + ' '
-								out+=' '.join(str(e) for e in out_seq_shape_list)+'\n'
+								# out+=out_seq + ' ' + l[1] + ' '
+								# out+=' '.join(str(e) for e in out_seq_shape_list)+'\n'
 								train_out+=out_seq + ' ' + l[1] + ' '
 								train_out+=' '.join(str(e) for e in out_seq_shape_list)+'\n'
+						# exit()
+			# print(train_out)
 			#f = open(seq_file+'all_processed_'+enriched+shape+".txt", "w+")
 			#f.write(out)
 			#f.close()
+			print("------------- writing output files to ")
+			print(seq_file+species+'_train_processed_'+enriched+shape+".txt")
+			print(seq_file+species+'_test_processed_'+enriched+shape+".txt")
 			f = open(seq_file+species+'_train_processed_'+enriched+shape+".txt", "w+")
 			f.write(train_out)
 			f.close()
@@ -269,8 +293,8 @@ def getClusterIndex(cluster_file, seq_file, species):
             # print('>>>> train seq')
             train_clsts+=selection
                 
-    print(f"train_data.shape {len(train_clsts)}")
-    print(f"test_data.shape {len(test_clsts)}")
+    # print(f"train_data.shape {len(train_clsts)}")
+    # print(f"test_data.shape {len(test_clsts)}")
 
     train_clsts.sort() 
     test_clsts.sort() 
@@ -278,20 +302,26 @@ def getClusterIndex(cluster_file, seq_file, species):
     # print(train_clsts)
     return test_clsts, train_clsts
 
-All_Shapes=['Buckle-FL', 'Buckle', 'EP', 'HelT-FL', 'HelT', 'MGW-FL', 'MGW',
-			 'Opening-FL', 'Opening', 'ProT-FL', 'ProT', 'Rise-FL', 'Rise', 'Roll-FL',
-			 'Roll', 'Shear-FL', 'Shear', 'Shift-FL', 'Shift', 'Slide-FL', 'Slide',
-			 'Stagger-FL', 'Stagger', 'Stretch-FL', 'Stretch', 'Tilt-FL', 'Tilt']
-
-#All_Shapes=['Buckle-FL', 'Stretch']
 #All_Shapes=['Stagger-FL', 'Stagger','Stretch',  'Stretch-FL', 'Tilt-FL', 'Tilt']
 seq_file='/project/rohs_108/yibeijia/data/yibei_predictions2/'
+seq_file='/Users/yibeijia/Downloads/data/yibei_predictions2/'
 #seq_file='/home/yibei/Downloads/yibei_predictions/'
 import sys
 species=sys.argv[1]
 
+# All_Shapes=['Buckle-FL', 'Buckle', 'EP', 'HelT-FL', 'HelT', 'MGW-FL', 'MGW',
+# 			 'Opening-FL', 'Opening', 'ProT-FL', 'ProT', 'Rise-FL', 'Rise', 'Roll-FL',
+# 			 'Roll', 'Shear-FL', 'Shear', 'Shift-FL', 'Shift', 'Slide-FL', 'Slide',
+# 			 'Stagger-FL', 'Stagger', 'Stretch-FL', 'Stretch', 'Tilt-FL', 'Tilt']
+
+# All_Shapes=['Buckle-FL', 'Buckle', 'EP']
+# All_Shapes=['Buckle-FL']
+# All_Shapes=['Buckle']
+All_Shapes=[sys.argv[2]]
+
 #path='/project/rohs_108/yibeijia/nucleosome_occupancy/tbinet_stuff/cluster_seq/'
 path='/project/rohs_102/share/nucleosome_occupancy_data/'
+path='/Users/yibeijia/Downloads/nucleosome_occupancy/data/'
 #path='/home/yibei/Projects/data/'
 
 if species =='human': 
@@ -317,7 +347,92 @@ else:
 #E_test_clsts, E_train_clsts = getClusterIndex(Ecluster, seq_file, species)
 #preprocessShapeFile(seq_file, All_Shapes, E_test_clsts, E_train_clsts,file_list, species)
 
-file_list = ['depleted_']
-D_test_clsts, D_train_clsts = getClusterIndex(Dcluster, seq_file, species)
-preprocessShapeFile(seq_file, All_Shapes, D_test_clsts, D_train_clsts,file_list, species)
+from os.path import exists
+file_list = [sys.argv[3]]
+train_clsts = []
+test_clsts = []
+enrich = False
+
+if 'enriched' in sys.argv[3]:
+	enrich = True
+	print('enriched!!!!!!!!!!!')
+	testname = "/Users/yibeijia/Downloads/nucleosome_occupancy/ShapeDNN/E_test_clsts_file.npy"
+	trainname = "/Users/yibeijia/Downloads/nucleosome_occupancy/ShapeDNN/E_train_clsts_file.npy"
+
+else:
+	print('depleted!!!!!!!!!!!')
+	testname = "/Users/yibeijia/Downloads/nucleosome_occupancy/ShapeDNN/D_test_clsts_file.npy"
+	trainname = "/Users/yibeijia/Downloads/nucleosome_occupancy/ShapeDNN/D_train_clsts_file.npy"
+print(os.path.getsize(testname))
+if exists(testname) == False:
+	print(" +++++ test/train file doenst exist, writing it to .npy file +++++")	
+	if enrich:
+		test_clsts, train_clsts = getClusterIndex(Ecluster, seq_file, species)
+	else:
+		test_clsts, train_clsts = getClusterIndex(Dcluster, seq_file, species)
+	with open(testname, 'wb') as f:
+		np.save(f, np.array(test_clsts))
+	with open(trainname, 'wb') as f:
+		np.save(f, np.array(train_clsts))
+	# writeTrainTestClusterToFile(test_clsts, testname)
+	# writeTrainTestClusterToFile(train_clsts, trainname)
+	print('testname')
+	print(testname)
+	print(test_clsts[1:5])
+	print('trainname')
+	print(trainname)
+	print(train_clsts[1:5])
+else:
+	print(" +++++ test/train file exists, loading from .npy file +++++")
+
+	with open(testname, 'rb') as f:
+		test_clsts = np.load(f)
+	with open(trainname, 'rb') as f:
+		train_clsts = np.load(f)
+
+	print('testname')
+	print(testname)
+	print(test_clsts[1:5])
+	print('trainname')
+	print(trainname)
+	print(train_clsts[1:5])
+
+
+print(f"train_data.shape {len(train_clsts)}")
+print(f"test_data.shape {len(test_clsts)}")
+preprocessShapeFile(seq_file, All_Shapes, test_clsts, train_clsts,file_list, species)
+
+# if exists(trainname) == False:
+# 	print(" +++++ train file doenst exist, writing it to .npy file +++++")	
+# 	if enrich:
+# 		test_clsts, train_clsts = getClusterIndex(Ecluster, seq_file, species)
+# 		writeTrainTestClusterToFile(test_clsts, trainname)
+# 	else:
+# 		test_clsts, train_clsts = getClusterIndex(Dcluster, seq_file, species)
+# 		writeTrainTestClusterToFile(test_clsts, trainname)
+# else:
+# 	print(" +++++ train file exists, loading from .npy file +++++")
+# 	if enrich:
+# 		with open(trainname, 'rb') as f:
+# 			train_clsts = np.load(f)
+
+
+# if exists(testname) == False:
+# 	D_test_clsts, D_train_clsts = getClusterIndex(Dcluster, seq_file, species)
+
+# 	print(" +++++ test file doenst exist, writing it to .npy file +++++")
+# 	writeTrainTestClusterToFile(D_test_clsts, testname)
+# else:
+# 	print(" +++++ test file exists, loading from .npy file +++++")
+# 	with open(testname, 'rb') as f:
+# 		D_test_clsts = np.load(f)
+
+# if exists(trainname) == False:
+# 	print(" +++++ train file doenst exist, writing it to .npy file +++++")
+# 	writeTrainTestClusterToFile(D_train_clsts, trainname)
+# else:
+# 	print(" +++++ train file exists, loading from .npy file +++++ ")
+# 	with open(trainname, 'rb') as f:
+# 		D_train_clsts = np.load(f)
+
 
