@@ -159,7 +159,7 @@ All_Shapes=['Buckle-FL', 'Buckle', 'EP', 'HelT-FL', 'HelT', 'MGW-FL', 'MGW',
 print(All_Shapes)
 
 # out_data_path='/project/rohs_108/yibeijia/nucleosome_occupancy/data/train_test_data/'
-out_data_path='/Users/yibeijia/Downloads/nucleosome_occupancy/data/train_test_data'
+out_data_path='/Users/yibeijia/Downloads/nucleosome_occupancy/data/train_test_data/'
 #out_data_path='/home/yibei/Projects/data/train_test_data/'
 
 E_train_path= seq_file+species+'_train_processed_'+'enriched_'
