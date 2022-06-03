@@ -99,7 +99,7 @@ print(f"X_train.shape {X_train.shape}")
 print(f"y_train.shape {y_train.shape}")
 
 # ### Run TBiNet
-sequence_input = Input(shape=(146,54))
+sequence_input = Input(shape=(146,42))
 sequence_input0 = tf.transpose(sequence_input, perm=[0, 2, 1])
 
 # Convolutional Layer - shape
@@ -112,7 +112,7 @@ attention0 = Dense(1)(output0)
 attention0 = Permute((2, 1))(attention0)
 attention0 = Activation('softmax')(attention0)
 attention0 = Permute((2, 1))(attention0)
-attention0 = Lambda(lambda x: K.mean(x, axis=2), name='shape_attention',output_shape=(54,))(attention0)
+attention0 = Lambda(lambda x: K.mean(x, axis=2), name='shape_attention',output_shape=(42,))(attention0)
 attention0 = RepeatVector(146)(attention0)
 attention0 = Permute((2,1))(attention0)
 output = multiply([sequence_input0, attention0])
@@ -139,7 +139,7 @@ output = Dropout(0.5)(output)
 flat_output = Flatten()(output)
 
 #FC Layer
-FC_output = Dense(10)(flat_output)
+FC_output = Dense(50)(flat_output)
 FC_output = Activation('relu')(FC_output)
 
 #Output Layer
@@ -149,18 +149,18 @@ output = Activation('sigmoid')(output)
 model = Model(inputs=sequence_input, outputs=output)
 
 print('compiling model')
-model.compile(loss='binary_crossentropy', optimizer='adam', metrics=[tf.keras.metrics.Precision(),
+model.compile(loss='binary_crossentropy',optimizer='adam',metrics=[tf.keras.metrics.Precision(),
 																	tf.keras.metrics.Recall(),
-																	tf.keras.metrics.Accuracy()])
+																	tf.keras.metrics.BinaryAccuracy()])
 
 print('model summary')
 model.summary()
 
 checkpointer = ModelCheckpoint(filepath=model_folder+"tbinet.{epoch:02d}-{val_loss:.2f}.hdf5", verbose=1, save_best_only=False)
 #earlystopper = EarlyStopping(monitor='val_loss', patience=10, verbose=1)
-earlystopper = EarlyStopping(monitor='val_accuracy',patience=10, verbose=1)
-reduce_lr = ReduceLROnPlateau(monitor='val_loss', factor=0.2,
-                              patience=5, min_lr=0.001)
+earlystopper = EarlyStopping(monitor='val_binary_accuracy',patience=10, verbose=1)
+#reduce_lr = ReduceLROnPlateau(monitor='val_loss', factor=0.2,
+#                              patience=5, min_lr=0.001)
 
 b=validmat['Test_labels'].T
 print(validmat['Test_data'].shape)
@@ -181,7 +181,9 @@ print('No Nan in validation')
 # model.fit(X_train, y_train, batch_size=100, epochs=60, shuffle=True, verbose=1, validation_data=(np.transpose(validmat['Train_data'],axes=(0,2,1)),validmat['Train_vals'][:,125:815]), callbacks=[checkpointer,earlystopper])
 
 # added reduce learning rate callback to slow down learning rate
-history = model.fit(X_train, y_train, batch_size=100, epochs=60, shuffle=True, verbose=1, validation_data=(X_val,y_val), callbacks=[checkpointer,earlystopper, reduce_lr])
+#history = model.fit(X_train, y_train, batch_size=100, epochs=60, shuffle=True, verbose=1, validation_data=(X_val,y_val), callbacks=[checkpointer,earlystopper, reduce_lr])
+history = model.fit(X_train, y_train, batch_size=100, epochs=60, shuffle=True, verbose=1, validation_data=(X_val,y_val),
+ callbacks=[checkpointer,earlystopper])
 
 model.save(model_folder+'tbinet.h5')
 
@@ -195,9 +197,9 @@ try:
 	print("\n")
 	
 	print("accuracy")
-	print(history.history['accuracy'])
+	print(history.history['binary_accuracy'])
 	print("val_accuracy")
-	print(history.history['val_accuracy'])
+	print(history.history['val_binary_accuracy'])
 	print("\n")
 	
 	print("precision")
@@ -212,8 +214,8 @@ try:
 	print(history.history['val_recall'])
 	print("\n")
 	fig, axs = plt.subplots(2, 2)
-	axs[0, 0].plot(history.history['accuracy'], label='train')
-	axs[0, 0].plot(history.history['val_accuracy'], label='test')
+	axs[0, 0].plot(history.history['binary_accuracy'], label='train')
+	axs[0, 0].plot(history.history['val_binary_accuracy'], label='test')
 	axs[0, 0].set_title('Accuracy')
 	axs[0, 0].legend(['train', 'test'], loc='upper right',prop={'size': 8})
 	axs[0, 0].set_ylim([0, 1.1])

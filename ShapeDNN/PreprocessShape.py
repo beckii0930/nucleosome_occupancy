@@ -304,7 +304,7 @@ def getClusterIndex(cluster_file, seq_file, species):
 
 #All_Shapes=['Stagger-FL', 'Stagger','Stretch',  'Stretch-FL', 'Tilt-FL', 'Tilt']
 seq_file='/project/rohs_108/yibeijia/data/yibei_predictions2/'
-seq_file='/Users/yibeijia/Downloads/data/yibei_predictions2/'
+#seq_file='/Users/yibeijia/Downloads/data/yibei_predictions2/'
 #seq_file='/home/yibei/Downloads/yibei_predictions/'
 import sys
 species=sys.argv[1]
@@ -321,7 +321,7 @@ All_Shapes=[sys.argv[2]]
 
 #path='/project/rohs_108/yibeijia/nucleosome_occupancy/tbinet_stuff/cluster_seq/'
 path='/project/rohs_102/share/nucleosome_occupancy_data/'
-path='/Users/yibeijia/Downloads/nucleosome_occupancy/data/'
+#path='/Users/yibeijia/Downloads/nucleosome_occupancy/data/'
 #path='/home/yibei/Projects/data/'
 
 if species =='human': 
@@ -358,13 +358,16 @@ if 'enriched' in sys.argv[3]:
 	print('enriched!!!!!!!!!!!')
 	testname = "/Users/yibeijia/Downloads/nucleosome_occupancy/ShapeDNN/E_test_clsts_file.npy"
 	trainname = "/Users/yibeijia/Downloads/nucleosome_occupancy/ShapeDNN/E_train_clsts_file.npy"
-
+	testname = "/project/rohs_108/yibeijia/nucleosome_occupancy/ShapeDNN/E_test_clsts_file.npy"
+	trainname = "/project/rohs_108/yibeijia/nucleosome_occupancy/ShapeDNN/E_train_clsts_file.npy"
 else:
 	print('depleted!!!!!!!!!!!')
 	testname = "/Users/yibeijia/Downloads/nucleosome_occupancy/ShapeDNN/D_test_clsts_file.npy"
 	trainname = "/Users/yibeijia/Downloads/nucleosome_occupancy/ShapeDNN/D_train_clsts_file.npy"
-print(os.path.getsize(testname))
+	testname = "/project/rohs_108/yibeijia/nucleosome_occupancy/ShapeDNN/D_test_clsts_file.npy"
+	trainname = "/project/rohs_108/yibeijia/nucleosome_occupancy/ShapeDNN/D_train_clsts_file.npy"
 if exists(testname) == False:
+
 	print(" +++++ test/train file doenst exist, writing it to .npy file +++++")	
 	if enrich:
 		test_clsts, train_clsts = getClusterIndex(Ecluster, seq_file, species)

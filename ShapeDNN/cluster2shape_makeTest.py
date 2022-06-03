@@ -100,7 +100,7 @@ def SeqToMat(path, All_Shapes):
     return np_E_train_data
 
 
-def main(seq_file, species, All_Shapes, E_data_path, D_data_path, out_data_path):
+def main(seq_file, species, All_Shapes, E_data_path, D_data_path, out_data_path, ablation):
 
     print(">>>>>>>>>>>>.. Processing " + D_data_path)
     np_D_data = SeqToMat(D_data_path, All_Shapes)
@@ -133,11 +133,11 @@ def main(seq_file, species, All_Shapes, E_data_path, D_data_path, out_data_path)
 
     data_label="Train_data"
     labels_label="Train_labels"
-    mat_out=out_data_path+species+'All_Shapes_Train_5seqsPerClustr_'
+    mat_out=out_data_path+species+ablation+'_Shapes_Train_5seqsPerClustr_'
     if 'test_processed_' in E_data_path:
         data_label="Test_data"
         labels_label="Test_labels"
-        mat_out=out_data_path+species+'All_Shapes_Test_5seqsPerClustr_'
+        mat_out=out_data_path+species+ablation+'_Shapes_Test_5seqsPerClustr_'
 
     DataToSave = {data_label: Train_Test_data[start_line:end_line,:,:], 
                 labels_label: Train_Test_labels[start_line:end_line]}
@@ -146,7 +146,7 @@ def main(seq_file, species, All_Shapes, E_data_path, D_data_path, out_data_path)
 
 ######################## ######################## Main ######################## ########################
 seq_file='/project/rohs_108/yibeijia/data/yibei_predictions2/'
-seq_file='/Users/yibeijia/Downloads/data/yibei_predictions2/'
+#seq_file='/Users/yibeijia/Downloads/data/yibei_predictions2/'
 #seq_file='/home/yibei/Downloads/yibei_predictions/'
 species='yeast'
 
@@ -154,21 +154,31 @@ All_Shapes=['Buckle-FL', 'Buckle', 'EP', 'HelT-FL', 'HelT', 'MGW-FL', 'MGW',
               'Opening-FL', 'Opening', 'ProT-FL', 'ProT', 'Rise-FL', 'Rise', 'Roll-FL',
               'Roll', 'Shear-FL', 'Shear', 'Shift-FL', 'Shift', 'Slide-FL', 'Slide',
               'Stagger-FL', 'Stagger', 'Stretch-FL', 'Stretch', 'Tilt-FL', 'Tilt']
-# All_Shapes=['Buckle-FL', 'Stretch','Tilt-FL']
-# All_Shapes=['Buckle-FL', 'Buckle', 'EP']
-print(All_Shapes)
 
-# out_data_path='/project/rohs_108/yibeijia/nucleosome_occupancy/data/train_test_data/'
-out_data_path='/Users/yibeijia/Downloads/nucleosome_occupancy/data/train_test_data'
+All_Shapes_FL=['Buckle-FL','HelT-FL','MGW-FL','Opening-FL','ProT-FL', 'Rise-FL','Roll-FL',
+			'Shear-FL','Shift-FL','Slide-FL','Stagger-FL','Stretch-FL',  'Tilt-FL']
+
+All_Shapes_noFL=['Buckle', 'EP','HelT','MGW','Opening', 'ProT','Rise','Roll','Shear', 'Shift',
+			'Slide','Stagger','Stretch', 'Tilt']
+
+print(All_Shapes)
+print(len(All_Shapes_FL))
+print(len(All_Shapes_noFL))
+
+out_data_path='/project/rohs_108/yibeijia/nucleosome_occupancy/data/train_test_data/'
+#out_data_path='/Users/yibeijia/Downloads/nucleosome_occupancy/data/train_test_data/'
 #out_data_path='/home/yibei/Projects/data/train_test_data/'
 
-#E_train_path= seq_file+'train_processed_'+'enriched_'
-#D_train_path= seq_file+'train_processed_'+'depleted_'
-
-#main(seq_file, species, All_Shapes, E_train_path, D_train_path, out_data_path)
+E_train_path= seq_file+'train_processed_'+'enriched_'
+D_train_path= seq_file+'train_processed_'+'depleted_'
+#main(seq_file, species, All_Shapes, E_train_path, D_train_path, out_data_path,'All')
+#main(seq_file, species, All_Shapes, E_train_path, D_train_path, out_data_path,'FL')
+#main(seq_file, species, All_Shapes, E_train_path, D_train_path, out_data_path,'noFL')
 
 E_test_path= seq_file+species+'_test_processed_'+'enriched_'
 D_test_path= seq_file+species+'_test_processed_'+'depleted_'
 
-main(seq_file, species, All_Shapes, E_test_path, D_test_path, out_data_path)
+#main(seq_file, species, All_Shapes_FL, E_test_path, D_test_path, out_data_path,'All')
+main(seq_file, species, All_Shapes_FL, E_test_path, D_test_path, out_data_path,'FL')
+main(seq_file, species, All_Shapes_noFL, E_test_path, D_test_path, out_data_path,'noFL')
 

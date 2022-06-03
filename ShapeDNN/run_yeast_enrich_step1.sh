@@ -9,7 +9,7 @@
 #SBATCH --output=yeast_enrich.out
 . ~/.bashrc
 conda activate gpuenv
-python3  PreprocessShape_enrich.py yeast
+#python3  PreprocessShape_enrich.py yeast
 
 
 declare -a All_Shapes=('Buckle-FL' 'Buckle' 'EP' 'HelT-FL' 'HelT' 'MGW-FL' 'MGW'
@@ -20,10 +20,10 @@ declare -a All_Shapes=('Buckle-FL' 'Buckle' 'EP' 'HelT-FL' 'HelT' 'MGW-FL' 'MGW'
 declare -a All_Shapes=('ProT-FL' 'ProT' 'Rise-FL' 'Rise' 'Roll-FL'
 			 'Roll' 'Shear-FL' 'Shear' 'Shift-FL' 'Shift' 'Slide-FL' 'Slide'
 			 'Stagger-FL' 'Stagger' 'Stretch-FL' 'Stretch' 'Tilt-FL' 'Tilt')
-declare -a All_Shapes=('Buckle-FL' 'Buckle' 'EP')
-declare -a All_Shapes=('Buckle-FL')
+#declare -a All_Shapes=('Buckle-FL' 'Buckle' 'EP')
+#declare -a All_Shapes=('Buckle-FL')
 
-# declare -a All_Shapes=('Buckle-FL' 'Buckle' 'EP' 'HelT-FL' 'HelT' 'MGW-FL' 'MGW'
+declare -a All_Shapes=('Buckle-FL' 'Buckle' 'EP' 'HelT-FL' 'HelT' 'MGW-FL' 'MGW'
 # 			 'Opening-FL' 'Opening' )
 
 # for shape in ${All_Shapes[@]}; do

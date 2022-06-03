@@ -132,11 +132,11 @@ with open(inputmodel+'y_test_run1.npy', 'wb') as f:
 	np.save(f, y_test)
 
 for i in range(len(tpreds)):
-    if tpreds[i] <= 0.1:
+    if tpreds[i] <= 0.5:
 #        print(f"original {tpreds[i]}")
         tpreds[i] = 0
 #        print(f"changed to {tpreds[i]}")
-    if tpreds[i] >= 0.9:
+    if tpreds[i] >= 0.6:
 #        print(f"original {tpreds[i]}")
         tpreds[i] = 1
 #        print(f"changed to {tpreds[i]}")
