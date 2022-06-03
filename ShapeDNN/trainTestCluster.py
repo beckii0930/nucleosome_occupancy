@@ -28,3 +28,5 @@ Ecluster = readInputAsArray(path+'Eseqs80.clstr')
 
 Dcluster = readInputAsArray(path+'Dseqs80.clstr')
 Dseqs = readInputAsArray(path+'Dseqs.txt')[1:]
+
+for 
