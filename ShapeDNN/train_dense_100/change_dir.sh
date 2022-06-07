@@ -1,0 +1,1 @@
+sed -i 's+/ShapeDNN+/ShapeDNN/train_dense_100+g' *.sl

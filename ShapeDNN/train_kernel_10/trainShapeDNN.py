@@ -119,8 +119,8 @@ output = multiply([sequence_input0, attention0])
 
 # Convolutional Layer 2 - seq
 output= tf.transpose(output, perm=[0, 2, 1])
-output = Conv1D(320,kernel_size=5,padding="same",activation="relu")(output)
-output = MaxPooling1D(pool_size=5, strides=1)(output)
+output = Conv1D(320,kernel_size=10,padding="same",activation="relu")(output)
+output = MaxPooling1D(pool_size=10, strides=1)(output)
 output = Dropout(0.2)(output)
 
 #Attention Layer 2 - seq
