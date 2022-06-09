@@ -114,6 +114,15 @@ def main(seq_file, species, All_Shapes, E_data_path, D_data_path, out_data_path,
     Edata_labels = np.ones(np_E_data.shape[0])
     Ddata_labels = np.zeros(np_D_data.shape[0])
     Train_Test_labels = np.concatenate((Edata_labels, Ddata_labels), axis=0)
+    e = 0
+    d = 0
+    for i in Train_Test_labels:
+        if i == 1:
+            e+=1
+        else:
+            d+=1
+    print(f"!!!!!!! total e seq is {e}") 
+    print(f"!!!!!!! total d seq is {d}")
     print(f"train/test data  shape is: {Train_Test_data.shape}")
     print(f"train/test label shape is: {Train_Test_labels.shape}")
 
@@ -171,8 +180,8 @@ out_data_path='/project/rohs_108/yibeijia/nucleosome_occupancy/data/train_test_d
 
 E_train_path= seq_file+'train_processed_'+'enriched_'
 D_train_path= seq_file+'train_processed_'+'depleted_'
-#main(seq_file, species, All_Shapes, E_train_path, D_train_path, out_data_path,'All')
-#main(seq_file, species, All_Shapes, E_train_path, D_train_path, out_data_path,'FL')
+main(seq_file, species, All_Shapes, E_train_path, D_train_path, out_data_path,'All')
+main(seq_file, species, All_Shapes, E_train_path, D_train_path, out_data_path,'FL')
 #main(seq_file, species, All_Shapes, E_train_path, D_train_path, out_data_path,'noFL')
 # out_data_path='/project/rohs_108/yibeijia/nucleosome_occupancy/data/train_test_data/'
 #out_data_path='/home/yibei/Projects/data/train_test_data/'
@@ -182,10 +191,10 @@ D_train_path= seq_file+'train_processed_'+'depleted_'
 
 #main(seq_file, species, All_Shapes, E_train_path, D_train_path, out_data_path)
 
-E_test_path= seq_file+species+'_test_processed_'+'enriched_'
-D_test_path= seq_file+species+'_test_processed_'+'depleted_'
+#E_test_path= seq_file+species+'_test_processed_'+'enriched_'
+#D_test_path= seq_file+species+'_test_processed_'+'depleted_'
 
 #main(seq_file, species, All_Shapes_FL, E_test_path, D_test_path, out_data_path,'All')
-main(seq_file, species, All_Shapes_FL, E_test_path, D_test_path, out_data_path,'FL')
-main(seq_file, species, All_Shapes_noFL, E_test_path, D_test_path, out_data_path,'noFL')
+#main(seq_file, species, All_Shapes_FL, E_test_path, D_test_path, out_data_path,'FL')
+#main(seq_file, species, All_Shapes_noFL, E_test_path, D_test_path, out_data_path,'noFL')
 
