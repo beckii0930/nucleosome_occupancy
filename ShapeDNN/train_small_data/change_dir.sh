@@ -1,0 +1,1 @@
+sed -i 's+ShapeDNN/+ShapeDNN/train_small_data/+g' test_ShapeDNN_run1.sl test_ShapeDNN_run2.sl test_ShapeDNN_run3.sl test_ShapeDNN_run4.sl test_ShapeDNN_run5.sl test_ShapeDNN_run6.sl train_ShapeDNN_run1.sl train_ShapeDNN_run2.sl train_ShapeDNN_run3.sl train_ShapeDNN_run4.sl train_ShapeDNN_run5.sl train_ShapeDNN_run6.sl

@@ -1,6 +1,6 @@
 #! /bin/bash
 
-dir_name=train_ablation_FL_run2/ 
+dir_name=train_debug/ 
 mkdir $dir_name
 cp test_ShapeDNN_run*.sl $dir_name
 cp train_ShapeDNN_run*.sl $dir_name
