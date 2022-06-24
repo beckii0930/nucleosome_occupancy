@@ -64,7 +64,7 @@ total_sections = 5
 X_train_og = np.array([]) 
 y_train_og = np.array([])
 for i in range(total_sections):
-    train_fn = 'yeastAll_Shapes_Train_5seqsPerClustr_'+str(i+1)+'_'+str(total_sections)+'.mat'
+    train_fn = 'yeastFL_Shapes_Train_5seqsPerClustr_'+str(i+1)+'_'+str(total_sections)+'.mat'
     trainmat = scipy.io.loadmat(data_folder+train_fn)
     if X_train_og.shape[0] == 0:
         X_train_og = np.array(trainmat['Train_data'])
@@ -90,7 +90,7 @@ if array_has_nan == True:
 print("No NaN in train or test data")	
 
 # first test mat is val and rest are test mats        
-valid_fn = 'yeastAll_Shapes_Test_5seqsPerClustr_1_'+str(total_sections)+'.mat'
+valid_fn = 'yeastFL_Shapes_Test_5seqsPerClustr_1_'+str(total_sections)+'.mat'
 print(valid_fn)
 validmat = scipy.io.loadmat(data_folder+valid_fn)
 print("valid mat shape")
@@ -103,7 +103,7 @@ sequence_input = Input(shape=(146,42))
 sequence_input0 = tf.transpose(sequence_input, perm=[0, 2, 1])
 
 # Convolutional Layer - shape
-output0 = Conv1D(320,kernel_size=1,padding="same",activation="relu")(sequence_input0)
+output0 = Conv1D(320,kernel_size=2,padding="same",activation="relu")(sequence_input0)
 output0 = MaxPooling1D(pool_size=1, strides=1)(output0)
 output0 = Dropout(0.2)(output0)
 

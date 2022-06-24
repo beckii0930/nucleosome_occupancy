@@ -61,23 +61,25 @@ total_sections = 5
 X_test_og = np.array([])
 y_test_og = np.array([])
 for i in range(1, total_sections):
-	test_fn = 'yeastAll_Shapes_Test_5seqsPerClustr_'+str(i+1)+'_'+str(total_sections)+'.mat'
+	test_fn = 'yeastFL_Shapes_Test_5seqsPerClustr_'+str(i+1)+'_'+str(total_sections)+'.mat'
 	print(test_fn)
 	testmat = scipy.io.loadmat(data_folder+test_fn)
 	if X_test_og.shape[0] == 0:
 		X_test_og = np.array(testmat['Test_data'])
 		y_test_og = np.array(testmat['Test_labels']).T
-		print('Xtest')
-		print(X_test_og)
-		print('y test')
-		print(y_test_og)
 	else:
 		curr_X_test = np.array(testmat['Test_data'])
 		curr_y_test = np.array(testmat['Test_labels']).T
 		X_test_og = np.concatenate([X_test_og, curr_X_test], axis=0)
 		y_test_og = np.concatenate([y_test_og, curr_y_test], axis=0)
 X_test, y_test = utils.shuffle(X_test_og,y_test_og)
+print('X_test')
+print(X_test)
 
+print('y_test')
+print(y_test)
+print('sum y_test')
+print(sum(y_test))
 print(f"X_test.shape {X_test.shape}")
 
 

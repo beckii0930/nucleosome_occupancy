@@ -138,7 +138,7 @@ for i in range(len(tpreds)):
 #        print(f"original {tpreds[i]}")
         tpreds[i] = 0
 #        print(f"changed to {tpreds[i]}")
-    if tpreds[i] >= 0.6:
+    if tpreds[i] > 0.5:
 #        print(f"original {tpreds[i]}")
         tpreds[i] = 1
 #        print(f"changed to {tpreds[i]}")
