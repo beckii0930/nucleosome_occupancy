@@ -61,7 +61,7 @@ total_sections = 5
 X_test_og = np.array([])
 y_test_og = np.array([])
 for i in range(1, total_sections):
-	test_fn = 'yeastAll_Shapes_Test_5seqsPerClustr_'+str(i+1)+'_'+str(total_sections)+'.mat'
+	test_fn = 'yeastAll_Shapes_Test_5seqsPerClustr_scaled_'+str(i+1)+'_'+str(total_sections)+'.mat'
 	print(test_fn)
 	testmat = scipy.io.loadmat(data_folder+test_fn)
 	if X_test_og.shape[0] == 0:

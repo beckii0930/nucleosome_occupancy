@@ -184,7 +184,7 @@ print('No Nan in validation')
 
 # added reduce learning rate callback to slow down learning rate
 #history = model.fit(X_train, y_train, batch_size=100, epochs=60, shuffle=True, verbose=1, validation_data=(X_val,y_val), callbacks=[checkpointer,earlystopper, reduce_lr])
-history = model.fit(X_train, y_train, batch_size=100, epochs=20, shuffle=True, verbose=1, validation_data=(X_val,y_val),
+history = model.fit(X_train, y_train, batch_size=100, epochs=1, shuffle=True, verbose=1, validation_data=(X_val,y_val),
  callbacks=[checkpointer,earlystopper])
 
 model.save(model_folder+'tbinet.h5')
