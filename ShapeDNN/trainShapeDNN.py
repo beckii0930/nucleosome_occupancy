@@ -90,7 +90,7 @@ if array_has_nan == True:
 print("No NaN in train or test data")	
 
 # first test mat is val and rest are test mats        
-valid_fn = 'yeastAll_Shapes_Test_5seqsPerClustr_1_'+str(total_sections)+'.mat'
+valid_fn = 'yeastAll_Shapes_Test_5seqsPerClustr_3_'+str(total_sections)+'.mat'
 print(valid_fn)
 validmat = scipy.io.loadmat(data_folder+valid_fn)
 print("valid mat shape")
@@ -103,7 +103,7 @@ sequence_input = Input(shape=(146,42))
 sequence_input0 = tf.transpose(sequence_input, perm=[0, 2, 1])
 
 # Convolutional Layer - shape
-output0 = Conv1D(320,kernel_size=1,padding="same",activation="relu")(sequence_input0)
+output0 = Conv1D(320,kernel_size=2,padding="same",activation="relu")(sequence_input0)
 output0 = MaxPooling1D(pool_size=1, strides=1)(output0)
 output0 = Dropout(0.2)(output0)
 
@@ -116,6 +116,8 @@ attention0 = Lambda(lambda x: K.mean(x, axis=2), name='shape_attention',output_s
 attention0 = RepeatVector(146)(attention0)
 attention0 = Permute((2,1))(attention0)
 output = multiply([sequence_input0, attention0])
+#output = multiply([sequence_input, attention0])
+#output = multiply([output0, attention0])
 
 # Convolutional Layer 2 - seq
 output= tf.transpose(output, perm=[0, 2, 1])
@@ -182,7 +184,7 @@ print('No Nan in validation')
 
 # added reduce learning rate callback to slow down learning rate
 #history = model.fit(X_train, y_train, batch_size=100, epochs=60, shuffle=True, verbose=1, validation_data=(X_val,y_val), callbacks=[checkpointer,earlystopper, reduce_lr])
-history = model.fit(X_train, y_train, batch_size=100, epochs=60, shuffle=True, verbose=1, validation_data=(X_val,y_val),
+history = model.fit(X_train, y_train, batch_size=100, epochs=20, shuffle=True, verbose=1, validation_data=(X_val,y_val),
  callbacks=[checkpointer,earlystopper])
 
 model.save(model_folder+'tbinet.h5')
