@@ -11,9 +11,11 @@
 conda activate gpuenv
 
 module load usc
-declare -a TrainOrTest=('Train' 'Test')
+python3 ScaleInputData.py Test
 
-for i in ${TrainOrTest[@]}; do
-   echo $i
-   python3 ScaleInputData.py $i &
-done
+#declare -a TrainOrTest=('Train' 'Test')
+
+#for i in ${TrainOrTest[@]}; do
+#   echo $i
+#   python3 ScaleInputData.py $i &
+#done
