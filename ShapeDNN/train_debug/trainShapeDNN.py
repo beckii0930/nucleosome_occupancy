@@ -68,12 +68,16 @@ for i in range(total_sections):
     trainmat = scipy.io.loadmat(data_folder+train_fn)
     if X_train_og.shape[0] == 0:
         X_train_og = np.array(trainmat['Train_data'])
-        y_train_og = np.array(trainmat['Train_labels']).T
+#        y_train_og = np.array(trainmat['Train_labels']).T
+        y_train_og = np.array(trainmat['Train_labels'])
     else:
         curr_X_train = np.array(trainmat['Train_data'])
-        curr_y_train = np.array(trainmat['Train_labels']).T
+#        curr_y_train = np.array(trainmat['Train_labels']).T
+        curr_y_train = np.array(trainmat['Train_labels'])
         X_train_og = np.concatenate([X_train_og, curr_X_train], axis=0)
         y_train_og = np.concatenate([y_train_og, curr_y_train], axis=0)
+print(X_train_og.shape)
+print(y_train_og.shape)
 X_train, y_train = utils.shuffle(X_train_og, y_train_og)
 #X_train, y_train = sklearn.utils.shuffle(X_train_og, y_train_og)
 array_sum = np.sum(X_train)
@@ -184,7 +188,7 @@ print('No Nan in validation')
 
 # added reduce learning rate callback to slow down learning rate
 #history = model.fit(X_train, y_train, batch_size=100, epochs=60, shuffle=True, verbose=1, validation_data=(X_val,y_val), callbacks=[checkpointer,earlystopper, reduce_lr])
-history = model.fit(X_train, y_train, batch_size=100, epochs=20, shuffle=True, verbose=1, validation_data=(X_val,y_val),
+history = model.fit(X_train, y_train, batch_size=100, epochs=1, shuffle=True, verbose=1, validation_data=(X_val,y_val),
  callbacks=[checkpointer,earlystopper])
 
 model.save(model_folder+'tbinet.h5')
