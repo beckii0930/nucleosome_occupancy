@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[5]:
+# In[1]:
 
 
 ### Turn one hot encoded .mat to fasta seq
@@ -96,7 +96,7 @@ def append_bplist_to_np_arr(lst, np_arr):
 # print(All_Shapes)
 
 
-# In[7]:
+# In[3]:
 
 
 import matplotlib as mpl
@@ -104,14 +104,14 @@ from matplotlib import pyplot as plt
 from matplotlib import cm
 import matplotlib.colors
 from sklearn.preprocessing import StandardScaler
-from sklearn.preprocessing import MinMaxScaler
-from sklearn.preprocessing import minmax_scale
-from sklearn.preprocessing import MaxAbsScaler
-from sklearn.preprocessing import StandardScaler
-from sklearn.preprocessing import RobustScaler
-from sklearn.preprocessing import Normalizer
-from sklearn.preprocessing import QuantileTransformer
-from sklearn.preprocessing import PowerTransformer
+# from sklearn.preprocessing import MinMaxScaler
+# from sklearn.preprocessing import minmax_scale
+# from sklearn.preprocessing import MaxAbsScaler
+# from sklearn.preprocessing import StandardScaler
+# from sklearn.preprocessing import RobustScaler
+# from sklearn.preprocessing import Normalizer
+# from sklearn.preprocessing import QuantileTransformer
+# from sklearn.preprocessing import PowerTransformer
 # from sklearn.datasets import fetch_california_housing
 
 
@@ -132,14 +132,7 @@ def Normalize_data(data):
         for i in range(data.shape[1]):
             max_val = np.max(data[N,i])
             min_val = np.min(data[N,i])
-            a = max_val - min_val
-            if np.isnan(a) == True:
-                print(f'Nan in data N:{N}, i:{i}')		
-                norm = data[N,i] - min_val
-            if a == 0: 
-                norm = data[N,i]
-            else:
-                norm = (data[N,i] - min_val)/(max_val - min_val)
+            norm = (data[N,i] - min_val)/(max_val - min_val)
             temp.append(norm)
             t1.append(max_val)
             t2.append(min_val)
@@ -162,14 +155,19 @@ def InverseNormalize_data(scaled_data, max_values, min_values):
     return np.array(res_data)
 
 
-import sys
-train_or_test = sys.argv[1]
+# In[4]:
+
+
+train_or_test = 'Train'
+
+
+# In[5]:
+
 
 ############################ read input
-print('############################ read input')
 data_folder = '/home/yibei/Projects/data/train_test_data/'
 data_folder='/project/rohs_108/yibeijia/nucleosome_occupancy/data/train_test_data/'
-# data_folder='/Users/yibeijia/Downloads/nucleosome_occupancy/data/train_test_data/'
+data_folder='/Users/yibeijia/Downloads/nucleosome_occupancy/data/train_test_data/'
 
 total_sections = 5
 X_train_og = np.array([]) 
@@ -192,14 +190,75 @@ print(X_train_og.shape)
 print(y_train_og.shape)
 print(seq_lines)
 
-############################ min max scaling
-print('############################ min max scaling')
-#X_train = X_train_og.copy()
-#y_full=y_train_og.copy()
 
-out = Normalize_data(X_train_og)
-X_train_normalized = out[0]
-print(X_train_normalized.shape)
+# In[9]:
+
+
+############################ standard scaling
+X_train = X_train_og.copy()
+y_full=y_train_og.copy()
+print(X_train.shape)
+print(X_train.shape[-1])
+
+X_train_expanded=X_train.reshape(-1, X_train.shape[-1])
+print(X_train_expanded.shape)
+
+
+# In[14]:
+
+
+scaler = StandardScaler()
+X_train_scaled = scaler.fit_transform(X_train_expanded).reshape(X_train.shape)                        
+
+
+# In[20]:
+
+
+print(X_train_scaled.shape)
+print(X_train_scaled.reshape(-1, X_train_scaled.shape[-1]).shape)
+
+print(X_train.reshape(-1, X_train.shape[-1]).shape)
+
+
+# In[25]:
+
+
+# Make plots to visualize nornamlization
+
+import matplotlib.pyplot as plt
+import numpy as np
+from matplotlib import colors
+n_bins = 20
+from random import sample
+  
+# Prints list of random items of given length
+list1 = range(0, 43)
+feature_ids = sample(list1,5)
+print(feature_ids)
+
+for feature_id in feature_ids:
+    fig, axs = plt.subplots(1, 2, sharey=True, tight_layout=True)
+
+    dist_ori = X_train.reshape(-1, X_train.shape[-1])[:,feature_id]
+    print(dist_ori.shape)
+    dist_scaled = X_train_scaled.reshape(-1, X_train_scaled.shape[-1])[:,feature_id]
+    print(dist_scaled.shape)
+
+    axs[0].hist(dist_ori, bins=n_bins)
+    axs[1].hist(dist_scaled, bins=n_bins)
+
+
+# In[ ]:
+
+
+############################ min max scaling
+# X_train = X_train_og.copy()
+# y_full=y_train_og.copy()
+
+# out = Normalize_data(X_train)
+# X_train_normalized = out[0]
+
+# print(X_train_normalized.shape)
 
 ## check if min and max are correct
 # for N in range(X_train_normalized.shape[0]):
@@ -211,12 +270,15 @@ print(X_train_normalized.shape)
 #                 print(X_train[N,i].min())
 #                 print(X_train[N,i].max())
 
+
+# In[26]:
+
+
 ############################ Write normalized to file
-print('############################ Write normalized to file')
 
 data_folder = '/home/yibei/Projects/data/train_test_data/'
 data_folder='/project/rohs_108/yibeijia/nucleosome_occupancy/data/train_test_data/'
-# data_folder='/Users/yibeijia/Downloads/nucleosome_occupancy/data/train_test_data/'
+data_folder='/Users/yibeijia/Downloads/nucleosome_occupancy/data/train_test_data/'
 
 total_sections = len(seq_lines)
 start_lines=0
@@ -228,14 +290,112 @@ for i in range(len(seq_lines)):
     print(start_lines)
     print(end_lines)
 
-    X_section_to_write = X_train_normalized[start_lines:end_lines, :, :]
+    X_section_to_write = X_train_scaled[start_lines:end_lines, :, :]
     y_section_to_write = y_train_og[start_lines:end_lines]
     print(X_section_to_write.shape)
     print(y_section_to_write.shape)
 
+#     data_path='/project/rohs_108/yibeijia/nucleosome_occupancy/data/train_test_data/'
+    data_path='/Users/yibeijia/Downloads/nucleosome_occupancy/data/train_test_data/'
+
+#     Data = {"Test_data" : np.array(Test_data), "Test_labels" : Test_labels}
+#     sio.savemat(data_path+species+'ShapeDNNSeqs_Test.mat', Data,  do_compression=True)
     Data = {train_or_test+"_data" : np.array(X_section_to_write), train_or_test+"_labels" : y_section_to_write}
     train_fn = 'yeastAll_Shapes_'+train_or_test+'_5seqsPerClustr_scaled_'+str(i+1)+'_'+str(total_sections)+'.mat'
-    sio.savemat(data_folder+train_fn, Data,  do_compression=True)
+    sio.savemat(data_path+train_fn, Data,  do_compression=True)
 
     start_lines = end_lines
+
+
+# In[ ]:
+
+
+# All_Shapes=['Buckle-FL', 'Buckle', 'EP', 'HelT-FL', 'HelT', 'MGW-FL', 'MGW', 
+#                 'Opening-FL', 'Opening', 'ProT-FL', 'ProT', 'Rise-FL', 'Rise', 'Roll-FL',
+#                 'Roll', 'Shear-FL', 'Shear', 'Shift-FL', 'Shift', 'Slide-FL', 'Slide', 
+#                 'Stagger-FL', 'Stagger', 'Stretch-FL', 'Stretch', 'Tilt-FL', 'Tilt']
+# # All_Shapes=['Stretch']
+# # All_Shapes=['Shift-FL']
+# def preprocessShapeFile(seq_file, All_Shapes):
+#     out = ''
+# #     debug = 0
+#     file_list = ['enriched_', 'depleted_']
+#     for enriched in file_list:
+#         print(enriched)
+#         for shape in All_Shapes:
+
+#             print(shape)
+#             Seqs = readInputAsArray(seq_file + enriched+shape+'.txt')
+#             for line in Seqs:
+#     #             if debug > 200: break;
+#     #             debug+=1
+#                 l = line.split()
+#                 if l[1] != '3': # Only consider flanking region of size 3
+#                     continue;
+#                 curr_seq_shape_list = list_str_to_float(l[2:])
+#                 curr_seq = l[0]
+
+#                 if len(curr_seq) > len(curr_seq_shape_list):
+#     #                 print(shape)
+#     #                 print("base step parameter")
+#                     bp_shape = False
+#                 else:
+#     #                 print("base pair parameter")
+#                     bp_shape = True
+
+#                 if bp_shape:
+#                     if len(curr_seq_shape_list) < 147:
+#                         while len(curr_seq_shape_list) < 147: # if the sequence is shorter than 147
+#                             curr_seq_shape_list+=[0]
+#                             curr_seq += 'N'
+#                         out+=curr_seq + ' ' + l[1] + ' '
+#                         out+=' '.join(str(e) for e in curr_seq_shape_list)+'\n'
+
+#                     else:
+#                         start = 0
+#                          # is a base pair shape, each 147bp seq has 147 shape vals, we use 147-2+1
+#                         while (start < len(curr_seq_shape_list)-146):
+#                             curr_start = start;
+#                             curr_end = 146 + start;
+#                             out_seq = curr_seq[curr_start:curr_end+1] 
+#                             out_seq_shape_list = curr_seq_shape_list[curr_start: curr_end+1];
+#                             start+=1
+#                             out+=out_seq + ' ' + l[1] + ' '
+#                             out+=' '.join(str(e) for e in out_seq_shape_list)+'\n'
+#                 else:
+#                     if len(curr_seq_shape_list) < 146:
+#                         while len(curr_seq_shape_list) < 146: # if the sequence is shorter than 146
+#                             curr_seq_shape_list+=[0]
+#                             curr_seq += 'N'
+#                         out+=curr_seq + ' ' + l[1] + ' '
+#                         out+=' '.join(str(e) for e in curr_seq_shape_list)+'\n'
+#                     else:
+#     #                     print('>>>>>> Found longer sequences')
+#     #                     print(l[0])
+#     #                     print((curr_seq_shape_list))
+#                         start = 0
+#                         # is a base step shape, each 147bp seq has 146 shape vals, we use 146-2+1
+#                         while (start < len(curr_seq_shape_list)-146):
+#                             curr_start = start;
+#                             curr_end = 146 + start;
+#                             out_seq = curr_seq[curr_start:curr_end+1] 
+#                             start+=1
+#                             out+=out_seq + ' ' + l[1] + ' '
+
+#                             out_seq_shape_list = curr_seq_shape_list[curr_start: curr_end];
+#                             out+=' '.join(str(e) for e in out_seq_shape_list)+'\n'
+# #             f = open(".txt", "w+")
+#             with gzip.open(seq_file+'processed_'+enriched+shape+'.gz', 'wb') as f:
+#                 f.write(out.encode())
+# #             f.write(out)
+# #             f.close()
+
+# seq_file='/home/yibei/Downloads/yibei_predictions/'
+# preprocessShapeFile(seq_file, All_Shapes)
+
+
+# In[ ]:
+
+
+
 
