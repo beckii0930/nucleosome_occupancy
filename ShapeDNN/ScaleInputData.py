@@ -157,8 +157,8 @@ def InverseNormalize_data(scaled_data, max_values, min_values):
 
 # In[4]:
 
-
-train_or_test = 'Train'
+import sys
+train_or_test = sys.argv[1]
 
 
 # In[5]:
@@ -167,14 +167,17 @@ train_or_test = 'Train'
 ############################ read input
 data_folder = '/home/yibei/Projects/data/train_test_data/'
 data_folder='/project/rohs_108/yibeijia/nucleosome_occupancy/data/train_test_data/'
-data_folder='/Users/yibeijia/Downloads/nucleosome_occupancy/data/train_test_data/'
+#data_folder='/Users/yibeijia/Downloads/nucleosome_occupancy/data/train_test_data/'
 
 total_sections = 5
 X_train_og = np.array([]) 
 y_train_og = np.array([])
 seq_lines=[]
+#ablation='All'
+ablation='FL'
+ablation='noFL'
 for i in range(total_sections):
-    train_fn = 'yeastAll_Shapes_'+train_or_test+'_5seqsPerClustr_'+str(i+1)+'_'+str(total_sections)+'.mat'
+    train_fn = 'yeast'+ablation+'_Shapes_'+train_or_test+'_5seqsPerClustr_'+str(i+1)+'_'+str(total_sections)+'.mat'
     trainmat = scipy.io.loadmat(data_folder+train_fn)
     if X_train_og.shape[0] == 0:
         X_train_og = np.array(trainmat[train_or_test+'_data'])
@@ -225,28 +228,28 @@ print(X_train.reshape(-1, X_train.shape[-1]).shape)
 
 # Make plots to visualize nornamlization
 
-import matplotlib.pyplot as plt
-import numpy as np
-from matplotlib import colors
-n_bins = 20
-from random import sample
-  
-# Prints list of random items of given length
-list1 = range(0, 43)
-feature_ids = sample(list1,5)
-print(feature_ids)
-
-for feature_id in feature_ids:
-    fig, axs = plt.subplots(1, 2, sharey=True, tight_layout=True)
-
-    dist_ori = X_train.reshape(-1, X_train.shape[-1])[:,feature_id]
-    print(dist_ori.shape)
-    dist_scaled = X_train_scaled.reshape(-1, X_train_scaled.shape[-1])[:,feature_id]
-    print(dist_scaled.shape)
-
-    axs[0].hist(dist_ori, bins=n_bins)
-    axs[1].hist(dist_scaled, bins=n_bins)
-
+#import matplotlib.pyplot as plt
+#import numpy as np
+#from matplotlib import colors
+#n_bins = 20
+#from random import sample
+#  
+## Prints list of random items of given length
+#list1 = range(0, 43)
+#feature_ids = sample(list1,5)
+#print(feature_ids)
+#
+#for feature_id in feature_ids:
+#    fig, axs = plt.subplots(1, 2, sharey=True, tight_layout=True)
+#
+#    dist_ori = X_train.reshape(-1, X_train.shape[-1])[:,feature_id]
+#    print(dist_ori.shape)
+#    dist_scaled = X_train_scaled.reshape(-1, X_train_scaled.shape[-1])[:,feature_id]
+#    print(dist_scaled.shape)
+#
+#    axs[0].hist(dist_ori, bins=n_bins)
+#    axs[1].hist(dist_scaled, bins=n_bins)
+#
 
 # In[ ]:
 
@@ -278,7 +281,7 @@ for feature_id in feature_ids:
 
 data_folder = '/home/yibei/Projects/data/train_test_data/'
 data_folder='/project/rohs_108/yibeijia/nucleosome_occupancy/data/train_test_data/'
-data_folder='/Users/yibeijia/Downloads/nucleosome_occupancy/data/train_test_data/'
+#data_folder='/Users/yibeijia/Downloads/nucleosome_occupancy/data/train_test_data/'
 
 total_sections = len(seq_lines)
 start_lines=0
@@ -295,13 +298,13 @@ for i in range(len(seq_lines)):
     print(X_section_to_write.shape)
     print(y_section_to_write.shape)
 
-#     data_path='/project/rohs_108/yibeijia/nucleosome_occupancy/data/train_test_data/'
-    data_path='/Users/yibeijia/Downloads/nucleosome_occupancy/data/train_test_data/'
+    data_path='/project/rohs_108/yibeijia/nucleosome_occupancy/data/train_test_data/'
+#    data_path='/Users/yibeijia/Downloads/nucleosome_occupancy/data/train_test_data/'
 
 #     Data = {"Test_data" : np.array(Test_data), "Test_labels" : Test_labels}
 #     sio.savemat(data_path+species+'ShapeDNNSeqs_Test.mat', Data,  do_compression=True)
     Data = {train_or_test+"_data" : np.array(X_section_to_write), train_or_test+"_labels" : y_section_to_write}
-    train_fn = 'yeastAll_Shapes_'+train_or_test+'_5seqsPerClustr_scaled_'+str(i+1)+'_'+str(total_sections)+'.mat'
+    train_fn = 'yeast'+ablation+'_Shapes_'+train_or_test+'_5seqsPerClustr_scaled_'+str(i+1)+'_'+str(total_sections)+'.mat'
     sio.savemat(data_path+train_fn, Data,  do_compression=True)
 
     start_lines = end_lines

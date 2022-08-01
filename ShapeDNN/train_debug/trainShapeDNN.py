@@ -171,7 +171,7 @@ earlystopper = EarlyStopping(monitor='val_binary_accuracy',patience=10, verbose=
 b=validmat['Test_labels'].T
 print(validmat['Test_data'].shape)
 print(validmat['Test_labels'].shape)
-X_val, y_val = utils.shuffle(validmat['Test_data'],validmat['Test_labels'].T)
+X_val, y_val = utils.shuffle(validmat['Test_data'],validmat['Test_labels'])
 array_sum = np.sum(X_val)
 array_has_nan = np.isnan(array_sum)
 if array_has_nan:
@@ -193,6 +193,109 @@ history = model.fit(X_train, y_train, batch_size=100, epochs=1, shuffle=True, ve
 
 model.save(model_folder+'tbinet.h5')
 
+##################### debug
+#model = load_model(model_folder+"tbinet.h5")
+X_test_og = np.array([])
+y_test_og = np.array([])
+for i in range(2,3):
+   test_fn = 'yeastAll_Shapes_Test_5seqsPerClustr_scaled_'+str(i+1)+'_'+str(total_sections)+'.mat'
+   print(test_fn)
+   testmat = scipy.io.loadmat(data_folder+test_fn)
+   if X_test_og.shape[0] == 0:
+       X_test_og = np.array(testmat['Test_data'])
+       y_test_og = np.array(testmat['Test_labels'])
+       print(y_test_og.shape)
+       print(X_test_og.shape)
+   else:
+       curr_X_test = np.array(testmat['Test_data'])
+       curr_y_test = np.array(testmat['Test_labels'])
+       X_test_og = np.concatenate([X_test_og, curr_X_test], axis=0)
+       y_test_og = np.concatenate([y_test_og, curr_y_test], axis=0)
+       print(y_test_og.shape)
+       print(X_test_og.shape)
+X_test, y_test = utils.shuffle(X_test_og,y_test_og)
+print('X_test')
+print(X_test)
+
+print('y_test')
+print(y_test)
+print('sum y_test')
+print(sum(y_test))
+print(f"X_test.shape {X_test.shape}")
+print(f"y_test.shape {y_test.shape}")
+
+tpreds = model.predict(X_test,verbose=1)
+tpreds_changed = np.copy(tpreds)
+tpreds_temp = np.copy(tpreds)
+print(f"tpreds_temp.shape {tpreds_temp.shape}")
+print(f"y_test.shape {y_test.shape}")
+
+for i in range(len(tpreds)):
+    if tpreds[i] <= 0.5:
+#        print(f"original {tpreds[i]}")
+        tpreds_changed[i] = 0
+#        print(f"changed to {tpreds[i]}")
+    if tpreds[i] > 0.5:
+#        print(f"original {tpreds[i]}")
+        tpreds_changed[i] = 1
+#        print(f"changed to {tpreds[i]}")
+
+reverse_start_id = int(y_test.shape[0]/2)
+
+print('y_test size')
+print(np.array(y_test).shape)
+print('tpreds size')
+print(np.array(tpreds).shape)
+
+for i in range(reverse_start_id):
+    tpreds_avg_temp = (tpreds_temp[i] + tpreds_temp[reverse_start_id+i])/2.0
+    tpreds_temp[i] = tpreds_avg_temp
+    tpreds_temp[reverse_start_id+i] = tpreds_avg_temp
+
+for i in range(len(tpreds)):
+    print("TrueLabel=%s, Predicted=%s, Avged=%s, Converted=%s" % (y_test[i], tpreds[i], tpreds_temp[i], tpreds_changed[i]))
+#   print("TrueLabel=%s, Predicted=%s" % (y_test[i], tpreds_temp[i]))
+
+def get_auroc(preds, obs):
+    fpr, tpr, thresholds  = metrics.roc_curve(obs, preds, drop_intermediate=False)
+    auroc = metrics.auc(fpr,tpr)
+    return auroc
+
+def get_aupr(preds, obs):
+    precision, recall, thresholds  = metrics.precision_recall_curve(obs, preds)
+    aupr = metrics.auc(recall,precision)
+    return aupr
+
+def get_aurocs_and_auprs(tpreds, tobs):
+    tpreds_df = pd.DataFrame(tpreds)
+    tobs_df = pd.DataFrame(tobs)
+    
+    task_list = []
+    auroc_list = []
+    aupr_list = []
+    for task in tpreds_df:
+        pred = tpreds_df[task]
+        obs = tobs_df[task]
+        auroc=round(get_auroc(pred,obs),5)
+        aupr = round(get_aupr(pred,obs),5)
+        task_list.append(task)
+        auroc_list.append(auroc)
+        aupr_list.append(aupr)
+    return auroc_list, aupr_list
+
+aurocs, auprs = get_aurocs_and_auprs(tpreds_temp,y_test)
+#aurocs, auprs = get_aurocs_and_auprs(tpreds_temp,y_test.T)
+print("Averaged AUROC:",np.nanmean(aurocs))
+print("Averaged AUPR:", np.nanmean(auprs))
+from sklearn.metrics import accuracy_score
+from sklearn.metrics import precision_score
+from sklearn.metrics import recall_score
+print("accuracy_score", accuracy_score(y_test,tpreds))
+print("precision_score", precision_score(y_test,tpreds))
+print("recall_score", recall_score(y_test,tpreds))
+
+
+############################################# plots
 print("listing all data in history")
 print(history.history.keys())
 try:

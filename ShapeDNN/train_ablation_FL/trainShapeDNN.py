@@ -59,21 +59,30 @@ data_folder='/project/rohs_108/yibeijia/nucleosome_occupancy/data/train_test_dat
 
 # In[4]:
 
+ablation='All'
+ablation='FL'
 
 total_sections = 5
 X_train_og = np.array([]) 
 y_train_og = np.array([])
 for i in range(total_sections):
-    train_fn = 'yeastFL_Shapes_Train_5seqsPerClustr_'+str(i+1)+'_'+str(total_sections)+'.mat'
+    train_fn = 'yeast'+ablation+'_Shapes_Train_5seqsPerClustr_scaled_'+str(i+1)+'_'+str(total_sections)+'.mat'
     trainmat = scipy.io.loadmat(data_folder+train_fn)
     if X_train_og.shape[0] == 0:
         X_train_og = np.array(trainmat['Train_data'])
-        y_train_og = np.array(trainmat['Train_labels']).T
+#        y_train_og = np.array(trainmat['Train_labels']).T
+        y_train_og = np.array(trainmat['Train_labels'])
     else:
         curr_X_train = np.array(trainmat['Train_data'])
-        curr_y_train = np.array(trainmat['Train_labels']).T
+#        curr_y_train = np.array(trainmat['Train_labels']).T
+        curr_y_train = np.array(trainmat['Train_labels'])
         X_train_og = np.concatenate([X_train_og, curr_X_train], axis=0)
         y_train_og = np.concatenate([y_train_og, curr_y_train], axis=0)
+print(X_train_og.shape)
+
+input_features = X_train_og.shape[-1]
+print(f'input features: {input_features}')
+print(y_train_og.shape)
 X_train, y_train = utils.shuffle(X_train_og, y_train_og)
 #X_train, y_train = sklearn.utils.shuffle(X_train_og, y_train_og)
 array_sum = np.sum(X_train)
@@ -90,7 +99,7 @@ if array_has_nan == True:
 print("No NaN in train or test data")	
 
 # first test mat is val and rest are test mats        
-valid_fn = 'yeastFL_Shapes_Test_5seqsPerClustr_1_'+str(total_sections)+'.mat'
+valid_fn = 'yeast'+ablation+'_Shapes_Test_5seqsPerClustr_scaled_3_'+str(total_sections)+'.mat'
 print(valid_fn)
 validmat = scipy.io.loadmat(data_folder+valid_fn)
 print("valid mat shape")
@@ -112,10 +121,12 @@ attention0 = Dense(1)(output0)
 attention0 = Permute((2, 1))(attention0)
 attention0 = Activation('softmax')(attention0)
 attention0 = Permute((2, 1))(attention0)
-attention0 = Lambda(lambda x: K.mean(x, axis=2), name='shape_attention',output_shape=(42,))(attention0)
+attention0 = Lambda(lambda x: K.mean(x, axis=2), name='shape_attention',output_shape=(input_features,))(attention0)
 attention0 = RepeatVector(146)(attention0)
 attention0 = Permute((2,1))(attention0)
 output = multiply([sequence_input0, attention0])
+#output = multiply([sequence_input, attention0])
+#output = multiply([output0, attention0])
 
 # Convolutional Layer 2 - seq
 output= tf.transpose(output, perm=[0, 2, 1])
@@ -165,7 +176,7 @@ earlystopper = EarlyStopping(monitor='val_binary_accuracy',patience=10, verbose=
 b=validmat['Test_labels'].T
 print(validmat['Test_data'].shape)
 print(validmat['Test_labels'].shape)
-X_val, y_val = utils.shuffle(validmat['Test_data'],validmat['Test_labels'].T)
+X_val, y_val = utils.shuffle(validmat['Test_data'],validmat['Test_labels'])
 array_sum = np.sum(X_val)
 array_has_nan = np.isnan(array_sum)
 if array_has_nan:

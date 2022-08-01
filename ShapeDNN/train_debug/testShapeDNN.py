@@ -4,11 +4,11 @@ from sklearn import metrics
 from sklearn import utils
 import pandas as pd
 import os
-os.environ['THEANO_FLAGS'] = "device=cuda0,force_device=True,floatX=float32"
-from aesara_theano_fallback import aesara as theano
+#os.environ['THEANO_FLAGS'] = "device=cuda0,force_device=True,floatX=float32"
+#from aesara_theano_fallback import aesara as theano
 #import theano
 
-print(theano.config.device)
+#print(theano.config.device)
 import sys, getopt
 
 from keras.layers import Embedding
@@ -60,18 +60,23 @@ data_folder = "/project/rohs_108/yibeijia/nucleosome_occupancy/data/train_test_d
 total_sections = 5
 X_test_og = np.array([])
 y_test_og = np.array([])
-for i in range(1, total_sections):
+for i in range(2,3):
+#for i in range(2, total_sections):
 	test_fn = 'yeastAll_Shapes_Test_5seqsPerClustr_scaled_'+str(i+1)+'_'+str(total_sections)+'.mat'
 	print(test_fn)
 	testmat = scipy.io.loadmat(data_folder+test_fn)
 	if X_test_og.shape[0] == 0:
 		X_test_og = np.array(testmat['Test_data'])
-		y_test_og = np.array(testmat['Test_labels']).T
+		y_test_og = np.array(testmat['Test_labels'])
+		print(y_test_og.shape)
+		print(X_test_og.shape)
 	else:
 		curr_X_test = np.array(testmat['Test_data'])
-		curr_y_test = np.array(testmat['Test_labels']).T
+		curr_y_test = np.array(testmat['Test_labels'])
 		X_test_og = np.concatenate([X_test_og, curr_X_test], axis=0)
 		y_test_og = np.concatenate([y_test_og, curr_y_test], axis=0)
+		print(y_test_og.shape)
+		print(X_test_og.shape)
 X_test, y_test = utils.shuffle(X_test_og,y_test_og)
 print('X_test')
 print(X_test)
@@ -118,7 +123,7 @@ print('model summary')
 model.summary()
 
 ### Calculate averaged AUROC and AUPR
-#tpreds = model.predict_classes(testmat['Test_data'])
+#tpreds = model.predict_class(X_test)
 tpreds = model.predict(X_test,verbose=1)
 
 #tpreds = model.predict(np.transpose(X_test,axes=(0,2,1)),verbose=1)
@@ -127,11 +132,11 @@ print(f"tpreds_temp.shape {tpreds_temp.shape}")
 print(f"y_test.shape {y_test.shape}")
 
 
-with open(inputmodel+'tpreds_temp_run1.npy', 'wb') as f:
-	np.save(f, tpreds_temp)
-
-with open(inputmodel+'y_test_run1.npy', 'wb') as f:
-	np.save(f, y_test)
+#with open(inputmodel+'tpreds_temp_run1.npy', 'wb') as f:
+#	np.save(f, tpreds_temp)
+#
+#with open(inputmodel+'y_test_run1.npy', 'wb') as f:
+#	np.save(f, y_test)
 
 for i in range(len(tpreds)):
     if tpreds[i] <= 0.5:
